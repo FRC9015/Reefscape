@@ -37,6 +37,8 @@ import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.photon.PhotonInterface;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -53,6 +55,7 @@ public class RobotContainer {
   private final Intake intake;
   private final EndEffector endEffector;
 
+  public static final PhotonInterface photonInterface = new PhotonInterface();
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
