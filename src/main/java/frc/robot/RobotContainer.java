@@ -14,6 +14,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -103,6 +105,19 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive Straight",
+        AutoBuilder.followPath(PathPlannerPath.fromPathFile("Drive Straight"))
+    );
+    autoChooser.addOption(
+        "Go to HP - Path 1", 
+        AutoBuilder.followPath(PathPlannerPath.fromPathFile("GoToHP - Path 1"))
+    );
+    autoChooser.addOption(
+        "Go to HP - Path 2", 
+        AutoBuilder.followPath(PathPlannerPath.fromPathFile("GoToHP - Path 2"))
+    );
+
 
     // Configure the button bindings
     configureButtonBindings();
