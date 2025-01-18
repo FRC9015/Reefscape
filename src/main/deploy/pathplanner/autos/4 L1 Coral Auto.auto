@@ -11,9 +11,21 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "findNxtCoralAndGoToIt"
+            "pathName": "L1 Coral Path"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L1 Coral Path"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L1 Coral Path"
           }
         }
       ]

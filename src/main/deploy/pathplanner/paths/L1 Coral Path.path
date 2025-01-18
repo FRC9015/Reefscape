@@ -20,24 +20,24 @@
         "y": 4.918084016393442
       },
       "prevControl": {
-        "x": 2.7919976176090717,
-        "y": 5.785012170245114
+        "x": 2.361577868852459,
+        "y": 5.025973360655737
       },
       "nextControl": {
-        "x": 4.872632136658763,
-        "y": 4.01677981825172
+        "x": 5.200052942897701,
+        "y": 4.814847115478818
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.6544922351194047,
-        "y": 7.137696392179043
+        "x": 2.0,
+        "y": 7.0
       },
       "prevControl": {
-        "x": 3.3403842088923232,
-        "y": 8.690135981923547
+        "x": 1.6858919737729186,
+        "y": 8.552439589744498
       },
       "nextControl": null,
       "isLocked": false,
@@ -53,6 +53,12 @@
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
+    {
+      "name": "collectCoral",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
     {
       "name": "dropCoralL1",
       "waypointRelativePos": 1.0037986704653385,
