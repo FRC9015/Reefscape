@@ -27,8 +27,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeAlgaeOnField;
-import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnField;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -225,17 +223,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void simulationPeriodic() {
-    if (Constants.currentMode == Constants.Mode.SIM) {
-      SimulatedArena.getInstance().simulationPeriodic();
-    }
-  }
-
-  void periodic() {
-    // Get the positions of the algae (both on the field and in the air)
-    Pose3d[] algaePoses = SimulatedArena.getInstance().getGamePiecesArrayByType("Algae");
-    // Publish to telemetry using AdvantageKit
-    Logger.recordOutput("FieldSimulation/AlgaePositions", algaePoses);
-    Pose3d[] coralPoses = SimulatedArena.getInstance().getGamePiecesArrayByType("Coral");
-    Logger.recordOutput("FieldSimulation/CoralPositions", coralPoses);
+    SimulatedArena.getInstance().simulationPeriodic();
+    robotContainer.displaySimFieldToAdvantageScope();
   }
 }

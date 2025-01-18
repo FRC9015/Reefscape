@@ -64,6 +64,7 @@ import org.littletonrobotics.junction.Logger;
 
 /** Represents the robot's drive subsystem. */
 public class Drive extends SubsystemBase {
+
   // TunerConstants doesn't include these constants, so they are declared locally
   static final double ODOMETRY_FREQUENCY =
       new CANBus(TunerConstants.swerveDrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
@@ -168,7 +169,7 @@ public class Drive extends SubsystemBase {
         new PPHolonomicDriveController(
             new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
         PP_CONFIG,
-        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+        () -> DriverStation.getAlliance().get() == Alliance.Red,
         this);
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
@@ -400,25 +401,5 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
-  }
-
-  public double getDistanceToPose(Translation2d targetpose) {
-    return getPose().getTranslation().getDistance(targetpose);
-  }
-
-  public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
-    Logger.recordOutput("flippath", AutoBuilder.shouldFlip());
-    return AutoBuilder.shouldFlip()
-        ? this.pathfindToPoseFlipped(targetpose, endVelocity)
-        : this.pfToPose(targetpose, endVelocity);
-  }
-
-  private Command pfToPose(Pose2d targetpose, double endVelocity) {
-    return AutoBuilder.pathfindToPose(targetpose, PP_CONSTRAINTS, endVelocity);
-  }
-
-  private Command pathfindToPoseFlipped(Pose2d targetPose, double endVelocity) {
-    Pose2d tp = FlippingUtil.flipFieldPose(targetPose);
-    return AutoBuilder.pathfindToPose(tp, PP_CONSTRAINTS, endVelocity);
   }
 }
