@@ -22,7 +22,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
@@ -50,7 +49,7 @@ public class AutoCommands{
 
     //Constants for below commands
 
-    static PathConstraints constraints = new PathConstraints(
+    public static PathConstraints constraints = new PathConstraints(
         3.0, 4.0,
         Units.degreesToRadians(540), Units.degreesToRadians(720));
 
@@ -69,7 +68,12 @@ public class AutoCommands{
 
         return pathfindingCommand;
     }
+    
+    public static Command correcToDesiredPath(PathPlannerPath desiredPath) {
+        Command correctToDesiredPath = AutoBuilder.pathfindThenFollowPath(desiredPath, constraints);
+        return correctToDesiredPath;
 
+    }
 
 }
 
