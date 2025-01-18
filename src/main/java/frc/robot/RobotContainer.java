@@ -110,11 +110,11 @@ public class RobotContainer {
         AutoBuilder.followPath(PathPlannerPath.fromPathFile("Drive Straight"))
     );
     autoChooser.addOption(
-        "Go to HP - Path 1", 
+        "GotoHP - Path 1", 
         AutoBuilder.followPath(PathPlannerPath.fromPathFile("GoToHP - Path 1"))
     );
     autoChooser.addOption(
-        "Go to HP - Path 2", 
+        "GotoHP - Path 2", 
         AutoBuilder.followPath(PathPlannerPath.fromPathFile("GoToHP - Path 2"))
     );
 
