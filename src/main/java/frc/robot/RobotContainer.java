@@ -27,9 +27,13 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
+import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -39,8 +43,9 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  /** The drive subsystem instance. */
-  public static Drive drive;
+  // Subsystems
+  private SwerveDriveSimulation simDrive = null;
+  private final Drive drive;
 
   /** The primary controller used for teleop. */
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -56,21 +61,24 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
+                new ModuleIOTalonFXReal(TunerConstants.FrontLeft),
+                new ModuleIOTalonFXReal(TunerConstants.FrontRight),
+                new ModuleIOTalonFXReal(TunerConstants.BackLeft),
+                new ModuleIOTalonFXReal(TunerConstants.BackRight));
         break;
 
       case SIM:
-        // Simulated robot, instantiate physics sim IO implementations
+        // Sim robot, instantiate physics sim IO implementations
+        simDrive =
+            new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+        SimulatedArena.getInstance().addDriveTrainSimulation(simDrive);
         drive =
             new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
+                new GyroIOSim(simDrive.getGyroSimulation()),
+                new ModuleIOTalonFXSim(TunerConstants.FrontLeft, simDrive.getModules()[0]),
+                new ModuleIOTalonFXSim(TunerConstants.FrontRight, simDrive.getModules()[1]),
+                new ModuleIOTalonFXSim(TunerConstants.BackLeft, simDrive.getModules()[2]),
+                new ModuleIOTalonFXSim(TunerConstants.BackRight, simDrive.getModules()[3]));
         break;
 
       default:
@@ -148,15 +156,7 @@ public class RobotContainer {
     controller.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
   }
 
-  /**
-   * Sets the robot's pose in simulation mode.
-   *
-   * @param pose The desired pose of the robot.
-   * @return The command to execute this action.
-   */
-  public static Command setRobotSimPose(Pose2d pose) {
-    return Commands.runOnce(() -> drive.setPose(pose), drive);
-  }
+
 
   /**
    * Provides the autonomous command to be executed.
@@ -167,10 +167,20 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
-  /**
-   * Sets the robot's pose to the predefined barge position.
-   */
-  public static void setBargePose() {
-    drive.setPose(Constants.FieldConstants.bargeFar);
+  public void resetSimulationField() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    simDrive.setSimulationWorldPose(new Pose2d(3, 3, new Rotation2d()));
+    SimulatedArena.getInstance().resetFieldForAuto();
+  }
+
+  public void displaySimFieldToAdvantageScope() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    Logger.recordOutput("FieldSimulation/RobotPosition", simDrive.getSimulatedDriveTrainPose());
+    Logger.recordOutput(
+        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+    Logger.recordOutput(
+        "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
   }
 }
