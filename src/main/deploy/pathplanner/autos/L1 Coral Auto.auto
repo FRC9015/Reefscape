@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Example Path"
+            "pathName": "L1 Coral Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "findNxtCoralAndGoToIt"
           }
         }
       ]
