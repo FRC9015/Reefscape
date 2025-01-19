@@ -32,6 +32,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+
+import java.nio.file.Path;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -105,19 +108,6 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive Straight",
-        AutoBuilder.followPath(PathPlannerPath.fromPathFile("Drive Straight"))
-    );
-    autoChooser.addOption(
-        "GotoHP - Path 1", 
-        AutoBuilder.followPath(PathPlannerPath.fromPathFile("GoToHP - Path 1"))
-    );
-    autoChooser.addOption(
-        "GotoHP - Path 2", 
-        AutoBuilder.followPath(PathPlannerPath.fromPathFile("GoToHP - Path 2"))
-    );
-
 
     // Configure the button bindings
     configureButtonBindings();

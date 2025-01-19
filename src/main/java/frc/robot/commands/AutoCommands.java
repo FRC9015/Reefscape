@@ -55,7 +55,7 @@ public class AutoCommands{
 
     
     public static Command resetPosetoStartofPath(Pose2d pose, PathPlannerPath path, Drive drive) {
-        return Commands.runOnce(() -> drive.setPose((path.getStartingDifferentialPose())), drive);   
+        return Commands.runOnce(() -> drive.setPose((path.getStartingHolonomicPose().get())), drive);   
 
     }
 
