@@ -70,7 +70,9 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        simDrive = new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d( new Translation2d(3,3), new Rotation2d()));
+        simDrive =
+            new SwerveDriveSimulation(
+                Drive.mapleSimConfig, new Pose2d(new Translation2d(3, 3), new Rotation2d()));
         SimulatedArena.getInstance().addDriveTrainSimulation(simDrive);
         drive =
             new Drive(
@@ -127,8 +129,8 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
+            () -> controller.getLeftY(),
+            () -> controller.getLeftX(),
             () -> -controller.getRightX()));
 
     // Lock to 0° when A button is held
@@ -137,8 +139,8 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> controller.getLeftY(),
+                () -> controller.getLeftX(),
                 () -> new Rotation2d()));
 
     // Reset gyro to 0° when B button is pressed
@@ -165,6 +167,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void setRobotPoseAuto() {
+    simDrive.setSimulationWorldPose(drive.getPose());
   }
 
   public void resetSimulationField() {
