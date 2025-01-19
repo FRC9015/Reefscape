@@ -27,7 +27,6 @@ public interface ElevatorIO {
       DealgifyL3(2.5),
       CoralL4(3.0);
 
-
       // Field to store the encoder position
       private final double encoderPosition;
 
@@ -35,7 +34,7 @@ public interface ElevatorIO {
       ElevatorState(double encoderPosition) {
         this.encoderPosition = encoderPosition;
       }
-      
+
       // Getter for encoder position
       public double getEncoderPosition() {
         return encoderPosition;

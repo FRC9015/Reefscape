@@ -66,7 +66,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   public void updateInputs(ElevatorIOInputs inputs) {
     // Refresh signals
     var encoderStatus = BaseStatusSignal.refreshAll(encoderPositionSignal);
-    
+
     // Update elevator inputs
     inputs.elevatorEncoderConnected = encoderConnectedDebounce.calculate(encoderStatus.isOK());
     inputs.elevatorPosition = encoderPositionSignal.getValueAsDouble();

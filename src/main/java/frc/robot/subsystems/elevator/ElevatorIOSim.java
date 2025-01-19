@@ -53,8 +53,7 @@ public class ElevatorIOSim implements ElevatorIO {
     // Run position control if enabled
     if (positionControl) {
       double targetPosition = inputs.getDesiredEncoderPosition();
-      appliedVolts =
-          elevatorController.calculate(elevatorSim.getPositionMeters(), targetPosition);
+      appliedVolts = elevatorController.calculate(elevatorSim.getPositionMeters(), targetPosition);
     }
 
     // Apply voltage to the simulation
