@@ -47,6 +47,7 @@ public interface ElevatorIO {
     public double elevatorCurrentAmps = 0.0;
     public boolean elevatorEncoderConnected = false;
     public double elevatorPosition = 0.0;
+    public boolean elevatorAtSetpoint = false;
 
     // Utility method to get the desired encoder position for the current state
     public double getDesiredEncoderPosition() {
@@ -59,4 +60,13 @@ public interface ElevatorIO {
 
   /** Sets the elevator position based on the desired state. */
   public default void setElevatorPosition(ElevatorIOInputs.ElevatorState state) {}
+
+  /** Run slam elevator at amps */
+  default void runCurrent(double amps) {}
+
+  /** Stop slam elevator */
+  default void stop() {}
+
+  /** Enable or disable brake mode on the elevator motor. */
+  default void setBrakeMode(boolean enable) {}
 }
