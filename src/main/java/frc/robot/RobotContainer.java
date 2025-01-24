@@ -142,7 +142,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    controller.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.reef_AL1));
+    controller.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar));
   }
 
   /**

@@ -375,10 +375,12 @@ public class Drive extends SubsystemBase {
   }
 
   public Command pathfindToPose(Pose2d targetpose) {
-    return AutoBuilder.pathfindToPose(targetpose, PP_CONSTRAINTS, 0.0);
+    return this.pathfindToPose(targetpose, 0.0);
   }
 
   public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
-    return AutoBuilder.pathfindToPose(targetpose, PP_CONSTRAINTS, endVelocity);
+    return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+        ? AutoBuilder.pathfindToPose(targetpose, PP_CONSTRAINTS, endVelocity)
+        : AutoBuilder.pathfindToPoseFlipped(targetpose, PP_CONSTRAINTS, endVelocity);
   }
 }

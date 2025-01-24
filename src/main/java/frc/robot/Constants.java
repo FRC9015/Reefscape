@@ -41,5 +41,6 @@ public final class Constants {
   public static class FieldConstants {
     public static final Pose2d reef_AL1 =
         new Pose2d(new Translation2d(3.25, 3.8), new Rotation2d());
+    public static final Pose2d bargeFar = new Pose2d(new Translation2d(4.0, 5.0), new Rotation2d());
   }
 }
