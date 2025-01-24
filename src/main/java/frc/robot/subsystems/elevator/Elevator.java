@@ -17,6 +17,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator {
@@ -37,7 +38,8 @@ public class Elevator {
     this.pidController = new PIDController(kP, kI, kD);
     this.pidController.setTolerance(kToleranceMeters);
 
-    encoderDisconnectedAlert = new Alert("Disconnected elevator encoder.", AlertType.kError);
+    encoderDisconnectedAlert =
+        new Alert("Disconnected elevator encoder.", AlertType.kError);
   }
 
   /** Periodic method to update inputs, PID calculations, and alerts. */
