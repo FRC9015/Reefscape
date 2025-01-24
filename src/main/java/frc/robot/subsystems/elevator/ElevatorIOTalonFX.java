@@ -17,6 +17,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -40,6 +41,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final StatusSignal<Current> motorCurrentSignal;
 
   private final Debouncer encoderConnectedDebounce = new Debouncer(0.5);
+  private final NeutralOut neutralOut = new NeutralOut();
+
 
   public ElevatorIOTalonFX(int motorId, int encoderId, String canBusName) {
     elevatorMotor = new TalonFX(motorId, canBusName);
@@ -78,5 +81,15 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   public void setElevatorPosition(ElevatorIOInputs.ElevatorState state) {
     double desiredPosition = state.getEncoderPosition();
     elevatorMotor.setControl(positionVoltageRequest.withPosition(desiredPosition));
+  }
+
+  @Override
+  public void stop() {
+    elevatorMotor.setControl(neutralOut);
+  }
+
+  @Override
+  public void setBrakeMode(boolean enable) {
+    elevatorMotor.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 }
