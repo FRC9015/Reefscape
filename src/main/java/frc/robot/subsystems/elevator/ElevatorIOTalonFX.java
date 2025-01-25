@@ -17,6 +17,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -32,7 +33,11 @@ import edu.wpi.first.units.measure.Voltage;
 public class ElevatorIOTalonFX implements ElevatorIO {
 
   private final TalonFX elevatorMotor;
+  private final TalonFX elevatorMotor1;
   private final CANcoder elevatorEncoder;
+  private final CANcoder elevatorEncoder1;
+  private final Follower elevatorFollower;
+  private final Follower elevatorEncoderFollower;
 
   private final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0);
 
@@ -44,9 +49,15 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final NeutralOut neutralOut = new NeutralOut();
 
 
-  public ElevatorIOTalonFX(int motorId, int encoderId, String canBusName) {
+  public ElevatorIOTalonFX(int motorId, int motorId1, int encoderId, int encoderId1, String canBusName) {
     elevatorMotor = new TalonFX(motorId, canBusName);
     elevatorEncoder = new CANcoder(encoderId, canBusName);
+    elevatorMotor1 = new TalonFX(motorId1, canBusName);
+    elevatorEncoder1 = new CANcoder(encoderId1, canBusName);
+    elevatorFollower = new Follower(motorId, true);
+    elevatorEncoderFollower = new Follower(encoderId, true);
+    elevatorMotor1.setControl(elevatorFollower);
+    elevatorEncoder1.setControl(elevatorEncoderFollower);
 
     // Configure the motor
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
