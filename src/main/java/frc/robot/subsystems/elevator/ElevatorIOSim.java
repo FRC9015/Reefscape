@@ -19,7 +19,8 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
 /**
  * Simulation implementation of the ElevatorIO interface using WPILib's ElevatorSim. This simulates
- * the behavior of an elevator subsystem, including physics and voltage control.
+ * the behavior of an elevator subsystem, including physics and voltage control with opposing
+ * motors.
  */
 public class ElevatorIOSim implements ElevatorIO {
   // Elevator constants
@@ -36,7 +37,8 @@ public class ElevatorIOSim implements ElevatorIO {
   // Elevator simulation model
   private final ElevatorSim elevatorSim =
       new ElevatorSim(
-          edu.wpi.first.math.system.plant.DCMotor.getVex775Pro(2), // Two motors
+          edu.wpi.first.math.system.plant.DCMotor.getKrakenX60(
+              1), // One motor (we'll simulate the second)
           ELEVATOR_GEAR_RATIO,
           ELEVATOR_MASS_KG,
           ELEVATOR_DRUM_RADIUS,
@@ -56,15 +58,32 @@ public class ElevatorIOSim implements ElevatorIO {
       appliedVolts = elevatorController.calculate(elevatorSim.getPositionMeters(), targetPosition);
     }
 
-    // Apply voltage to the simulation
-    elevatorSim.setInputVoltage(MathUtil.clamp(appliedVolts, -12.0, 12.0));
+    // Simulate opposing motors
+    double clampedVolts = MathUtil.clamp(appliedVolts, -12.0, 12.0);
+    simulateOpposingMotors(clampedVolts);
+
     elevatorSim.update(0.02); // Simulate a 20ms timestep
 
     // Update inputs with simulated data
     inputs.elevatorEncoderConnected = true; // Simulate that the encoder is always connected
     inputs.elevatorPosition = elevatorSim.getPositionMeters(); // Position in meters
-    inputs.elevatorAppliedVolts = appliedVolts; // Voltage applied to the motor
-    inputs.elevatorCurrentAmps = elevatorSim.getCurrentDrawAmps(); // Current drawn by the motor
+    inputs.elevatorAppliedVolts = appliedVolts; // Voltage applied to the motors
+    inputs.elevatorCurrentAmps =
+        elevatorSim.getCurrentDrawAmps() * 2; // Approximate current for two motors
+  }
+
+  private void simulateOpposingMotors(double voltage) {
+    // Simulate two motors running in opposite directions
+    double effectiveVoltage = voltage / 2; // Split voltage between two motors
+    elevatorSim.setInputVoltage(effectiveVoltage);
+
+    // Simulate the effect of the opposing motor
+    double position = elevatorSim.getPositionMeters();
+    double velocity = elevatorSim.getVelocityMetersPerSecond();
+
+    // Apply a counteracting force to simulate the opposing motor
+    double opposingForce = -effectiveVoltage * ELEVATOR_GEAR_RATIO / ELEVATOR_DRUM_RADIUS;
+    elevatorSim.setState(position, velocity + (opposingForce / ELEVATOR_MASS_KG) * 0.02);
   }
 
   @Override
