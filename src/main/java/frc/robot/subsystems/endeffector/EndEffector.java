@@ -15,9 +15,10 @@ package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-public class EndEffector {
+public class EndEffector extends SubsystemBase {
   private final EndEffectorIO io;
   private final EndEffectorIOInputsAutoLogged inputs = new EndEffectorIOInputsAutoLogged();
   private final Alert encoderDisconnectedAlert;
