@@ -27,6 +27,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -113,6 +114,8 @@ public class Drive extends SubsystemBase {
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
   private Optional<EstimatedRobotPose> est_pos;
+  private Matrix<N3, N1> stdDevs = VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
+
 
   public Drive(
       GyroIO gyroIO,
@@ -225,6 +228,8 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
     est_pos = photonInterface.getEstimatedPose();
+
+    stdDevs = VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
   }
 
   /**
@@ -359,7 +364,7 @@ public class Drive extends SubsystemBase {
   public void updatePose(){
 
     if(est_pos.isPresent()){
-      addVisionMeasurement(est_pos.get().estimatedPose.toPose2d(),est_pos.get().timestampSeconds,);
+      addVisionMeasurement(est_pos.get().estimatedPose.toPose2d(),est_pos.get().timestampSeconds,stdDevs);
     }
   }
 
