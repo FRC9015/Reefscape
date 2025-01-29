@@ -60,7 +60,8 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight),photonInterface);
+                new ModuleIOTalonFX(TunerConstants.BackRight),
+                photonInterface);
         break;
 
       case SIM:
@@ -71,7 +72,8 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontLeft),
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight),photonInterface);
+                new ModuleIOSim(TunerConstants.BackRight),
+                photonInterface);
         break;
 
       default:
@@ -82,7 +84,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {},photonInterface);
+                new ModuleIO() {},
+                photonInterface);
         break;
     }
 

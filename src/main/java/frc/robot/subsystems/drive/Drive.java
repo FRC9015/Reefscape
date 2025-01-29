@@ -15,7 +15,6 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 
-
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -121,7 +120,8 @@ public class Drive extends SubsystemBase {
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
-      ModuleIO brModuleIO, PhotonInterface photon) {
+      ModuleIO brModuleIO,
+      PhotonInterface photon) {
     this.gyroIO = gyroIO;
     this.photon = photon;
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
