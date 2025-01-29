@@ -15,6 +15,7 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 
+
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -55,15 +56,12 @@ import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.photon.PhotonInterface;
 import frc.robot.util.LocalADStarAK;
-
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
-
-import static frc.robot.RobotContainer.photonInterface;
 
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
@@ -100,6 +98,7 @@ public class Drive extends SubsystemBase {
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
+  private final PhotonInterface photon;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
@@ -119,16 +118,17 @@ public class Drive extends SubsystemBase {
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
   private Optional<EstimatedRobotPose> est_pos;
-  private Matrix<N3, N1> stdDevs = VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
-
+  private Matrix<N3, N1> stdDevs =
+      VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
 
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
-      ModuleIO brModuleIO) {
+      ModuleIO brModuleIO, PhotonInterface photon) {
     this.gyroIO = gyroIO;
+    this.photon = photon;
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
     modules[2] = new Module(blModuleIO, 2, TunerConstants.BackLeft);
@@ -232,9 +232,10 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
-    est_pos = photonInterface.getEstimatedPose();
+    est_pos = photon.getEstimatedPose();
 
-    stdDevs = VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
+    stdDevs =
+        VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
   }
 
   /**
@@ -366,10 +367,11 @@ public class Drive extends SubsystemBase {
         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
   }
 
-  public void updatePose(){
+  public void updatePose() {
 
-    if(est_pos.isPresent()){
-      addVisionMeasurement(est_pos.get().estimatedPose.toPose2d(),est_pos.get().timestampSeconds,stdDevs);
+    if (est_pos.isPresent()) {
+      addVisionMeasurement(
+          est_pos.get().estimatedPose.toPose2d(), est_pos.get().timestampSeconds, stdDevs);
     }
   }
 

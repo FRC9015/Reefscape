@@ -38,7 +38,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.photon.PhotonInterface;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -55,7 +54,7 @@ public class RobotContainer {
   private final Intake intake;
   private final EndEffector endEffector;
 
-  public static final PhotonInterface photonInterface = new PhotonInterface();
+  public final PhotonInterface photonInterface = new PhotonInterface();
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
@@ -73,11 +72,13 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
+                new ModuleIOTalonFX(TunerConstants.BackRight),
+                photonInterface);
 
         climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
         intake = new Intake(new IntakeIOTalonFX(5));
+                
         break;
 
       case SIM:
@@ -88,7 +89,8 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontLeft),
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
+                new ModuleIOSim(TunerConstants.BackRight),
+                photonInterface);
 
         climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
@@ -103,7 +105,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
+                new ModuleIO() {},
+                photonInterface);
         climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
         intake = new Intake(new IntakeIOTalonFX(5));
