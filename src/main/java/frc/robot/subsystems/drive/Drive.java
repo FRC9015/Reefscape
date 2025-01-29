@@ -23,6 +23,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.FlippingUtil;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
@@ -45,6 +46,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -374,13 +376,19 @@ public class Drive extends SubsystemBase {
     return getPose().getTranslation().getDistance(targetpose);
   }
 
-  public Command pathfindToPose(Pose2d targetpose) {
-    return this.pathfindToPose(targetpose, 0.0);
+  public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
+    Logger.recordOutput("flippath", AutoBuilder.shouldFlip());
+    return AutoBuilder.shouldFlip()
+        ? this.pathfindToPoseFlipped(targetpose, endVelocity)
+        : this.pfToPose(targetpose, endVelocity);
   }
 
-  public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
-    return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
-        ? AutoBuilder.pathfindToPose(targetpose, PP_CONSTRAINTS, endVelocity)
-        : AutoBuilder.pathfindToPoseFlipped(targetpose, PP_CONSTRAINTS, endVelocity);
+  private Command pfToPose(Pose2d targetpose, double endVelocity) {
+    return AutoBuilder.pathfindToPose(targetpose, PP_CONSTRAINTS, endVelocity);
+  }
+
+  private Command pathfindToPoseFlipped(Pose2d targetPose, double endVelocity) {
+    Pose2d tp = FlippingUtil.flipFieldPose(targetPose);
+    return AutoBuilder.pathfindToPose(tp, PP_CONSTRAINTS, endVelocity);
   }
 }
