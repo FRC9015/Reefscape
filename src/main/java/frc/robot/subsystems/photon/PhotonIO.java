@@ -1,5 +1,3 @@
 package frc.robot.subsystems.photon;
 
-public class PhotonIO {
-    
-}
+public class PhotonIO {}
