@@ -21,7 +21,9 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.FlippingUtil;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
@@ -39,10 +41,12 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -85,6 +89,8 @@ public class Drive extends SubsystemBase {
               TunerConstants.FrontLeft.SlipCurrent,
               1),
           getModuleTranslations());
+  private static final PathConstraints PP_CONSTRAINTS =
+      new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
@@ -161,7 +167,11 @@ public class Drive extends SubsystemBase {
 
   @Override
   public void periodic() {
-    odometryLock.lock(); // Prevents odometry updates while reading data
+    try {
+      odometryLock.lock(); // Prevents odometry updates while reading data
+    } finally {
+      odometryLock.unlock(); // Ensure the lock is released
+    }
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
     for (var module : modules) {
@@ -365,5 +375,25 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
+  }
+
+  public double getDistanceToPose(Translation2d targetpose) {
+    return getPose().getTranslation().getDistance(targetpose);
+  }
+
+  public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
+    Logger.recordOutput("flippath", AutoBuilder.shouldFlip());
+    return AutoBuilder.shouldFlip()
+        ? this.pathfindToPoseFlipped(targetpose, endVelocity)
+        : this.pfToPose(targetpose, endVelocity);
+  }
+
+  private Command pfToPose(Pose2d targetpose, double endVelocity) {
+    return AutoBuilder.pathfindToPose(targetpose, PP_CONSTRAINTS, endVelocity);
+  }
+
+  private Command pathfindToPoseFlipped(Pose2d targetPose, double endVelocity) {
+    Pose2d tp = FlippingUtil.flipFieldPose(targetPose);
+    return AutoBuilder.pathfindToPose(tp, PP_CONSTRAINTS, endVelocity);
   }
 }
