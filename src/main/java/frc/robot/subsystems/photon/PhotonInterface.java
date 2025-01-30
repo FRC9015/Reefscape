@@ -7,6 +7,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,7 +48,7 @@ public class PhotonInterface extends SubsystemBase {
       e.printStackTrace();
     }
 
-    tagCam = new PhotonCamera("Tag_Camera");
+    tagCam = new PhotonCamera("tagCam0");
 
     photonPoseEstimator =
         new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camPose);
@@ -62,11 +63,30 @@ public class PhotonInterface extends SubsystemBase {
     Logger.recordOutput("Tags/Number", tagCam.getLatestResult().getTargets().size());
   }
 
+  public Translation2d get2DEstimatedPose() {
+    if (tagCam.getLatestResult().getTargets().size() == 0) {
+      return new Translation2d(0, 0);
+    }
+    System.out.println(tagCam.getLatestResult().getTargets().size());
+
+    return photonPoseEstimator
+        .update(tagCam.getLatestResult())
+        .get()
+        .estimatedPose
+        .toPose2d()
+        .getTranslation();
+  }
+
   public Optional<EstimatedRobotPose> getEstimatedPose() {
     if (tagCam.getLatestResult().getTargets().size() == 0) {
 
       return Optional.empty();
     }
+    // else if ((get2DEstimatedPose().getX() > 16.4846 || get2DEstimatedPose().getX() < 0)) {
+    //   return Optional.empty();
+    // } else if ((get2DEstimatedPose().getY() > 8.1026 || get2DEstimatedPose().getY() < 0)) {
+    //   return Optional.empty();
+    // }
 
     return photonPoseEstimator.update(tagCam.getLatestResult());
   }

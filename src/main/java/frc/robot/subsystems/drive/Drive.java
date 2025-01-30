@@ -116,7 +116,7 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
-  private Optional<EstimatedRobotPose> est_pos;
+  private Optional<EstimatedRobotPose> estimatedPose;
   private Matrix<N3, N1> stdDevs =
       VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
 
@@ -232,10 +232,20 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
-    est_pos = photon.getEstimatedPose();
+    estimatedPose = photon.getEstimatedPose();
+
+    // if (estimatedPose.isPresent()) {
+    //   stdDevs =
+    //       VecBuilder.fill(
+    //           estimatedPose.get().estimatedPose.getX(),
+    //           estimatedPose.get().estimatedPose.getY(),
+    //           estimatedPose.get().estimatedPose.getRotation().toRotation2d().getRadians());
+    //   System.out.println(stdDevs);
+    // }
 
     stdDevs =
         VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
+    updatePose();
   }
 
   /**
@@ -369,9 +379,11 @@ public class Drive extends SubsystemBase {
 
   public void updatePose() {
 
-    if (est_pos.isPresent()) {
+    if (estimatedPose.isPresent()) {
       addVisionMeasurement(
-          est_pos.get().estimatedPose.toPose2d(), est_pos.get().timestampSeconds, stdDevs);
+          estimatedPose.get().estimatedPose.toPose2d(),
+          estimatedPose.get().timestampSeconds,
+          stdDevs);
     }
   }
 
