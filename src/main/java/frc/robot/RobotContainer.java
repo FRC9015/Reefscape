@@ -14,6 +14,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -32,6 +33,14 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs.ElevatorState;
+import frc.robot.subsystems.endeffector.EndEffector;
+import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
 
 import java.nio.file.Path;
 
@@ -44,9 +53,19 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // Subsystems
+  // Subsystem declarations
   private final Drive drive;
+  private final Elevator elevator;
+  private final Intake intake;
+  private final EndEffector endEffector;
 
+  //IO files to instantiate objects in subsystems, @TODO: Add motor IDs and CAN IDs  
+  private final ElevatorIOTalonFX elevatorIO = new ElevatorIOTalonFX(0, 0, 0, 0, null);
+  private final IntakeIOTalonFX intakeIO = new IntakeIOTalonFX(0, 0, 0, 0, 0, "");
+  private final EndEffectorIOTalonFX endEffectorIO = new EndEffectorIOTalonFX(0, 0, 0, 0, 0, "");
+ 
+
+  
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
@@ -89,6 +108,22 @@ public class RobotContainer {
                 new ModuleIO() {});
         break;
     }
+    //subsystem initialization
+    elevator = new Elevator(elevatorIO);
+    intake = new Intake(intakeIO);
+    endEffector = new EndEffector(endEffectorIO);
+
+    //Named commands for pathplanner autos
+    NamedCommands.registerCommand("shootCoral", Commands.runOnce(() -> endEffector.setRPM(3000), endEffector));
+    NamedCommands.registerCommand("IntakeCoral", Commands.runOnce(() -> endEffector.setRPM(-3000), endEffector));
+    NamedCommands.registerCommand("L2Position", Commands.runOnce(()-> elevatorIO.setElevatorPosition(ElevatorState.CoralL2), elevator));
+    NamedCommands.registerCommand("L3Position", Commands.runOnce(()-> elevatorIO.setElevatorPosition(ElevatorState.CoralL3), elevator));
+    NamedCommands.registerCommand("L4Position", Commands.runOnce(()-> elevatorIO.setElevatorPosition(ElevatorState.CoralL4), elevator));
+    NamedCommands.registerCommand("IntakeCoral", Commands.runOnce(() -> intake.setRPM(-3000), intake));
+
+
+
+
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
