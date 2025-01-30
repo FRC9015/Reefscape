@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -162,8 +162,8 @@ public class DriveCommands {
    * <p>This command should only be used in voltage control mode.
    */
   public static Command feedforwardCharacterization(Drive drive) {
-    List<Double> velocitySamples = new ArrayList<>();
-    List<Double> voltageSamples = new ArrayList<>();
+    List<Double> velocitySamples = new LinkedList<>();
+    List<Double> voltageSamples = new LinkedList<>();
     Timer timer = new Timer();
 
     return Commands.sequence(
