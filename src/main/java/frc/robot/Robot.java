@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
+import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -28,15 +29,14 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
+ * The main robot class, extending {@link LoggedRobot}. This class is configured to run
+ * automatically and execute the appropriate methods for each robot mode.
  */
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
 
+  /** Constructs the Robot instance and initializes logging and configuration checks. */
   public Robot() {
     // Record metadata
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
@@ -44,12 +44,13 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
     Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
     Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+    
     switch (BuildConstants.DIRTY) {
       case 0:
         Logger.recordMetadata("GitDirty", "All changes committed");
         break;
       case 1:
-        Logger.recordMetadata("GitDirty", "Uncomitted changes");
+        Logger.recordMetadata("GitDirty", "Uncommitted changes");
         break;
       default:
         Logger.recordMetadata("GitDirty", "Unknown");
@@ -76,12 +77,14 @@ public class Robot extends LoggedRobot {
         Logger.setReplaySource(new WPILOGReader(logPath));
         Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
         break;
+      default:
+        break;
     }
 
     // Start AdvantageKit logger
     Logger.start();
 
-    // Check for valid swerve config
+    // Check for valid swerve configuration
     var modules =
         new SwerveModuleConstants[] {
           TunerConstants.FrontLeft,
@@ -89,16 +92,19 @@ public class Robot extends LoggedRobot {
           TunerConstants.BackLeft,
           TunerConstants.BackRight
         };
+    
     for (var constants : modules) {
       if (constants.DriveMotorType != DriveMotorArrangement.TalonFX_Integrated
           || constants.SteerMotorType != SteerMotorArrangement.TalonFX_Integrated) {
         throw new RuntimeException(
-            "You are using an unsupported swerve configuration, which this template does not support without manual customization. The 2025 release of Phoenix supports some swerve configurations which were not available during 2025 beta testing, preventing any development and support from the AdvantageKit developers.");
+            "You are using an unsupported swerve configuration, which this template does not "
+                + "support without manual customization. The 2025 release of Phoenix supports "
+                + "some swerve configurations which were not available during 2025 beta testing, "
+                + "preventing any development and support from the AdvantageKit developers.");
       }
     }
 
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our autonomous chooser on the dashboard.
+    // Instantiate our RobotContainer. This sets up button bindings and dashboard configurations.
     robotContainer = new RobotContainer();
   }
 
@@ -108,11 +114,7 @@ public class Robot extends LoggedRobot {
     // Switch thread to high priority to improve loop timing
     Threads.setCurrentThreadPriority(true, 99);
 
-    // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled commands, running already-scheduled commands, removing
-    // finished or interrupted commands, and running subsystem periodic() methods.
-    // This must be called from the robot's periodic block in order for anything in
-    // the Command-based framework to work.
+    // Runs the Command Scheduler
     CommandScheduler.getInstance().run();
 
     // Return to normal thread priority
@@ -127,41 +129,38 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {}
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+  /** This function is called once at the start of the autonomous period. */
   @Override
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
+    // Schedule the autonomous command if available
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
   }
 
-  /** This function is called periodically during autonomous. */
+  /** This function is called periodically during the autonomous period. */
   @Override
   public void autonomousPeriodic() {}
 
-  /** This function is called once when teleop is enabled. */
+  /** This function is called once at the start of the teleoperated period. */
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
+    // Ensures autonomous command stops when teleop starts
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
   }
 
-  /** This function is called periodically during operator control. */
+  /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {}
 
   /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
-    // Cancels all running commands at the start of test mode.
+    // Cancels all running commands at the start of test mode
     CommandScheduler.getInstance().cancelAll();
   }
 
@@ -169,11 +168,25 @@ public class Robot extends LoggedRobot {
   @Override
   public void testPeriodic() {}
 
-  /** This function is called once when the robot is first started up. */
+  /** 
+   * This function is called once when the robot enters simulation mode.
+   * Initializes the SimulatedArena **only** if running in simulation mode.
+   */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      SimulatedArena.getInstance();
+    }
+  }
 
-  /** This function is called periodically whilst in simulation. */
+  /** 
+   * This function is called periodically during simulation mode.
+   * Runs the SimulatedArena **only** if running in simulation mode.
+   */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    if (Constants.currentMode == Constants.Mode.SIM) {
+      SimulatedArena.getInstance().simulationPeriodic();
+    }
+  }
 }
