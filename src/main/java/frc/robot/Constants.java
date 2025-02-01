@@ -27,6 +27,7 @@ public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
+  /** Enum representing the different runtime modes. */
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
@@ -38,6 +39,7 @@ public final class Constants {
     REPLAY
   }
 
+  /** This class contains constants related to the field layout. */
   public static class FieldConstants {
     public static final Pose2d reef_AL1 =
         new Pose2d(new Translation2d(3.25, 3.8), new Rotation2d());

@@ -145,7 +145,6 @@ public class RobotContainer {
     controller.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
   }
 
-
   public static Command setRobotSIMPose(Pose2d pose) {
     return Commands.runOnce(() -> drive.setPose(pose), drive);
   }
@@ -164,7 +163,7 @@ public class RobotContainer {
    *
    * @return The command to set the robot's pose to the barge.
    */
-  public static Command setBargePose(){
-    return Commands.runOnce(()->drive.setPose(Constants.FieldConstants.bargeFar), drive);
-}
+  public static void setBargePose() {
+    drive.setPose(Constants.FieldConstants.bargeFar);
+  }
 }
