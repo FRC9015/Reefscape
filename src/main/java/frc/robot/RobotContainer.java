@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AutoCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -120,6 +121,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("L3Position", Commands.runOnce(()-> elevatorIO.setElevatorPosition(ElevatorState.CoralL3), elevator));
     NamedCommands.registerCommand("L4Position", Commands.runOnce(()-> elevatorIO.setElevatorPosition(ElevatorState.CoralL4), elevator));
     NamedCommands.registerCommand("IntakeCoral", Commands.runOnce(() -> intake.setRPM(-3000), intake));
+    NamedCommands.registerCommand("EjectCoral", Commands.runOnce(() -> intake.setRPM(3000), intake));
+    NamedCommands.registerCommand("WarmUpBeforeAuto", AutoCommands.pathfindToAutoStartPoseWhileWarmup("4 L1 Coral Auto", endEffector, intake));
 
 
 

@@ -55,7 +55,7 @@ public class AutoCommands {
   
 }
 
-public PathPlannerPath returnFirstPathinAuto(String autoName) {
+public static PathPlannerPath returnFirstPathinAuto(String autoName) {
         try {
             List<PathPlannerPath> pathCollection = PathPlannerAuto.getPathGroupFromAutoFile(autoName);
             return pathCollection.get(0);
@@ -65,12 +65,12 @@ public PathPlannerPath returnFirstPathinAuto(String autoName) {
             return null;
         }
     }
-
-public Command pathfindToAutoStartPoseWhileWarmup(Pose2d currentPose, String desiredAuto, EndEffector endEffector, Intake intake) {
+//Purpose: Warmup motorized subsystems (intake, endeffector) while pathifinding to an auto start pose.
+public static Command pathfindToAutoStartPoseWhileWarmup(String desiredAuto, EndEffector endEffector, Intake intake) {
         Pose2d startPose = returnFirstPathinAuto(desiredAuto).getStartingHolonomicPose().get();
 
         return new ParallelCommandGroup(
-            AutoBuilder.pathfindToPose(startPose, AutoConstants.PP_CONSTRAINTS, returnFirstPathinAuto(desiredAuto).getIdealStartingState().velocityMPS()),
+            AutoBuilder.pathfindToPose(startPose, AutoConstants.PP_CONSTRAINTS, returnFirstPathinAuto(desiredAuto).getGoalEndState().velocityMPS()),
             Commands.runOnce(()->endEffector.setRPM(6000), endEffector),
             Commands.runOnce(()->intake.setRPM(6000), intake)
         );
