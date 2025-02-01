@@ -17,16 +17,12 @@ import org.littletonrobotics.junction.AutoLog;
 
 /** Interface representing the elevator subsystem's input/output operations. */
 public interface ElevatorIO {
-  
-  /**
-   * Class containing all loggable inputs for the elevator.
-   */
+
+  /** Class containing all loggable inputs for the elevator. */
   @AutoLog
   public static class ElevatorIOInputs {
-    
-    /**
-     * Enum representing different elevator preset positions.
-     */
+
+    /** Enum representing different elevator preset positions. */
     public enum ElevatorState {
       Default(0.0),
       CoralL2(1.0),
@@ -59,19 +55,19 @@ public interface ElevatorIO {
 
     /** The current elevator state. */
     public ElevatorState elevatorState = ElevatorState.Default;
-    
+
     /** The voltage applied to the elevator motor. */
     public double elevatorAppliedVolts = 0.0;
-    
+
     /** The current drawn by the elevator motor in amps. */
     public double elevatorCurrentAmps = 0.0;
-    
+
     /** Whether the elevator encoder is connected. */
     public boolean elevatorEncoderConnected = false;
-    
+
     /** The current position of the elevator in meters. */
     public double elevatorPosition = 0.0;
-    
+
     /** Whether the elevator has reached its setpoint. */
     public boolean elevatorAtSetpoint = false;
 
