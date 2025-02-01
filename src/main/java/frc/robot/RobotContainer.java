@@ -40,7 +40,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
-  private final Drive drive;
+  private static Drive drive;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -153,4 +153,13 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
+
+  /**
+   * Set the robot's pose to the barge.
+   *
+   * @return The command to set the robot's pose to the barge.
+   */
+  public static Command setBargePose(){
+    return Commands.runOnce(()->drive.setPose(Constants.FieldConstants.bargeFar), drive);
+}
 }
