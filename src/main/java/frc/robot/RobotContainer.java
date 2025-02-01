@@ -40,7 +40,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
-  private final Drive drive;
+  public static Drive drive;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -143,6 +143,11 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     controller.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
+  }
+
+
+  public static Command setRobotSIMPose(Pose2d pose) {
+    return Commands.runOnce(() -> drive.setPose(pose), drive);
   }
 
   /**
