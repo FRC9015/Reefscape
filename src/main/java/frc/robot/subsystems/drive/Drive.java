@@ -13,7 +13,8 @@
 
 package frc.robot.subsystems.drive;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -58,6 +59,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+/** Represents the robot's drive subsystem. */
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
   static final double ODOMETRY_FREQUENCY =
@@ -111,6 +113,15 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
+  /**
+   * Constructs a new Drive.
+   *
+   * @param gyroIO The gyro input/output interface
+   * @param flModuleIO The front-left module input/output interface
+   * @param frModuleIO The front-right module input/output interface
+   * @param blModuleIO The back-left module input/output interface
+   * @param brModuleIO The back-right module input/output interface
+   */
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
