@@ -19,8 +19,10 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
@@ -125,6 +127,30 @@ public class Robot extends LoggedRobot {
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
+
+    Logger.recordOutput("Robopose", new Pose2d());
+    Logger.recordOutput(
+        "ZeroedComponentPoses",
+        new Pose3d[] {new Pose3d(), new Pose3d()} // Two components, both initially at zero
+        );
+    double totalExtension = -0.45 * Math.cos(Math.PI * Timer.getFPGATimestamp() / 2) + 0.5;
+    // Clamp stage 1 to 0.5. When totalExtension is below 0.5, stage 1 follows it.
+    double stage1Extension = Math.min(totalExtension, 0.5);
+    // The carriage (stage 2) only moves once stage1Extension has hit 0.5.
+    double stage2Extension = (totalExtension > 0.5) ? totalExtension - 0.5 : 0.0;
+
+    // Now, the absolute position of stage 1 is stage1Extension,
+    // and the absolute position of the carriage is stage1Extension + stage2Extension,
+    // which is equal to totalExtension.
+    Logger.recordOutput(
+        "FinalComponentPoses",
+        new Pose3d[] {
+          // Lower stage’s absolute pose
+          new Pose3d(0.0, 0.0, stage1Extension + 0.03, new Rotation3d(0.0, 0.0, 0.0)),
+          // Carriage’s absolute pose (mounted on stage 1)
+          new Pose3d(
+              0.0, 0.0, stage1Extension + stage2Extension - 0.1, new Rotation3d(0.0, 0.0, 0.0))
+        });
   }
 
   /** This function is called once when the robot is disabled. */
