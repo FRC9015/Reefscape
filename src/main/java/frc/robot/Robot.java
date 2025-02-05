@@ -18,17 +18,13 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeAlgaeOnField;
-import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnField;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -155,7 +151,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    robotContainer.resetSimulationField();
+  }
 
   /** This function is called periodically when disabled. */
   @Override
@@ -170,6 +168,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
+    robotContainer.setRobotPoseAuto();
   }
 
   /** This function is called periodically during the autonomous period. */
@@ -205,16 +204,7 @@ public class Robot extends LoggedRobot {
    * SimulatedArena **only** if running in simulation mode.
    */
   @Override
-  public void simulationInit() {
-    if (Constants.currentMode == Constants.Mode.SIM) {
-      RobotContainer.setBargePose();
-      SimulatedArena.getInstance().simulationPeriodic();
-      // Add a Reescape Algae to the field
-      SimulatedArena.getInstance().addGamePiece(new ReefscapeAlgaeOnField(new Translation2d(3, 3)));
-      SimulatedArena.getInstance()
-          .addGamePiece(new ReefscapeCoralOnField(new Pose2d(4, 4, new Rotation2d())));
-    }
-  }
+  public void simulationInit() {}
 
   /**
    * This function is called periodically during simulation mode. Runs the SimulatedArena **only**
@@ -222,17 +212,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void simulationPeriodic() {
-    if (Constants.currentMode == Constants.Mode.SIM) {
-      SimulatedArena.getInstance().simulationPeriodic();
-    }
-  }
-
-  void periodic() {
-    // Get the positions of the algae (both on the field and in the air)
-    Pose3d[] algaePoses = SimulatedArena.getInstance().getGamePiecesArrayByType("Algae");
-    // Publish to telemetry using AdvantageKit
-    Logger.recordOutput("FieldSimulation/AlgaePositions", algaePoses);
-    Pose3d[] coralPoses = SimulatedArena.getInstance().getGamePiecesArrayByType("Coral");
-    Logger.recordOutput("FieldSimulation/CoralPositions", coralPoses);
+    SimulatedArena.getInstance().simulationPeriodic();
+    robotContainer.displaySimFieldToAdvantageScope();
   }
 }
