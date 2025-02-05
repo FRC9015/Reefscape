@@ -18,9 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -206,16 +204,7 @@ public class Robot extends LoggedRobot {
    * SimulatedArena **only** if running in simulation mode.
    */
   @Override
-  public void simulationInit() {
-    if (Constants.currentMode == Constants.Mode.SIM) {
-      RobotContainer.setBargePose();
-      SimulatedArena.getInstance().simulationPeriodic();
-      // Add a Reescape Algae to the field
-      SimulatedArena.getInstance().addGamePiece(new ReefscapeAlgaeOnField(new Translation2d(3, 3)));
-      SimulatedArena.getInstance()
-          .addGamePiece(new ReefscapeCoralOnField(new Pose2d(4, 4, new Rotation2d())));
-    }
-  }
+  public void simulationInit() {}
 
   /**
    * This function is called periodically during simulation mode. Runs the SimulatedArena **only**
