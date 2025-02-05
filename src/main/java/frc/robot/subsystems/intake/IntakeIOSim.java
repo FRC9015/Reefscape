@@ -18,6 +18,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
+/** Simulates the intake subsystem using DC motor simulations. */
 public class IntakeIOSim implements IntakeIO {
   private static final double MAX_RPM = 3000.0;
   private static final double GEAR_REDUCTION = 1.0; // Adjust if gearing is used
@@ -28,6 +29,7 @@ public class IntakeIOSim implements IntakeIO {
   private double appliedVolts = 0.0;
   private boolean brakeMode = false;
 
+  /** Constructs an IntakeIOSim instance. Creates two DCMotorSim instances for Kraken X60 motors. */
   public IntakeIOSim() {
     // Create two DCMotorSim instances for Kraken X60 motors
     motorSim1 =

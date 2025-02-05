@@ -31,6 +31,10 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 
+/**
+ * The IntakeIOTalonFX class implements the IntakeIO interface and controls the intake subsystem
+ * using TalonFX motors and CANcoder encoders.
+ */
 public class IntakeIOTalonFX implements IntakeIO {
 
   private final TalonFX motor1;
@@ -48,6 +52,16 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final Debouncer encoderConnectedDebounce = new Debouncer(0.5);
   private final DigitalInput coralSensor;
 
+  /**
+   * Constructs an IntakeIOTalonFX object.
+   *
+   * @param motorId1 The ID of the first motor.
+   * @param motorId2 The ID of the second motor.
+   * @param encoderId1 The ID of the first encoder.
+   * @param encoderId2 The ID of the second encoder.
+   * @param coralSensorChannel The channel of the coral sensor.
+   * @param canBusName The name of the CAN bus.
+   */
   public IntakeIOTalonFX(
       int motorId1,
       int motorId2,

@@ -39,13 +39,13 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // Subsystems
+  /** The drive subsystem instance. */
   public static Drive drive;
 
-  // Controller
+  /** The primary controller used for teleop. */
   private final CommandXboxController controller = new CommandXboxController(0);
 
-  // Dashboard inputs
+  /** The dashboard chooser for selecting autonomous routines. */
   private final LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -63,7 +63,7 @@ public class RobotContainer {
         break;
 
       case SIM:
-        // Sim robot, instantiate physics sim IO implementations
+        // Simulated robot, instantiate physics sim IO implementations
         drive =
             new Drive(
                 new GyroIO() {},
@@ -109,10 +109,10 @@ public class RobotContainer {
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   * Defines button mappings for commands.
+   * Buttons can be created by instantiating a {@link GenericHID} or one of its subclasses
+   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}),
+   * and then passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
@@ -132,7 +132,8 @@ public class RobotContainer {
                 () -> -controller.getLeftY(),
                 () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
-    // Reset gyro to 0° when B button is pressed
+
+    // Reset gyro to 0° when B button is pressed
     controller
         .b()
         .onTrue(
@@ -142,26 +143,32 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    // Move to predefined pose when X button is pressed
     controller.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
   }
 
-  public static Command setRobotSIMPose(Pose2d pose) {
+  /**
+   * Sets the robot's pose in simulation mode.
+   *
+   * @param pose The desired pose of the robot.
+   * @return The command to execute this action.
+   */
+  public static Command setRobotSimPose(Pose2d pose) {
     return Commands.runOnce(() -> drive.setPose(pose), drive);
   }
 
   /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
+   * Provides the autonomous command to be executed.
    *
-   * @return the command to run in autonomous
+   * @return The command to run in autonomous mode.
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
 
   /**
-   * Set the robot's pose to the barge.
-   *
-   * @return The command to set the robot's pose to the barge.
+   * Sets the robot's pose to the predefined barge position.
    */
   public static void setBargePose() {
     drive.setPose(Constants.FieldConstants.bargeFar);

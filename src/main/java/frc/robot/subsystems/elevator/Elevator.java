@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs;
 import org.littletonrobotics.junction.Logger;
 
+/** The Elevator subsystem controls the elevator mechanism of the robot. */
 public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
@@ -33,6 +34,11 @@ public class Elevator extends SubsystemBase {
   private static final double kD = 0.0;
   private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
 
+  /**
+   * Constructs a new Elevator subsystem.
+   *
+   * @param io
+   */
   public Elevator(ElevatorIO io) {
     this.io = io;
     this.pidController = new PIDController(kP, kI, kD);
