@@ -46,7 +46,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private SwerveDriveSimulation simDrive = null;
-  private static Drive drive;
+  private final Drive drive;
 
   /** The primary controller used for teleop. */
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -158,8 +158,6 @@ public class RobotContainer {
     controller.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
   }
 
-
-
   /**
    * Provides the autonomous command to be executed.
    *
@@ -168,10 +166,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
-
-  /** Sets the robot's pose to the predefined barge position. */
-  public static void setBargePose() {
-    drive.setPose(Constants.FieldConstants.bargeFar);}
 
   public void setRobotPoseAuto() {
     simDrive.setSimulationWorldPose(drive.getPose());
