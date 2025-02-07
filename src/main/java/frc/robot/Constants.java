@@ -13,6 +13,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+// import edu.wpi.first.math.geometry.Translation3d;
+// import edu.wpi.first.apriltag.AprilTagFieldLayout;
+// import edu.wpi.first.apriltag.AprilTagFields;
+// import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -24,6 +30,8 @@ public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
+  // public static final Transform3d CAMERA_1_TO_ROBOT = new Transform3d();
+
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
@@ -33,5 +41,26 @@ public final class Constants {
 
     /** Replaying from a log file. */
     REPLAY
+  }
+
+  public class CameraConstants {
+    public static final String CAMERA_2_NAME = "Camera2";
+    public static final String CAMERA_1_NAME = "Camera1";
+    // Camera positions relative to the robot's center in meters
+    public static final Transform3d CAMERA_1_TO_ROBOT =
+        new Transform3d(
+            0.3,
+            0.0,
+            0.2,
+            new Rotation3d(0, 0, Math.PI) // Sample metrics for front-mounted camera in meters
+            );
+
+    public static final Transform3d CAMERA_2_TO_ROBOT =
+        new Transform3d(
+            -0.3,
+            0.0,
+            0.2,
+            new Rotation3d(0, 0, 0) // Sample metrics for rear-mounted camera in meters
+            );
   }
 }
