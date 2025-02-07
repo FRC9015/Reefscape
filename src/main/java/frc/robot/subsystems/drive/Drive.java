@@ -114,6 +114,15 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
+  /**
+   * Constructs a new Drive.
+   *
+   * @param gyroIO The gyro input/output interface
+   * @param flModuleIO The front-left module input/output interface
+   * @param frModuleIO The front-right module input/output interface
+   * @param blModuleIO The back-left module input/output interface
+   * @param brModuleIO The back-right module input/output interface
+   */
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -260,7 +269,7 @@ public class Drive extends SubsystemBase {
   public void stop() {
     runVelocity(new ChassisSpeeds());
   }
-  
+
   /**
    * Stops the drive and turns the modules to an X arrangement to resist movement. The modules will
    * return to their normal orientations the next time a nonzero velocity is requested.
@@ -345,7 +354,7 @@ public class Drive extends SubsystemBase {
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
-
+  
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();
@@ -389,11 +398,18 @@ public class Drive extends SubsystemBase {
     return getPose().getTranslation().getDistance(targetpose);
   }
 
-  public Command pfToPose(Pose2d targetpose, double endVelocity) {
+  public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
+    Logger.recordOutput("flippath", AutoBuilder.shouldFlip());
+    return AutoBuilder.shouldFlip()
+        ? this.pathfindToPoseFlipped(targetpose, endVelocity)
+        : this.pfToPose(targetpose, endVelocity);
+  }
+
+  private Command pfToPose(Pose2d targetpose, double endVelocity) {
     return AutoBuilder.pathfindToPose(targetpose, PP_CONSTRAINTS, endVelocity);
   }
 
-  public Command pathfindToPoseFlipped(Pose2d targetPose, double endVelocity) {
+  private Command pathfindToPoseFlipped(Pose2d targetPose, double endVelocity) {
     Pose2d tp = FlippingUtil.flipFieldPose(targetPose);
     return AutoBuilder.pathfindToPose(tp, PP_CONSTRAINTS, endVelocity);
   }
