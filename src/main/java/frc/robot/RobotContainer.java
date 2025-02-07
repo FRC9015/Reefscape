@@ -185,8 +185,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    controller.x().onTrue(drive.pfToPose(Constants.FieldConstants.bargeFar, 0.0));
-    controller.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.bargeFar, 0.0));
+    controller.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
   }
 
   /**
