@@ -46,6 +46,16 @@ public final class Constants {
         new Pose2d(new Translation2d(3.25, 3.8), new Rotation2d());
     public static final Pose2d bargeFar = new Pose2d(new Translation2d(7.6, 6.6), new Rotation2d());
     public static final Pose2d bargeNear = new Pose2d(new Translation2d(7.6, 5), new Rotation2d());
+
+    //Reef poses/locations
+    public static final Pose2d REEF_A = new Pose2d(new Translation2d(3.033, 4.103), new Rotation2d());
+    public static final Pose2d REEF_B = new Pose2d(new Translation2d(3.261, 5.230), new Rotation2d());
+    public static final Pose2d REEF_C = new Pose2d(new Translation2d(5.287, 5.386), new Rotation2d());
+    public static final Pose2d REEF_D = new Pose2d(new Translation2d(6, 4.103), new Rotation2d());
+    public static final Pose2d REEF_E = new Pose2d(new Translation2d(5.632, 2.832), new Rotation2d());
+    public static final Pose2d REEF_F = new Pose2d(new Translation2d(3.836, 2.616), new Rotation2d());
+
+
   }
   public static class AutoConstants {
     public static final PathConstraints PP_CONSTRAINTS =
