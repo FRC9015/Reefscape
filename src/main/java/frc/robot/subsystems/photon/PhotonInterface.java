@@ -21,7 +21,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class PhotonInterface extends SubsystemBase {
-  private PhotonCamera tagCam;
+  private PhotonCamera starboard, port;
   AprilTagFieldLayout fieldLayout;
 
   Transform3d camPose =
@@ -30,13 +30,13 @@ public class PhotonInterface extends SubsystemBase {
           // new Translation3d(Units.inchesToMeters(12.25), -Units.inchesToMeters(10.875),
           // Units.inchesToMeters(11)),
           new Translation3d(
-              Units.Meters.convertFrom(1.911942, Inch),
-              -Units.Meters.convertFrom(10.8125, Inch),
-              Units.Meters.convertFrom(10.634, Inch)), // 24.974 //11.6661	//10.634 //
+              Units.Meters.convertFrom(15, Inch),
+              -Units.Meters.convertFrom(15, Inch),
+              Units.Meters.convertFrom(5, Inch)), // 24.974 //11.6661	//10.634 //
           new Rotation3d(
               0,
-              Units.Radians.convertFrom(-30, Degree),
-              Units.Radians.convertFrom(180, Degree))); // 37.4// try negative pitch
+              Units.Radians.convertFrom(-15, Degree),
+              Units.Radians.convertFrom(90, Degree))); // 37.4// try negative pitch
   PhotonPoseEstimator photonPoseEstimator;
 
   public PhotonInterface() {
@@ -48,7 +48,8 @@ public class PhotonInterface extends SubsystemBase {
       e.printStackTrace();
     }
 
-    tagCam = new PhotonCamera("tagCam0");
+    starboard = new PhotonCamera("Starboard");
+    // port = new PhotonCamera("Port");
 
     photonPoseEstimator =
         new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camPose);
@@ -58,19 +59,19 @@ public class PhotonInterface extends SubsystemBase {
   @Override
   public void periodic() {
 
-    SmartDashboard.putBoolean("April Tag", tagCam.getLatestResult().getTargets().size() == 2);
-    Logger.recordOutput("Tags/TwoTag", tagCam.getLatestResult().getTargets().size() == 2);
-    Logger.recordOutput("Tags/Number", tagCam.getLatestResult().getTargets().size());
+    SmartDashboard.putBoolean("April Tag", starboard.getLatestResult().getTargets().size() == 2);
+    Logger.recordOutput("Tags/TwoTag", starboard.getLatestResult().getTargets().size() == 2);
+    Logger.recordOutput("Tags/Number", starboard.getLatestResult().getTargets().size());
   }
 
   public Translation2d get2DEstimatedPose() {
-    if (tagCam.getLatestResult().getTargets().size() == 0) {
+    if (starboard.getLatestResult().getTargets().size() == 0) {
       return new Translation2d(0, 0);
     }
-    System.out.println(tagCam.getLatestResult().getTargets().size());
+    System.out.println(starboard.getLatestResult().getTargets().size());
 
     return photonPoseEstimator
-        .update(tagCam.getLatestResult())
+        .update(starboard.getLatestResult())
         .get()
         .estimatedPose
         .toPose2d()
@@ -78,7 +79,7 @@ public class PhotonInterface extends SubsystemBase {
   }
 
   public Optional<EstimatedRobotPose> getEstimatedPose() {
-    if (tagCam.getLatestResult().getTargets().size() == 0) {
+    if (starboard.getLatestResult().getTargets().size() == 0) {
 
       return Optional.empty();
     }
@@ -88,6 +89,6 @@ public class PhotonInterface extends SubsystemBase {
     //   return Optional.empty();
     // }
 
-    return photonPoseEstimator.update(tagCam.getLatestResult());
+    return photonPoseEstimator.update(starboard.getLatestResult());
   }
 }
