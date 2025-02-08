@@ -1,4 +1,4 @@
-package frc.robot.subsystems.pivot;
+package frc.robot.subsystems.algae.pivot;
 
 import org.littletonrobotics.junction.AutoLog;
 
@@ -7,14 +7,14 @@ public interface PivotIO {
   @AutoLog
   public static class PivotIOInputs {
 
-    public static enum PivotPositions {
-      CollectAlgae(0.0),
+    public static enum PivotPosition {
+      CollectAlgae(1.0),
       PassAlgae(0.5),
-      Default(1.0);
+      Default(0);
 
       private final double pivotPosition;
 
-      PivotPositions(double pivotPosition) {
+      PivotPosition(double pivotPosition) {
         this.pivotPosition = pivotPosition;
       }
 
@@ -24,7 +24,7 @@ public interface PivotIO {
     }
 
     // Fields Representing the pivot state and inputs
-    public PivotPositions pivotState = PivotPositions.Default;
+    public PivotPosition pivotState = PivotPosition.Default;
     public double pivotAppliedVolts = 0.0;
     public double pivotCurrentAmps = 0.0;
     public double pivotPosition = 0.0;
@@ -40,7 +40,7 @@ public interface PivotIO {
   public default void updateInputs(PivotIOInputs inputs) {}
 
   /** Sets the pivot position based on the desired state. */
-  public default void setPivotPosition(PivotIOInputs.PivotPositions pivotPosition) {}
+  public default void setPivotPosition(PivotIOInputs.PivotPosition pivotPosition) {}
 
   /** Run slam pivot at amps */
   default void runCurrent(double amps) {}
