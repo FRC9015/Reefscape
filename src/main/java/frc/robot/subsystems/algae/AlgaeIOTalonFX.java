@@ -4,7 +4,6 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -18,8 +17,8 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 
 public class AlgaeIOTalonFX implements AlgaeIO {
-  private final TalonFX motor1;
-  private final CANcoder encoder1;
+  private final TalonFX motor;
+  private final CANcoder encoder;
   private final NeutralOut neutralOut = new NeutralOut();
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
 
@@ -30,16 +29,15 @@ public class AlgaeIOTalonFX implements AlgaeIO {
   private final Debouncer encoderConnectedDebounce = new Debouncer(0.5);
 
   // private final DigitalInput algaeSensor;--> Do we need this?
-  public AlgaeIOTalonFX(
-      int motorId1, int encoderId1, String canBusName) {
-    motor1 = new TalonFX(motorId1, canBusName);
-    encoder1 = new CANcoder(encoderId1, canBusName);
+  public AlgaeIOTalonFX(int motorId1, int encoderId1, String canBusName) {
+    motor = new TalonFX(motorId1, canBusName);
+    encoder = new CANcoder(encoderId1, canBusName);
 
     // Configure motors
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    motor1.getConfigurator().apply(motorConfig);
+    motor.getConfigurator().apply(motorConfig);
 
     TalonFXConfiguration followerConfig = new TalonFXConfiguration();
     followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -48,11 +46,11 @@ public class AlgaeIOTalonFX implements AlgaeIO {
     // Configure encoders
     CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
     encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    encoder1.getConfigurator().apply(encoderConfig);
+    encoder.getConfigurator().apply(encoderConfig);
 
-    rpmSignal = encoder1.getVelocity();
-    appliedVoltsSignal = motor1.getMotorVoltage();
-    currentSignal = motor1.getStatorCurrent();
+    rpmSignal = encoder.getVelocity();
+    appliedVoltsSignal = motor.getMotorVoltage();
+    currentSignal = motor.getStatorCurrent();
   }
 
   @Override
@@ -69,16 +67,16 @@ public class AlgaeIOTalonFX implements AlgaeIO {
 
   @Override
   public void stop() {
-    motor1.setControl(neutralOut);
+    motor.setControl(neutralOut);
   }
 
   @Override
   public void setBrakeMode(boolean enable) {
-    motor1.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+    motor.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 
   @Override
   public void setRPM(double rpm) {
-    motor1.setControl(velocityRequest.withVelocity(rpm));
+    motor.setControl(velocityRequest.withVelocity(rpm));
   }
 }
