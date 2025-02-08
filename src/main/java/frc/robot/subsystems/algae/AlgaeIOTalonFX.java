@@ -19,10 +19,7 @@ import edu.wpi.first.units.measure.Voltage;
 
 public class AlgaeIOTalonFX implements AlgaeIO {
   private final TalonFX motor1;
-  private final TalonFX motor2;
   private final CANcoder encoder1;
-  private final CANcoder encoder2;
-  private final Follower motorFollower;
   private final NeutralOut neutralOut = new NeutralOut();
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
 
@@ -34,14 +31,9 @@ public class AlgaeIOTalonFX implements AlgaeIO {
 
   // private final DigitalInput algaeSensor;--> Do we need this?
   public AlgaeIOTalonFX(
-      int motorId1, int motorId2, int encoderId1, int encoderId2, String canBusName) {
+      int motorId1, int encoderId1, String canBusName) {
     motor1 = new TalonFX(motorId1, canBusName);
-    motor2 = new TalonFX(motorId2, canBusName);
     encoder1 = new CANcoder(encoderId1, canBusName);
-    encoder2 = new CANcoder(encoderId2, canBusName);
-
-    motorFollower = new Follower(motorId1, false);
-    motor2.setControl(motorFollower);
 
     // Configure motors
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
@@ -52,13 +44,11 @@ public class AlgaeIOTalonFX implements AlgaeIO {
     TalonFXConfiguration followerConfig = new TalonFXConfiguration();
     followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     followerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    motor2.getConfigurator().apply(followerConfig);
 
     // Configure encoders
     CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
     encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     encoder1.getConfigurator().apply(encoderConfig);
-    encoder2.getConfigurator().apply(encoderConfig);
 
     rpmSignal = encoder1.getVelocity();
     appliedVoltsSignal = motor1.getMotorVoltage();
@@ -85,7 +75,6 @@ public class AlgaeIOTalonFX implements AlgaeIO {
   @Override
   public void setBrakeMode(boolean enable) {
     motor1.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
-    motor2.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 
   @Override
