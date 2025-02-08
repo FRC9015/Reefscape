@@ -17,7 +17,6 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -298,12 +297,10 @@ public class Drive extends SubsystemBase {
   public Command followPathCommand(String pathname) {
     try {
       return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathname));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
       return Commands.none();
-  }
-    
+    }
   }
 
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
@@ -354,7 +351,7 @@ public class Drive extends SubsystemBase {
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
-  
+
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();
