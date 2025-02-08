@@ -376,18 +376,11 @@ public class Drive extends SubsystemBase {
     return getPose().getTranslation().getDistance(targetpose);
   }
 
-  public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
-    Logger.recordOutput("flippath", AutoBuilder.shouldFlip());
-    return AutoBuilder.shouldFlip()
-        ? this.pathfindToPoseFlipped(targetpose, endVelocity)
-        : this.pfToPose(targetpose, endVelocity);
-  }
-
-  private Command pfToPose(Pose2d targetpose, double endVelocity) {
+  public Command pfToPose(Pose2d targetpose, double endVelocity) {
     return AutoBuilder.pathfindToPose(targetpose, PP_CONSTRAINTS, endVelocity);
   }
 
-  private Command pathfindToPoseFlipped(Pose2d targetPose, double endVelocity) {
+  public Command pathfindToPoseFlipped(Pose2d targetPose, double endVelocity) {
     Pose2d tp = FlippingUtil.flipFieldPose(targetPose);
     return AutoBuilder.pathfindToPose(tp, PP_CONSTRAINTS, endVelocity);
   }
