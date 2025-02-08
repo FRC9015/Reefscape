@@ -2,8 +2,6 @@ package frc.robot.subsystems.algae;
 
 import org.littletonrobotics.junction.AutoLog;
 
-import frc.robot.subsystems.pivot.PivotIO.PivotIOInputs;
-
 public interface AlgaeIO {
   @AutoLog
   public static class AlgaeIOInputs {

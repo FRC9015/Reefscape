@@ -11,7 +11,6 @@ public class Algae extends SubsystemBase {
   private final Alert encoderDisconnectedAlert;
   private final PIDController pidController;
 
-
   // Algae PID constants
   private static final double kP = 10.0;
   private static final double kI = 0.0;
@@ -29,6 +28,5 @@ public class Algae extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     encoderDisconnectedAlert.set(!inputs.algaeEncoderConnected);
-
   }
 }

@@ -23,19 +23,24 @@ public interface PivotIO {
       }
     }
 
-    // Fields Representing the algae state and inputs
+    // Fields Representing the pivot state and inputs
+    public PivotPositions pivotState = PivotPositions.Default;
     public double pivotAppliedVolts = 0.0;
     public double pivotCurrentAmps = 0.0;
-    public boolean pivotEncoderConnected = false;
     public double pivotPosition = 0.0;
+    public boolean pivotEncoderConnected = false;
     public boolean pivotAtSetpoint = false;
+
+    public double getDesiredEncoderPosition() {
+      return pivotState.getPivotPosition();
+    }
   }
 
   /** Updates the set of loggable inputs. */
   public default void updateInputs(PivotIOInputs inputs) {}
 
   /** Sets the pivot position based on the desired state. */
-  public default void setElevatorPosition(PivotIOInputs.PivotPositions pivotPosition) {}
+  public default void setPivotPosition(PivotIOInputs.PivotPositions pivotPosition) {}
 
   /** Run slam pivot at amps */
   default void runCurrent(double amps) {}
