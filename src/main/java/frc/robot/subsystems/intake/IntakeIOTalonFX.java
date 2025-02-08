@@ -1,30 +1,13 @@
-// Copyright 2021-2025 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -33,11 +16,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeIOTalonFX implements IntakeIO {
 
-  private final TalonFX motor1;
-  private final TalonFX motor2;
-  private final CANcoder encoder1;
-  private final CANcoder encoder2;
-  private final Follower motorFollower;
+  private final TalonFX motor;
   private final NeutralOut neutralOut = new NeutralOut();
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
 
@@ -48,54 +27,29 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final Debouncer encoderConnectedDebounce = new Debouncer(0.5);
   private final DigitalInput coralSensor;
 
-  public IntakeIOTalonFX(
-      int motorId1,
-      int motorId2,
-      int encoderId1,
-      int encoderId2,
-      int coralSensorChannel,
-      String canBusName) {
-    motor1 = new TalonFX(motorId1, canBusName);
-    motor2 = new TalonFX(motorId2, canBusName);
-    encoder1 = new CANcoder(encoderId1, canBusName);
-    encoder2 = new CANcoder(encoderId2, canBusName);
+  public IntakeIOTalonFX(int motorId, int coralSensorChannel, String canBusName) {
+    motor = new TalonFX(motorId, canBusName);
     coralSensor = new DigitalInput(coralSensorChannel);
 
-    motorFollower = new Follower(motorId1, false);
-    motor2.setControl(motorFollower);
-
-    // Configure motors
+    // Configure motor
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    motor1.getConfigurator().apply(motorConfig);
-
-    TalonFXConfiguration motorConfig2 = new TalonFXConfiguration();
-    motorConfig2.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    motorConfig2.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    motor2.getConfigurator().apply(motorConfig2);
-
-    // Configure encoders
-    CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
-    encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    encoder1.getConfigurator().apply(encoderConfig);
-
-    encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-    encoder2.getConfigurator().apply(encoderConfig);
+    motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; // Normal direction
+    motor.getConfigurator().apply(motorConfig);
 
     // Signals
-    rpmSignal = encoder1.getVelocity();
-    appliedVoltsSignal = motor1.getMotorVoltage();
-    currentSignal = motor1.getStatorCurrent();
+    rpmSignal = motor.getVelocity();
+    appliedVoltsSignal = motor.getMotorVoltage();
+    currentSignal = motor.getStatorCurrent();
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
     // Refresh signals
-    var encoderStatus = BaseStatusSignal.refreshAll(rpmSignal);
+    var motorStatus = BaseStatusSignal.refreshAll(rpmSignal);
 
     // Update inputs
-    inputs.intakeEncoderConnected = encoderConnectedDebounce.calculate(encoderStatus.isOK());
+    inputs.intakeEncoderConnected = encoderConnectedDebounce.calculate(motorStatus.isOK());
     inputs.intakeRPM = rpmSignal.getValueAsDouble();
     inputs.intakeAppliedVolts = appliedVoltsSignal.getValueAsDouble();
     inputs.intakeCurrentAmps = currentSignal.getValueAsDouble();
@@ -105,17 +59,16 @@ public class IntakeIOTalonFX implements IntakeIO {
 
   @Override
   public void stop() {
-    motor1.setControl(neutralOut);
+    motor.setControl(neutralOut);
   }
 
   @Override
   public void setBrakeMode(boolean enable) {
-    motor1.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
-    motor2.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+    motor.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 
   @Override
   public void setRPM(double rpm) {
-    motor1.setControl(velocityRequest.withVelocity(rpm));
+    motor.setControl(velocityRequest.withVelocity(rpm));
   }
 }
