@@ -24,20 +24,30 @@ public class PhotonInterface extends SubsystemBase {
   private PhotonCamera starboard, port;
   AprilTagFieldLayout fieldLayout;
 
-  Transform3d camPose =
+  Transform3d starboardPose =
       new Transform3d(
-
-          // new Translation3d(Units.inchesToMeters(12.25), -Units.inchesToMeters(10.875),
-          // Units.inchesToMeters(11)),
           new Translation3d(
               Units.Meters.convertFrom(15, Inch),
               -Units.Meters.convertFrom(15, Inch),
-              Units.Meters.convertFrom(5, Inch)), // 24.974 //11.6661	//10.634 //
+              Units.Meters.convertFrom(5, Inch)),
           new Rotation3d(
               0,
               Units.Radians.convertFrom(-15, Degree),
-              Units.Radians.convertFrom(90, Degree))); // 37.4// try negative pitch
-  PhotonPoseEstimator photonPoseEstimator;
+              Units.Radians.convertFrom(90, Degree)));
+
+  Transform3d portPose =
+      new Transform3d(
+          new Translation3d(
+              Units.Meters.convertFrom(15, Inch),
+              -Units.Meters.convertFrom(15, Inch),
+              Units.Meters.convertFrom(5, Inch)),
+          new Rotation3d(
+              0,
+              Units.Radians.convertFrom(-15, Degree),
+              Units.Radians.convertFrom(90, Degree)));
+
+  PhotonPoseEstimator photonPoseEstimatorStarboard;
+  PhotonPoseEstimator photonPoseEstimatorPort;
 
   public PhotonInterface() {
     try {
@@ -49,11 +59,19 @@ public class PhotonInterface extends SubsystemBase {
     }
 
     starboard = new PhotonCamera("Starboard");
-    // port = new PhotonCamera("Port");
+    port = new PhotonCamera("Port");
 
-    photonPoseEstimator =
-        new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camPose);
-    photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    photonPoseEstimatorStarboard =
+        new PhotonPoseEstimator(fieldLayout, 
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+        starboardPose);
+    photonPoseEstimatorStarboard.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+
+    photonPoseEstimatorPort =
+        new PhotonPoseEstimator(fieldLayout, 
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+        portPose);
+    photonPoseEstimatorPort.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
   }
 
   @Override
@@ -70,7 +88,7 @@ public class PhotonInterface extends SubsystemBase {
     }
     System.out.println(starboard.getLatestResult().getTargets().size());
 
-    return photonPoseEstimator
+    return photonPoseEstimatorStarboard
         .update(starboard.getLatestResult())
         .get()
         .estimatedPose
@@ -78,7 +96,7 @@ public class PhotonInterface extends SubsystemBase {
         .getTranslation();
   }
 
-  public Optional<EstimatedRobotPose> getEstimatedPose() {
+  public Optional<EstimatedRobotPose> getEstimatedStarboardPose() {
     if (starboard.getLatestResult().getTargets().size() == 0) {
 
       return Optional.empty();
@@ -89,6 +107,20 @@ public class PhotonInterface extends SubsystemBase {
     //   return Optional.empty();
     // }
 
-    return photonPoseEstimator.update(starboard.getLatestResult());
+    return photonPoseEstimatorStarboard.update(starboard.getLatestResult());
+  }
+  
+  public Optional<EstimatedRobotPose> getEstimatedPortPose() {
+    if (port.getLatestResult().getTargets().size() == 0) {
+
+      return Optional.empty();
+    }
+    // else if ((get2DEstimatedPose().getX() > 16.4846 || get2DEstimatedPose().getX() < 0)) {
+    //   return Optional.empty();
+    // } else if ((get2DEstimatedPose().getY() > 8.1026 || get2DEstimatedPose().getY() < 0)) {
+    //   return Optional.empty();
+    // }
+
+    return photonPoseEstimatorPort.update(port.getLatestResult());
   }
 }
