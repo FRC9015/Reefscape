@@ -12,11 +12,10 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeIOTalonFX implements IntakeIO {
 
-  private final TalonFX motor;
+  public final TalonFX motor;
   private final NeutralOut neutralOut = new NeutralOut();
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
 
@@ -25,11 +24,17 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<Current> currentSignal;
 
   private final Debouncer encoderConnectedDebounce = new Debouncer(0.5);
-  private final DigitalInput coralSensor;
 
-  public IntakeIOTalonFX(int motorId, int coralSensorChannel, String canBusName) {
-    motor = new TalonFX(motorId, canBusName);
-    coralSensor = new DigitalInput(coralSensorChannel);
+  // private final DigitalInput coralSensor;
+
+  /**
+   * Constructs an IntakeIOTalonFX.
+   *
+   * @param motorId The ID of the motor.
+   */
+  public IntakeIOTalonFX(int motorId) {
+    motor = new TalonFX(motorId);
+    // coralSensor = new DigitalInput(coralSensorChannel);
 
     // Configure motor
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
@@ -37,7 +42,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; // Normal direction
     motor.getConfigurator().apply(motorConfig);
 
-    // Signals
+    // Use the TalonFX's built-in relative encoder
     rpmSignal = motor.getVelocity();
     appliedVoltsSignal = motor.getMotorVoltage();
     currentSignal = motor.getStatorCurrent();
@@ -53,8 +58,10 @@ public class IntakeIOTalonFX implements IntakeIO {
     inputs.intakeRPM = rpmSignal.getValueAsDouble();
     inputs.intakeAppliedVolts = appliedVoltsSignal.getValueAsDouble();
     inputs.intakeCurrentAmps = currentSignal.getValueAsDouble();
-    inputs.coralDetected =
-        !coralSensor.get(); // Coral detected if the sensor is triggered (active low)
+
+    // Commented out for now
+    // inputs.coralDetected = !coralSensor.get(); // Coral detected if the sensor is triggered
+    // (active low)
   }
 
   @Override
@@ -69,6 +76,6 @@ public class IntakeIOTalonFX implements IntakeIO {
 
   @Override
   public void setRPM(double rpm) {
-    motor.setControl(velocityRequest.withVelocity(rpm));
+    motor.set(-rpm);
   }
 }
