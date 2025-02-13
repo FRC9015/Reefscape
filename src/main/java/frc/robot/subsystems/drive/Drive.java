@@ -116,7 +116,7 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
-  private Optional<EstimatedRobotPose> estimatedPose;
+  private Optional<EstimatedRobotPose> estimatedBowPose, estimatedPortPose;
   private Matrix<N3, N1> stdDevs =
       VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
 
@@ -232,7 +232,8 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
-    estimatedPose = photon.getEstimatedPortPose();
+    estimatedBowPose = photon.getEstimatedBowPose();
+    estimatedPortPose = photon.getEstimatedPortPose();
 
     // if (estimatedPose.isPresent()) {
     //   stdDevs =
@@ -379,10 +380,16 @@ public class Drive extends SubsystemBase {
 
   public void updatePose() {
 
-    if (estimatedPose.isPresent()) {
+    // if (estimatedBowPose.isPresent()) {
+    //   addVisionMeasurement(
+    //       estimatedBowPose.get().estimatedPose.toPose2d() ,
+    //       estimatedBowPose.get().timestampSeconds,
+    //       stdDevs);
+    // }
+    if (estimatedPortPose.isPresent() ) {
       addVisionMeasurement(
-          estimatedPose.get().estimatedPose.toPose2d(),
-          estimatedPose.get().timestampSeconds,
+          estimatedPortPose.get().estimatedPose.toPose2d(),
+          estimatedPortPose.get().timestampSeconds,
           stdDevs);
     }
   }
