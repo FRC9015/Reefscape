@@ -21,32 +21,28 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class PhotonInterface extends SubsystemBase {
-  private PhotonCamera starboard, port;
+  private PhotonCamera bow, port;
   AprilTagFieldLayout fieldLayout;
 
-  Transform3d starboardPose =
+  Transform3d bowPose =
       new Transform3d(
           new Translation3d(
-              Units.Meters.convertFrom(15, Inch),
-              -Units.Meters.convertFrom(15, Inch),
+              -Units.Meters.convertFrom(20, Inch),
+              -Units.Meters.convertFrom(1, Inch),
               Units.Meters.convertFrom(5, Inch)),
           new Rotation3d(
-              0,
-              Units.Radians.convertFrom(-15, Degree),
-              Units.Radians.convertFrom(90, Degree)));
+              0, -Units.Radians.convertFrom(15, Degree), Units.Radians.convertFrom(180, Degree)));
 
   Transform3d portPose =
       new Transform3d(
           new Translation3d(
-              Units.Meters.convertFrom(15, Inch),
+              -Units.Meters.convertFrom(15, Inch),
               -Units.Meters.convertFrom(15, Inch),
               Units.Meters.convertFrom(5, Inch)),
           new Rotation3d(
-              0,
-              Units.Radians.convertFrom(-15, Degree),
-              Units.Radians.convertFrom(90, Degree)));
+              0, -Units.Radians.convertFrom(15, Degree), Units.Radians.convertFrom(270, Degree)));
 
-  PhotonPoseEstimator photonPoseEstimatorStarboard;
+  PhotonPoseEstimator photonPoseEstimatorBow;
   PhotonPoseEstimator photonPoseEstimatorPort;
 
   public PhotonInterface() {
@@ -58,68 +54,55 @@ public class PhotonInterface extends SubsystemBase {
       e.printStackTrace();
     }
 
-    starboard = new PhotonCamera("Starboard");
+    bow = new PhotonCamera("Bow");
     port = new PhotonCamera("Port");
 
-    photonPoseEstimatorStarboard =
-        new PhotonPoseEstimator(fieldLayout, 
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
-        starboardPose);
-    photonPoseEstimatorStarboard.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    photonPoseEstimatorBow =
+        new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, bowPose);
+    photonPoseEstimatorBow.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
     photonPoseEstimatorPort =
-        new PhotonPoseEstimator(fieldLayout, 
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
-        portPose);
+        new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, portPose);
     photonPoseEstimatorPort.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
   }
 
   @Override
   public void periodic() {
 
-    SmartDashboard.putBoolean("April Tag", starboard.getLatestResult().getTargets().size() == 2);
-    Logger.recordOutput("Tags/TwoTag", starboard.getLatestResult().getTargets().size() == 2);
-    Logger.recordOutput("Tags/Number", starboard.getLatestResult().getTargets().size());
+    SmartDashboard.putBoolean("April Tag", bow.getLatestResult().getTargets().size() == 2);
+    Logger.recordOutput("Tags/TwoTag", bow.getLatestResult().getTargets().size() == 2);
+    Logger.recordOutput("Tags/Number", bow.getLatestResult().getTargets().size());
   }
 
   public Translation2d get2DEstimatedPose() {
-    if (starboard.getLatestResult().getTargets().size() == 0) {
+    if (bow.getLatestResult().getTargets().size() == 0) {
       return new Translation2d(0, 0);
     }
-    System.out.println(starboard.getLatestResult().getTargets().size());
+    System.out.println(bow.getLatestResult().getTargets().size());
 
-    return photonPoseEstimatorStarboard
-        .update(starboard.getLatestResult())
+    return photonPoseEstimatorBow
+        .update(bow.getLatestResult())
         .get()
         .estimatedPose
         .toPose2d()
         .getTranslation();
   }
 
-  public Optional<EstimatedRobotPose> getEstimatedStarboardPose() {
-    if (starboard.getLatestResult().getTargets().size() == 0) {
+  // makes an estimated pose out of the date from the starboard camera
+  public Optional<EstimatedRobotPose> getEstimatedBowPose() {
+    if (bow.getLatestResult().getTargets().size() == 0) {
 
       return Optional.empty();
     }
-    // else if ((get2DEstimatedPose().getX() > 16.4846 || get2DEstimatedPose().getX() < 0)) {
-    //   return Optional.empty();
-    // } else if ((get2DEstimatedPose().getY() > 8.1026 || get2DEstimatedPose().getY() < 0)) {
-    //   return Optional.empty();
-    // }
 
-    return photonPoseEstimatorStarboard.update(starboard.getLatestResult());
+    return photonPoseEstimatorBow.update(bow.getLatestResult());
   }
-  
+
   public Optional<EstimatedRobotPose> getEstimatedPortPose() {
     if (port.getLatestResult().getTargets().size() == 0) {
 
       return Optional.empty();
     }
-    // else if ((get2DEstimatedPose().getX() > 16.4846 || get2DEstimatedPose().getX() < 0)) {
-    //   return Optional.empty();
-    // } else if ((get2DEstimatedPose().getY() > 8.1026 || get2DEstimatedPose().getY() < 0)) {
-    //   return Optional.empty();
-    // }
 
     return photonPoseEstimatorPort.update(port.getLatestResult());
   }

@@ -232,7 +232,7 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
-    estimatedPose = photon.getEstimatedStarboardPose();
+    estimatedPose = photon.getEstimatedPortPose();
 
     // if (estimatedPose.isPresent()) {
     //   stdDevs =
