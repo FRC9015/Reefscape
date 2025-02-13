@@ -13,9 +13,12 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+// import edu.wpi.first.math.geometry.Translation3d;
+// import edu.wpi.first.apriltag.AprilTagFieldLayout;
+// import edu.wpi.first.apriltag.AprilTagFields;
+// import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -40,9 +43,24 @@ public final class Constants {
     REPLAY
   }
 
-  public static class FieldConstants {
-    public static final Pose2d reef_AL1 =
-        new Pose2d(new Translation2d(3.25, 3.8), new Rotation2d());
-    public static final Pose2d bargeFar = new Pose2d(new Translation2d(7.6, 6.6), new Rotation2d());
+  public class CameraConstants {
+    public static final String CAMERA_2_NAME = "Camera2";
+    public static final String CAMERA_1_NAME = "Camera1";
+    // Camera positions relative to the robot's center in meters
+    public static final Transform3d CAMERA_1_TO_ROBOT =
+        new Transform3d(
+            0.3,
+            0.0,
+            0.2,
+            new Rotation3d(0, 0, Math.PI) // Sample metrics for front-mounted camera in meters
+            );
+
+    public static final Transform3d CAMERA_2_TO_ROBOT =
+        new Transform3d(
+            -0.3,
+            0.0,
+            0.2,
+            new Rotation3d(0, 0, 0) // Sample metrics for rear-mounted camera in meters
+            );
   }
 }
