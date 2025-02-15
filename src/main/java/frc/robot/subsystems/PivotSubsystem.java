@@ -8,17 +8,9 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkBase;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
-import edu.wpi.first.math.interpolation.Interpolator;
-import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,7 +30,10 @@ public class PivotSubsystem extends SubsystemBase {
 
     // Create PID controller instance
     private final PIDController pid = new PIDController(1, 0, 0);
-    public final SparkMaxConfig climberConfig;
+    
+    // Create motor configuration objects
+    public final SparkMaxConfig pivotMotor1Config;
+    public final SparkMaxConfig pivotMotor2Config;
 
     // Motion profiling
     private final TrapezoidProfile pivot1Profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(3.0, 1.0));
@@ -51,33 +46,36 @@ public class PivotSubsystem extends SubsystemBase {
     private double currentPosition = 0;
 
     public PivotSubsystem() {
-        // Initialize configuration for the motor
-        this.climberConfig = new SparkMaxConfig();
-        climberConfig.inverted(true).idleMode(IdleMode.kBrake);
-        climberConfig.encoder.positionConversionFactor(1).velocityConversionFactor(15);
+        // Initialize configuration for pivotMotor1 (leader)
+        pivotMotor1Config = new SparkMaxConfig();
+        pivotMotor1Config
+            .inverted(false) // Leader motor not inverted
+            .idleMode(IdleMode.kBrake)
+            .encoder
+                .positionConversionFactor(1) // Adjust as needed
+                .velocityConversionFactor(15); // Adjust as needed
 
-        // Configure the motor settings including encoder conversion factors, PID, and feed-forward
-        climberConfig.closedLoop
+        pivotMotor1Config.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(2, 0.0, 0.0)
-            .outputRange(0, 1)
-            .velocityFF(1.0 / 565.0);
+            .pid(2.0, 0.0, 0.0) // Adjust PID gains
+            .outputRange(-1.0, 1.0)
+            .velocityFF(1.0 / 565.0); // Adjust as needed
 
-        // Updated follower configuration for REVLib 2025:
-        // Set pivotMotor2 to follow pivotMotor1 by using the closed-loop controller's setReference method.
-        pivotMotor2.getClosedLoopController().setReference(
-            pivotMotor1.getDeviceId(),
-            SparkBase.ControlType.
-        );
-        pivotMotor1.configure(climberConfig, 
-        ResetMode.kResetSafeParameters, 
-        PersistMode.kPersistParameters);
+        // Initialize configuration for pivotMotor2 (follower)
+        pivotMotor2Config = new SparkMaxConfig();
+        pivotMotor2Config
+            .apply(pivotMotor1Config) // Apply global config from leader
+            .follow(pivotMotor1); // Set as a follower
+
+        // Apply configurations to both motors
+        pivotMotor1.configure(pivotMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        pivotMotor2.configure(pivotMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public Command raisePivot() {
         return run(this::movePivotUp);
     }
-    
+
     public Command lowerPivot() {
         return run(this::movePivotDown);
     }
@@ -105,12 +103,12 @@ public class PivotSubsystem extends SubsystemBase {
 
     // Moves the pivot up by increasing the current position
     private void movePivotUp() {
-        currentPosition += 0.005;
+        currentPosition = MathUtil.clamp(currentPosition + 0.005, 0, 1.3);
     }
 
     // Moves the pivot down by decreasing the current position
     private void movePivotDown() {
-        currentPosition -= 0.005;
+        currentPosition = MathUtil.clamp(currentPosition - 0.005, 0, 1.3);
     }
 
     // Sets the pivot position to the intake position using SparkMax PID
@@ -132,13 +130,13 @@ public class PivotSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Output the current pivot position to the dashboard
-        SmartDashboard.putNumber("pivot Position", pivotEncoder.getPosition());
+        SmartDashboard.putNumber("Pivot Position", pivotEncoder.getPosition());
 
         double kDt = 0.02;
         motor1Setpoint = pivot1Profile.calculate(kDt, motor1Setpoint, motor1Goal);
         motor2Setpoint = pivot2Profile.calculate(kDt, motor2Setpoint, motor2Goal);
         
-        // Apply the PID calculation to pivotMotor1; the follower will mirror its output
+        // Apply the PID calculation to pivotMotor1; pivotMotor2 will follow it
         pivotMotor1.set(MathUtil.clamp(pid.calculate(pivotEncoder.getPosition()), -0.9, 0.9));
     }
 }
