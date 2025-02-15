@@ -77,7 +77,7 @@ public class RobotContainer {
 
         climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
-        intake = new Intake(new IntakeIOTalonFX(5));
+        intake = new Intake(new IntakeIOTalonFX(5, 6));
         break;
 
       case SIM:
@@ -108,7 +108,7 @@ public class RobotContainer {
                 photonInterface);
         climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
-        intake = new Intake(new IntakeIOTalonFX(5));
+        intake = new Intake(new IntakeIOTalonFX(5, 0));
         break;
     }
 
@@ -175,7 +175,8 @@ public class RobotContainer {
     controller.povUp().onTrue(climber.retractCommand());
     controller
         .rightBumper()
-        .whileTrue(intake.runIntake(0.5).alongWith(endEffector.runEffector(0.25)));
+        .whileTrue(intake.runIntake(0.5).alongWith(endEffector.runEffector(0.25))
+        .until(() -> intake.isCoralDetected()));
   }
 
   /**
