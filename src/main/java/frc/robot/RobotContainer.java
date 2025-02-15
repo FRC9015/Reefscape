@@ -23,7 +23,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.Handoff;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.AmpSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PivotSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -45,8 +50,13 @@ public class RobotContainer {
 
   private final Drive drive;
   private final PhotonInterface photonInterface = new PhotonInterface();
+  private final PivotSubsystem pivot = new PivotSubsystem();
+  private final AmpSubsystem amp = new AmpSubsystem();
+  private final IntakeSubsystem intake = new IntakeSubsystem();
+  private final ShooterSubsystem shooter = new ShooterSubsystem();
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController controller1 = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -152,6 +162,12 @@ public class RobotContainer {
                 .ignoringDisable(true));
     controller.x().onTrue(drive.pfToPose(Constants.FieldConstants.REEF_D, 0.0));
     controller.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D, 0.0));
+    
+    controller1.povUp().whileTrue(pivot.raisePivot());
+    controller1.povDown().whileTrue(pivot.lowerPivot());
+    controller1.rightTrigger().whileTrue(shooter.shootNoteToSpeaker());
+    controller1.rightBumper().whileTrue(new Handoff(intake, amp).until(shooter::getShooterSensor).andThen(shooter::setIdleShooterSpeeds));
+    controller1.leftBumper().whileTrue(amp.ampIntake());
   }
 
   /**
