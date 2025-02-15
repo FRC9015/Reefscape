@@ -177,7 +177,11 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(intake.runIntake(0.5).alongWith(endEffector.runEffector(0.25))
         .until(() -> intake.isCoralDetected()));
+    controller
+        .leftBumper()
+        .whileTrue(intake.runIntakeReverse(0.5).alongWith(endEffector.runEffectorReverse(0.25)));
   }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
