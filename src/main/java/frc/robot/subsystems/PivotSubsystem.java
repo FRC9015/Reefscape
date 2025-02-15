@@ -2,10 +2,14 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkBase;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -53,7 +57,6 @@ public class PivotSubsystem extends SubsystemBase {
         climberConfig.encoder.positionConversionFactor(1).velocityConversionFactor(15);
 
         // Configure the motor settings including encoder conversion factors, PID, and feed-forward
-        climberConfig.encoder.positionConversionFactor(1).velocityConversionFactor(1);
         climberConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(2, 0.0, 0.0)
@@ -64,8 +67,11 @@ public class PivotSubsystem extends SubsystemBase {
         // Set pivotMotor2 to follow pivotMotor1 by using the closed-loop controller's setReference method.
         pivotMotor2.getClosedLoopController().setReference(
             pivotMotor1.getDeviceId(),
-            SparkBase.ControlType.kFollower
+            SparkBase.ControlType.
         );
+        pivotMotor1.configure(climberConfig, 
+        ResetMode.kResetSafeParameters, 
+        PersistMode.kPersistParameters);
     }
 
     public Command raisePivot() {
