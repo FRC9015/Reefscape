@@ -15,6 +15,7 @@ package frc.robot.subsystems.endeffector;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -100,5 +101,15 @@ public class EndEffector extends SubsystemBase {
    */
   public double getCurrentAmps() {
     return inputs.endEffectorCurrentAmps;
+  }
+
+  /**
+   * Runs the end effector at the specified RPM.
+   *
+   * @param rpm The desired RPM for the end effector.
+   * @return A command that runs the end effector.
+   */
+  public Command runEffector(double rpm) {
+    return this.startEnd(() -> setRPM(rpm), () -> stop());
   }
 }
