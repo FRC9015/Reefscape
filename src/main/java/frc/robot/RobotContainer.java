@@ -24,12 +24,19 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.endeffector.EndEffector;
+import frc.robot.subsystems.endeffector.EndEffectorIOSim;
+import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -39,8 +46,12 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
   // Subsystems
   private final Drive drive;
+  private final Climber climber;
+  private final Intake intake;
+  private final EndEffector endEffector;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -60,6 +71,10 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+
+        climber = new Climber(1);
+        endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
+        intake = new Intake(new IntakeIOTalonFX(5));
         break;
 
       case SIM:
@@ -71,6 +86,10 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+
+        climber = new Climber(1);
+        endEffector = new EndEffector(new EndEffectorIOSim());
+        intake = new Intake(new IntakeIOSim());
         break;
 
       default:
@@ -82,6 +101,9 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        climber = new Climber(1);
+        endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
+        intake = new Intake(new IntakeIOTalonFX(5));
         break;
     }
 
@@ -144,6 +166,11 @@ public class RobotContainer {
                 .ignoringDisable(true));
     controller.x().onTrue(drive.pfToPose(Constants.FieldConstants.bargeFar, 0.0));
     controller.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.bargeFar, 0.0));
+    controller.povDown().onTrue(climber.unwindCommand());
+    controller.povUp().onTrue(climber.retractCommand());
+    controller
+        .rightBumper()
+        .whileTrue(intake.runIntake(0.5).alongWith(endEffector.runEffector(0.25)));
   }
 
   /**
@@ -154,6 +181,4 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
-
-
 }
