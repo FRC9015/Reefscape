@@ -61,10 +61,8 @@ public class Elevator extends SubsystemBase {
     double output = pidController.calculate(inputs.elevatorPosition);
     io.setElevatorPosition(state);
     io.updateInputs(inputs);
-
     Logger.recordOutput("Elevator/Setpoint", targetPosition);
-    Logger.recordOutput("Elevator/Output", output);
-    Logger.recordOutput("Elevator/CurrentPosition", inputs.elevatorPosition);
+
   }
 
   /**
@@ -74,6 +72,8 @@ public class Elevator extends SubsystemBase {
    */
   public void runOpenLoop(double output) {
     io.updateInputs(inputs);
+    Logger.recordOutput("Elevator/Output", output);
+    Logger.recordOutput("Elevator/CurrentPosition", inputs.elevatorPosition);
     // Adjust motor output to the elevator manually
     io.setElevatorPosition(ElevatorIOInputs.ElevatorState.Default);
   }
