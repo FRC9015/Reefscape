@@ -77,7 +77,7 @@ public class RobotContainer {
 
         climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
-        intake = new Intake(new IntakeIOTalonFX(5, 6));
+        intake = new Intake(new IntakeIOTalonFX(5));
         break;
 
       case SIM:
@@ -108,7 +108,7 @@ public class RobotContainer {
                 photonInterface);
         climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
-        intake = new Intake(new IntakeIOTalonFX(5, 0));
+        intake = new Intake(new IntakeIOTalonFX(5));
         break;
     }
 
@@ -175,13 +175,27 @@ public class RobotContainer {
     controller.povUp().onTrue(climber.retractCommand());
     controller
         .rightBumper()
-        .whileTrue(intake.runIntake(0.5).alongWith(endEffector.runEffector(0.25))
-        .until(() -> intake.isCoralDetected()));
+        .whileTrue(
+            intake
+                .runIntake(0.5)
+                .alongWith(endEffector.runEffector(0.25))
+                .until(() -> intake.isCoralDetected()));
     controller
         .leftBumper()
-        .whileTrue(intake.runIntakeReverse(0.5).alongWith(endEffector.runEffectorReverse(0.25)));
+        .whileTrue(intake.runIntake(-0.5).alongWith(endEffector.runEffectorReverse(0.25)));
+    //Slow mode
+    controller
+        .leftTrigger()
+        .whileTrue(
+            DriveCommands.joystickDrive(
+            drive,
+            () -> -controller.getLeftY()*Constants.SLOW_MODE_CONSTANT,
+            () -> -controller.getLeftX()*Constants.SLOW_MODE_CONSTANT,
+            () -> -controller.getRightX()*Constants.SLOW_MODE_CONSTANT)
+        );
+
+    
   }
-  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
