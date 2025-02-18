@@ -177,24 +177,21 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(
             intake
-                .runIntake(0.5)
+                .runIntake(0.3)
                 .alongWith(endEffector.runEffector(0.25))
                 .until(() -> intake.isCoralDetected()));
     controller
         .leftBumper()
-        .whileTrue(intake.runIntake(-0.5).alongWith(endEffector.runEffectorReverse(0.25)));
-    //Slow mode
+        .whileTrue(intake.runIntake(-0.3).alongWith(endEffector.runEffectorReverse(0.25)));
+    // Slow mode
     controller
         .leftTrigger()
         .whileTrue(
             DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY()*Constants.SLOW_MODE_CONSTANT,
-            () -> -controller.getLeftX()*Constants.SLOW_MODE_CONSTANT,
-            () -> -controller.getRightX()*Constants.SLOW_MODE_CONSTANT)
-        );
-
-    
+                drive,
+                () -> -controller.getLeftY() * Constants.SLOW_MODE_CONSTANT,
+                () -> -controller.getLeftX() * Constants.SLOW_MODE_CONSTANT,
+                () -> -controller.getRightX() * Constants.SLOW_MODE_CONSTANT));
   }
 
   /**
