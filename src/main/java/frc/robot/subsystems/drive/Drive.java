@@ -386,7 +386,7 @@ public class Drive extends SubsystemBase {
     //       estimatedBowPose.get().timestampSeconds,
     //       stdDevs);
     // }
-    if (estimatedPortPose.isPresent() ) {
+    if (estimatedPortPose.isPresent()) {
       addVisionMeasurement(
           estimatedPortPose.get().estimatedPose.toPose2d(),
           estimatedPortPose.get().timestampSeconds,
