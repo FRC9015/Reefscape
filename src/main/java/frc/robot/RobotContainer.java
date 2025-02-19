@@ -31,6 +31,10 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs.ElevatorState;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.endeffector.EndEffectorIOSim;
 import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
@@ -53,10 +57,16 @@ public class RobotContainer {
   private final Climber climber;
   private final Intake intake;
   private final EndEffector endEffector;
+  private final Elevator elevator;
 
   private final PhotonInterface photonInterface = new PhotonInterface();
-  // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  // Driver Controller
+  private final CommandXboxController driverController = new CommandXboxController(0);
+  // Operator Controller
+  private final CommandXboxController operatorController = new CommandXboxController(1);
+
+  // Triggers
+  // private final Trigger robotInPosition;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -78,6 +88,7 @@ public class RobotContainer {
         climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
         intake = new Intake(new IntakeIOTalonFX(5));
+        elevator = new Elevator(new ElevatorIOTalonFX(7, 8, 9, 10));
         break;
 
       case SIM:
@@ -94,6 +105,7 @@ public class RobotContainer {
         climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
+        elevator = new Elevator(new ElevatorIOSim());
         break;
 
       default:
@@ -109,6 +121,7 @@ public class RobotContainer {
         climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
         intake = new Intake(new IntakeIOTalonFX(5));
+        elevator = new Elevator(new ElevatorIOTalonFX(7, 8, 9, 10));
         break;
     }
 
@@ -146,21 +159,21 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
+    driverController
         .a()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
                 () -> new Rotation2d()));
     // Reset gyro to 0° when B button is pressed
-    controller
+    driverController
         .b()
         .onTrue(
             Commands.runOnce(
@@ -169,29 +182,34 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    controller.x().onTrue(drive.pfToPose(Constants.FieldConstants.REEF_D, 0.0));
-    controller.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D, 0.0));
-    controller.povDown().onTrue(climber.unwindCommand());
-    controller.povUp().onTrue(climber.retractCommand());
-    controller
+    driverController.x().onTrue(drive.pfToPose(Constants.FieldConstants.REEF_D, 0.0));
+    driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D, 0.0));
+    driverController.povDown().onTrue(climber.unwindCommand());
+    driverController.povUp().onTrue(climber.retractCommand());
+    driverController
         .rightBumper()
         .whileTrue(
             intake
                 .runIntake(0.3)
                 .alongWith(endEffector.runEffector(0.25))
                 .until(() -> intake.isCoralDetected()));
-    controller
+    driverController
         .leftBumper()
         .whileTrue(intake.runIntake(-0.3).alongWith(endEffector.runEffectorReverse(0.25)));
     // Slow mode
-    controller
+    driverController
         .leftTrigger()
         .whileTrue(
             DriveCommands.joystickDrive(
                 drive,
-                () -> -controller.getLeftY() * Constants.SLOW_MODE_CONSTANT,
-                () -> -controller.getLeftX() * Constants.SLOW_MODE_CONSTANT,
-                () -> -controller.getRightX() * Constants.SLOW_MODE_CONSTANT));
+                () -> -driverController.getLeftY() * Constants.SLOW_MODE_CONSTANT,
+                () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
+                () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
+
+    operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.Default));
+    operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL2));
+    operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL3));
+    operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.CoralL4));
   }
 
   /**
