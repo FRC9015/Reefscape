@@ -59,8 +59,6 @@ public class RobotContainer {
   private final IntakeIOTalonFX intakeIO = new IntakeIOTalonFX(0, 0, 0, 0, 0, "");
   private final EndEffectorIOTalonFX endEffectorIO = new EndEffectorIOTalonFX(0, 0, 0, 0, 0, "");
 
-
-
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
