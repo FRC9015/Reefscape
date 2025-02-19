@@ -90,6 +90,5 @@ public final class Constants {
   public static class AutoConstants {
     public static final PathConstraints PP_CONSTRAINTS =
         new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
-
   }
 }

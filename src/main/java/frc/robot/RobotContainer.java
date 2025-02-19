@@ -60,13 +60,11 @@ public class RobotContainer {
   private final EndEffector endEffector;
   private final Elevator elevator;
 
-
   private final PhotonInterface photonInterface = new PhotonInterface();
   // Driver Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
   // Operator Controller
   private final CommandXboxController operatorController = new CommandXboxController(1);
-
 
   // Triggers
   // private final Trigger robotInPosition;
@@ -127,18 +125,14 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOTalonFX(7, 8, 9, 10));
         break;
     }
-    
+
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
         "shootCoral", Commands.runOnce(() -> endEffector.setRPM(3000), endEffector));
     NamedCommands.registerCommand(
         "IntakeCoral", Commands.runOnce(() -> endEffector.setRPM(-3000), endEffector));
-    NamedCommands.registerCommand(
-        "L2Position",
-        elevator.executePreset(ElevatorState.CoralL2));
-    NamedCommands.registerCommand(
-        "L3Position",
-        elevator.executePreset(ElevatorState.CoralL3));
+    NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
+    NamedCommands.registerCommand("L3Position", elevator.executePreset(ElevatorState.CoralL3));
     NamedCommands.registerCommand(
         "IntakeCoral", Commands.runOnce(() -> intake.setRPM(-3000), intake));
     NamedCommands.registerCommand(
@@ -235,7 +229,6 @@ public class RobotContainer {
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.CoralL4));
 
     driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
-
   }
 
   /**
