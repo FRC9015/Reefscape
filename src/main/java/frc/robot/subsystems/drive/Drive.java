@@ -22,6 +22,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.FlippingUtil;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -29,6 +30,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -47,16 +49,20 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.photon.PhotonInterface;
 import frc.robot.util.LocalADStarAK;
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
 
 /** Represents the robot's drive subsystem. */
 public class Drive extends SubsystemBase {
@@ -94,6 +100,7 @@ public class Drive extends SubsystemBase {
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
+  private final PhotonInterface photon;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
@@ -112,13 +119,28 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
+  private Optional<EstimatedRobotPose> estimatedBowPose, estimatedPortPose;
+  private Matrix<N3, N1> stdDevs =
+      VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
+
+  /**
+   * Constructs a new Drive.
+   *
+   * @param gyroIO The gyro input/output interface
+   * @param flModuleIO The front-left module input/output interface
+   * @param frModuleIO The front-right module input/output interface
+   * @param blModuleIO The back-left module input/output interface
+   * @param brModuleIO The back-right module input/output interface
+   */
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
-      ModuleIO brModuleIO) {
+      ModuleIO brModuleIO,
+      PhotonInterface photon) {
     this.gyroIO = gyroIO;
+    this.photon = photon;
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
     modules[2] = new Module(blModuleIO, 2, TunerConstants.BackLeft);
@@ -221,6 +243,22 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    estimatedBowPose = photon.getEstimatedBowPose();
+    estimatedPortPose = photon.getEstimatedPortPose();
+
+    // if (estimatedPose.isPresent()) {
+    //   stdDevs =
+    //       VecBuilder.fill(
+    //           estimatedPose.get().estimatedPose.getX(),
+    //           estimatedPose.get().estimatedPose.getY(),
+    //           estimatedPose.get().estimatedPose.getRotation().toRotation2d().getRadians());
+    //   System.out.println(stdDevs);
+    // }
+
+    stdDevs =
+        VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
+    updatePose();
   }
 
   /**
@@ -282,6 +320,15 @@ public class Drive extends SubsystemBase {
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
+  }
+
+  public Command followPathCommand(String pathname) {
+    try {
+      return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathname));
+    } catch (Exception e) {
+      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+      return Commands.none();
+    }
   }
 
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
@@ -352,6 +399,22 @@ public class Drive extends SubsystemBase {
         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
   }
 
+  public void updatePose() {
+
+    // if (estimatedBowPose.isPresent()) {
+    //   addVisionMeasurement(
+    //       estimatedBowPose.get().estimatedPose.toPose2d() ,
+    //       estimatedBowPose.get().timestampSeconds,
+    //       stdDevs);
+    // }
+    if (estimatedPortPose.isPresent()) {
+      addVisionMeasurement(
+          estimatedPortPose.get().estimatedPose.toPose2d(),
+          estimatedPortPose.get().timestampSeconds,
+          stdDevs);
+    }
+  }
+
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
     return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -374,6 +437,13 @@ public class Drive extends SubsystemBase {
 
   public double getDistanceToPose(Translation2d targetpose) {
     return getPose().getTranslation().getDistance(targetpose);
+  }
+  
+  public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
+    Logger.recordOutput("flippath", AutoBuilder.shouldFlip());
+    return AutoBuilder.shouldFlip()
+        ? this.pathfindToPoseFlipped(targetpose, endVelocity)
+        : this.pfToPose(targetpose, endVelocity);
   }
 
   public Command pfToPose(Pose2d targetpose, double endVelocity) {

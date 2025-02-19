@@ -48,12 +48,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final Debouncer encoderConnectedDebounce = new Debouncer(0.5);
   private final NeutralOut neutralOut = new NeutralOut();
 
-  public ElevatorIOTalonFX(
-      int motorId, int motorId1, int encoderId, int encoderId1, String canBusName) {
-    elevatorMotor = new TalonFX(motorId, canBusName);
-    elevatorEncoder = new CANcoder(encoderId, canBusName);
-    elevatorMotor1 = new TalonFX(motorId1, canBusName);
-    elevatorEncoder1 = new CANcoder(encoderId1, canBusName);
+  public ElevatorIOTalonFX(int motorId, int motorId1, int encoderId, int encoderId1) {
+    elevatorMotor = new TalonFX(motorId);
+    elevatorEncoder = new CANcoder(encoderId);
+    elevatorMotor1 = new TalonFX(motorId1);
+    elevatorEncoder1 = new CANcoder(encoderId1);
     elevatorFollower = new Follower(motorId, true);
     elevatorEncoderFollower = new Follower(encoderId, true);
     elevatorMotor1.setControl(elevatorFollower);

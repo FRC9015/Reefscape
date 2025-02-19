@@ -106,4 +106,8 @@ public class Intake extends SubsystemBase {
   public Command runIntake(double rpm) {
     return this.startEnd(() -> setRPM(rpm), () -> stop());
   }
+
+  public Command runIntakeReverse(double rpm) {
+    return this.startEnd(() -> setRPM(-rpm), () -> stop());
+  }
 }
