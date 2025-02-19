@@ -127,11 +127,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOTalonFX(7, 8, 9, 10));
         break;
     }
-    // subsystem initialization
-    elevator = new Elevator(elevatorIO);
-    intake = new Intake(intakeIO);
-    endEffector = new EndEffector(endEffectorIO);
-
+    
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
         "shootCoral", Commands.runOnce(() -> endEffector.setRPM(3000), endEffector));
@@ -139,13 +135,10 @@ public class RobotContainer {
         "IntakeCoral", Commands.runOnce(() -> endEffector.setRPM(-3000), endEffector));
     NamedCommands.registerCommand(
         "L2Position",
-        Commands.runOnce(() -> elevatorIO.setElevatorPosition(ElevatorState.CoralL2), elevator));
+        elevator.executePreset(ElevatorState.CoralL2));
     NamedCommands.registerCommand(
         "L3Position",
-        Commands.runOnce(() -> elevatorIO.setElevatorPosition(ElevatorState.CoralL3), elevator));
-    NamedCommands.registerCommand(
-        "L4Position",
-        Commands.runOnce(() -> elevatorIO.setElevatorPosition(ElevatorState.CoralL4), elevator));
+        elevator.executePreset(ElevatorState.CoralL3));
     NamedCommands.registerCommand(
         "IntakeCoral", Commands.runOnce(() -> intake.setRPM(-3000), intake));
     NamedCommands.registerCommand(
@@ -241,7 +234,7 @@ public class RobotContainer {
     operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL3));
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.CoralL4));
 
-    controller.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
+    driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
 
   }
 
