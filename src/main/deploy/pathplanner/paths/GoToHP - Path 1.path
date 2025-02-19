@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.15775,
-        "y": 5.43875
+        "x": 5.346516393442624,
+        "y": 5.361629098360655
       },
       "prevControl": {
-        "x": 5.988902972836461,
-        "y": 5.518207353608962
+        "x": 6.177669366279084,
+        "y": 5.441086451969618
       },
       "nextControl": {
-        "x": 4.439664212330172,
-        "y": 5.370101750860334
+        "x": 4.628430605772795,
+        "y": 5.2929808492209895
       },
       "isLocked": false,
       "linkedName": null
@@ -44,13 +44,32 @@
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -119.99999999999999
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.007597340930674,
+      "maxWaypointRelativePos": 1.04,
+      "constraints": {
+        "maxVelocity": 0.1,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "",
-      "waypointRelativePos": 0,
+      "name": "EjectCoral",
+      "waypointRelativePos": 0.9886039886039693,
       "endWaypointRelativePos": null,
       "command": null
     }

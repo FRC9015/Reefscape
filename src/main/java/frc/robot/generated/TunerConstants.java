@@ -35,7 +35,7 @@ public class TunerConstants {
       new Slot0Configs().withKP(0.25).withKI(0).withKD(0).withKS(0).withKV(0.120);
 
   // The closed-loop output type to use for the steer motors;
-  // This affects the PID/FF gains for the steer motors
+  // This affects the PID/FF gains for  steer motors
   private static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.Voltage;
   // The closed-loop output type to use for the drive motors;
   // This affects the PID/FF gains for the drive motors
