@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AutoCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -34,11 +35,15 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs.ElevatorState;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endeffector.EndEffector;
+import frc.robot.subsystems.endeffector.EndEffectorIOSim;
 import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.photon.PhotonInterface;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -48,19 +53,23 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // Subsystem declarations
+  // Subsystems
   private final Drive drive;
-  private final Elevator elevator;
+  private final Climber climber;
   private final Intake intake;
   private final EndEffector endEffector;
+  private final Elevator elevator;
 
-  // IO files to instantiate objects in subsystems, @TODO: Add motor IDs and CAN IDs
-  private final ElevatorIOTalonFX elevatorIO = new ElevatorIOTalonFX(0, 0, 0, 0, null);
-  private final IntakeIOTalonFX intakeIO = new IntakeIOTalonFX(0, 0, 0, 0, 0, "");
-  private final EndEffectorIOTalonFX endEffectorIO = new EndEffectorIOTalonFX(0, 0, 0, 0, 0, "");
 
-  // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final PhotonInterface photonInterface = new PhotonInterface();
+  // Driver Controller
+  private final CommandXboxController driverController = new CommandXboxController(0);
+  // Operator Controller
+  private final CommandXboxController operatorController = new CommandXboxController(1);
+
+
+  // Triggers
+  // private final Trigger robotInPosition;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -76,7 +85,13 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
+                new ModuleIOTalonFX(TunerConstants.BackRight),
+                photonInterface);
+
+        climber = new Climber(1);
+        endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
+        intake = new Intake(new IntakeIOTalonFX(5));
+        elevator = new Elevator(new ElevatorIOTalonFX(7, 8, 9, 10));
         break;
 
       case SIM:
@@ -87,7 +102,13 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontLeft),
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
+                new ModuleIOSim(TunerConstants.BackRight),
+                photonInterface);
+
+        climber = new Climber(1);
+        endEffector = new EndEffector(new EndEffectorIOSim());
+        intake = new Intake(new IntakeIOSim());
+        elevator = new Elevator(new ElevatorIOSim());
         break;
 
       default:
@@ -98,7 +119,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
+                new ModuleIO() {},
+                photonInterface);
+        climber = new Climber(1);
+        endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
+        intake = new Intake(new IntakeIOTalonFX(5));
+        elevator = new Elevator(new ElevatorIOTalonFX(7, 8, 9, 10));
         break;
     }
     // subsystem initialization
@@ -162,21 +188,21 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
+    driverController
         .a()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
                 () -> new Rotation2d()));
     // Reset gyro to 0° when B button is pressed
-    controller
+    driverController
         .b()
         .onTrue(
             Commands.runOnce(
@@ -185,7 +211,38 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    driverController.x().onTrue(drive.pfToPose(Constants.FieldConstants.REEF_D, 0.0));
+    driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D, 0.0));
+    driverController.povDown().onTrue(climber.unwindCommand());
+    driverController.povUp().onTrue(climber.retractCommand());
+    driverController
+        .rightBumper()
+        .whileTrue(
+            intake
+                .runIntake(0.3)
+                .alongWith(endEffector.runEffector(0.25))
+                .until(() -> intake.isCoralDetected()));
+    driverController
+        .leftBumper()
+        .whileTrue(intake.runIntake(-0.3).alongWith(endEffector.runEffectorReverse(0.25)));
+    // Slow mode
+    driverController
+        .leftTrigger()
+        .whileTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -driverController.getLeftY() * Constants.SLOW_MODE_CONSTANT,
+                () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
+                () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
+
+    operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.Default));
+    operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL2));
+    operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL3));
+    operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.CoralL4));
+
     controller.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
+
   }
 
   /**

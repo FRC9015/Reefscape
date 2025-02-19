@@ -16,6 +16,7 @@ package frc.robot.subsystems.elevator;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs;
 import org.littletonrobotics.junction.Logger;
@@ -61,10 +62,7 @@ public class Elevator extends SubsystemBase {
     double output = pidController.calculate(inputs.elevatorPosition);
     io.setElevatorPosition(state);
     io.updateInputs(inputs);
-
     Logger.recordOutput("Elevator/Setpoint", targetPosition);
-    Logger.recordOutput("Elevator/Output", output);
-    Logger.recordOutput("Elevator/CurrentPosition", inputs.elevatorPosition);
   }
 
   /**
@@ -74,7 +72,13 @@ public class Elevator extends SubsystemBase {
    */
   public void runOpenLoop(double output) {
     io.updateInputs(inputs);
+    Logger.recordOutput("Elevator/Output", output);
+    Logger.recordOutput("Elevator/CurrentPosition", inputs.elevatorPosition);
     // Adjust motor output to the elevator manually
     io.setElevatorPosition(ElevatorIOInputs.ElevatorState.Default);
+  }
+
+  public Command executePreset(ElevatorIOInputs.ElevatorState state) {
+    return run(() -> this.setPreset(state));
   }
 }

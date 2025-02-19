@@ -30,6 +30,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -54,11 +55,14 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.photon.PhotonInterface;
 import frc.robot.util.LocalADStarAK;
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
 
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
@@ -95,6 +99,7 @@ public class Drive extends SubsystemBase {
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
+  private final PhotonInterface photon;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
@@ -113,6 +118,9 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
+  private Optional<EstimatedRobotPose> estimatedBowPose, estimatedPortPose;
+  private Matrix<N3, N1> stdDevs =
+      VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
   /**
    * Constructs a new Drive.
    *
@@ -127,8 +135,10 @@ public class Drive extends SubsystemBase {
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
-      ModuleIO brModuleIO) {
+      ModuleIO brModuleIO,
+      PhotonInterface photon) {
     this.gyroIO = gyroIO;
+    this.photon = photon;
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
     modules[2] = new Module(blModuleIO, 2, TunerConstants.BackLeft);
@@ -231,6 +241,22 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    estimatedBowPose = photon.getEstimatedBowPose();
+    estimatedPortPose = photon.getEstimatedPortPose();
+
+    // if (estimatedPose.isPresent()) {
+    //   stdDevs =
+    //       VecBuilder.fill(
+    //           estimatedPose.get().estimatedPose.getX(),
+    //           estimatedPose.get().estimatedPose.getY(),
+    //           estimatedPose.get().estimatedPose.getRotation().toRotation2d().getRadians());
+    //   System.out.println(stdDevs);
+    // }
+
+    stdDevs =
+        VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
+    updatePose();
   }
 
   /**
@@ -369,6 +395,22 @@ public class Drive extends SubsystemBase {
       Matrix<N3, N1> visionMeasurementStdDevs) {
     poseEstimator.addVisionMeasurement(
         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+  }
+
+  public void updatePose() {
+
+    // if (estimatedBowPose.isPresent()) {
+    //   addVisionMeasurement(
+    //       estimatedBowPose.get().estimatedPose.toPose2d() ,
+    //       estimatedBowPose.get().timestampSeconds,
+    //       stdDevs);
+    // }
+    if (estimatedPortPose.isPresent()) {
+      addVisionMeasurement(
+          estimatedPortPose.get().estimatedPose.toPose2d(),
+          estimatedPortPose.get().timestampSeconds,
+          stdDevs);
+    }
   }
 
   /** Returns the maximum linear speed in meters per sec. */

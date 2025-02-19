@@ -15,7 +15,9 @@ package frc.robot.subsystems.endeffector;
 
 import org.littletonrobotics.junction.AutoLog;
 
+/** Interface for the End Effector Input/Output operations. */
 public interface EndEffectorIO {
+  /** Class representing the inputs for the End Effector. */
   @AutoLog
   public static class EndEffectorIOInputs {
 
@@ -30,11 +32,16 @@ public interface EndEffectorIO {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(EndEffectorIOInputs inputs) {}
 
-  /** Stop end effector from running */
+  /** Stop end effector from running. */
   default void stop() {}
 
   /** Enable or disable brake mode on the end effector motor. */
   default void setBrakeMode(boolean enable) {}
 
+  /**
+   * Sets the RPM of the end effector motor.
+   *
+   * @param rpm The desired RPM.
+   */
   default void setRPM(double rpm) {}
 }
