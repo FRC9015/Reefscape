@@ -3,56 +3,61 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.298929794520548,
-        "y": 6.286365582191781
+        "x": 7.780020491803279,
+        "y": 7.267674180327869
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6363123208160446,
-        "y": 6.177780061401925
+        "x": 8.022619766060343,
+        "y": 7.501765316827602
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.634631849315068,
-        "y": 5.459952910958905
+        "x": 5.346516393442624,
+        "y": 5.361629098360655
       },
       "prevControl": {
-        "x": 5.406996523567858,
-        "y": 5.638083253748984
+        "x": 6.177669366279084,
+        "y": 5.441086451969618
       },
       "nextControl": {
-        "x": 6.180761783783787,
-        "y": 5.032592561173528
+        "x": 4.628430605772795,
+        "y": 5.2929808492209895
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 11.34183673469388,
-        "y": 3.998883928571428
+        "x": 2.0,
+        "y": 7.0
       },
       "prevControl": {
-        "x": 11.166263764960071,
-        "y": 4.1768562081512846
+        "x": 1.775886809924257,
+        "y": 7.1621494320903905
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -119.99999999999999
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8480531813865114,
-      "maxWaypointRelativePos": 1.0151946818613504,
+      "minWaypointRelativePos": 1.007597340930674,
+      "maxWaypointRelativePos": 1.04,
       "constraints": {
         "maxVelocity": 0.1,
-        "maxAcceleration": 0.1,
+        "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -61,7 +66,14 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "EjectCoral",
+      "waypointRelativePos": 0.9886039886039693,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -72,13 +84,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -45.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "GoToHP Paths- From Start Zones",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

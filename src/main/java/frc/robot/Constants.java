@@ -13,15 +13,19 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+
 // import edu.wpi.first.math.geometry.Translation3d;
 // import edu.wpi.first.apriltag.AprilTagFieldLayout;
 // import edu.wpi.first.apriltag.AprilTagFields;
 // import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.util.Units;
+
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -81,11 +85,17 @@ public final class Constants {
         new Pose2d(new Translation2d(3.261, 5.230), new Rotation2d());
     public static final Pose2d REEF_C =
         new Pose2d(new Translation2d(5.287, 5.386), new Rotation2d());
-    public static final Pose2d REEF_D =
-        new Pose2d(new Translation2d(11.3, 4.00), new Rotation2d(0, 0));
+
+    public static final Pose2d REEF_D = new Pose2d(new Translation2d(6, 4.103), new Rotation2d());
     public static final Pose2d REEF_E =
         new Pose2d(new Translation2d(5.632, 2.832), new Rotation2d());
     public static final Pose2d REEF_F =
         new Pose2d(new Translation2d(3.836, 2.616), new Rotation2d());
+  }
+
+  public static class AutoConstants {
+    public static final PathConstraints PP_CONSTRAINTS =
+        new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+
   }
 }

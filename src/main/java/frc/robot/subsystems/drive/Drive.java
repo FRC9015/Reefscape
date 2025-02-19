@@ -22,6 +22,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.FlippingUtil;
 import com.pathplanner.lib.util.PathPlannerLogging;
@@ -48,6 +49,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -119,7 +121,15 @@ public class Drive extends SubsystemBase {
   private Optional<EstimatedRobotPose> estimatedBowPose, estimatedPortPose;
   private Matrix<N3, N1> stdDevs =
       VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
-
+  /**
+   * Constructs a new Drive.
+   *
+   * @param gyroIO The gyro input/output interface
+   * @param flModuleIO The front-left module input/output interface
+   * @param frModuleIO The front-right module input/output interface
+   * @param blModuleIO The back-left module input/output interface
+   * @param brModuleIO The back-right module input/output interface
+   */
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -310,6 +320,15 @@ public class Drive extends SubsystemBase {
     return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 
+  public Command followPathCommand(String pathname) {
+    try {
+      return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathname));
+    } catch (Exception e) {
+      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+      return Commands.none();
+    }
+  }
+
   /** Returns the module states (turn angles and drive velocities) for all of the modules. */
   @AutoLogOutput(key = "SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
@@ -418,11 +437,18 @@ public class Drive extends SubsystemBase {
     return getPose().getTranslation().getDistance(targetpose);
   }
 
-  public Command pfToPose(Pose2d targetpose, double endVelocity) {
+  public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
+    Logger.recordOutput("flippath", AutoBuilder.shouldFlip());
+    return AutoBuilder.shouldFlip()
+        ? this.pathfindToPoseFlipped(targetpose, endVelocity)
+        : this.pfToPose(targetpose, endVelocity);
+  }
+
+  private Command pfToPose(Pose2d targetpose, double endVelocity) {
     return AutoBuilder.pathfindToPose(targetpose, PP_CONSTRAINTS, endVelocity);
   }
 
-  public Command pathfindToPoseFlipped(Pose2d targetPose, double endVelocity) {
+  private Command pathfindToPoseFlipped(Pose2d targetPose, double endVelocity) {
     Pose2d tp = FlippingUtil.flipFieldPose(targetPose);
     return AutoBuilder.pathfindToPose(tp, PP_CONSTRAINTS, endVelocity);
   }

@@ -14,6 +14,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AutoCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
@@ -51,7 +53,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-
   // Subsystems
   private final Drive drive;
   private final Climber climber;
@@ -64,6 +65,7 @@ public class RobotContainer {
   private final CommandXboxController driverController = new CommandXboxController(0);
   // Operator Controller
   private final CommandXboxController operatorController = new CommandXboxController(1);
+
 
   // Triggers
   // private final Trigger robotInPosition;
@@ -124,6 +126,32 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOTalonFX(7, 8, 9, 10));
         break;
     }
+    // subsystem initialization
+    elevator = new Elevator(elevatorIO);
+    intake = new Intake(intakeIO);
+    endEffector = new EndEffector(endEffectorIO);
+
+    // Named commands for pathplanner autos
+    NamedCommands.registerCommand(
+        "shootCoral", Commands.runOnce(() -> endEffector.setRPM(3000), endEffector));
+    NamedCommands.registerCommand(
+        "IntakeCoral", Commands.runOnce(() -> endEffector.setRPM(-3000), endEffector));
+    NamedCommands.registerCommand(
+        "L2Position",
+        Commands.runOnce(() -> elevatorIO.setElevatorPosition(ElevatorState.CoralL2), elevator));
+    NamedCommands.registerCommand(
+        "L3Position",
+        Commands.runOnce(() -> elevatorIO.setElevatorPosition(ElevatorState.CoralL3), elevator));
+    NamedCommands.registerCommand(
+        "L4Position",
+        Commands.runOnce(() -> elevatorIO.setElevatorPosition(ElevatorState.CoralL4), elevator));
+    NamedCommands.registerCommand(
+        "IntakeCoral", Commands.runOnce(() -> intake.setRPM(-3000), intake));
+    NamedCommands.registerCommand(
+        "EjectCoral", Commands.runOnce(() -> intake.setRPM(3000), intake));
+    NamedCommands.registerCommand(
+        "WarmUpBeforeAuto",
+        AutoCommands.pathfindToAutoStartPoseWhileWarmup("4 L1 Coral Auto", endEffector, intake));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -182,6 +210,7 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
     driverController.x().onTrue(drive.pfToPose(Constants.FieldConstants.REEF_D, 0.0));
     driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D, 0.0));
     driverController.povDown().onTrue(climber.unwindCommand());
@@ -210,6 +239,9 @@ public class RobotContainer {
     operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL2));
     operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL3));
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.CoralL4));
+
+    controller.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
+
   }
 
   /**
