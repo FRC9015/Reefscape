@@ -3,65 +3,69 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.298929794520548,
-        "y": 6.286365582191781
+        "x": 2.0,
+        "y": 7.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6363123208160446,
-        "y": 6.177780061401925
+        "x": 3.0556913535302437,
+        "y": 6.441295065016612
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.634631849315068,
-        "y": 5.459952910958905
+        "x": 3.7342500000000003,
+        "y": 5.3315
       },
       "prevControl": {
-        "x": 5.406996523567858,
-        "y": 5.638083253748984
+        "x": 2.283737704918033,
+        "y": 5.439389344262295
       },
       "nextControl": {
-        "x": 6.180761783783787,
-        "y": 5.032592561173528
+        "x": 5.1222127789632745,
+        "y": 5.2282630990853765
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 11.34183673469388,
-        "y": 3.998883928571428
+        "x": 2.0,
+        "y": 7.0
       },
       "prevControl": {
-        "x": 11.166263764960071,
-        "y": 4.1768562081512846
+        "x": 1.6858919737729186,
+        "y": 8.552439589744498
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [
+  "rotationTargets": [
     {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8480531813865114,
-      "maxWaypointRelativePos": 1.0151946818613504,
-      "constraints": {
-        "maxVelocity": 0.1,
-        "maxAcceleration": 0.1,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
+      "waypointRelativePos": 0.9828068772490948,
+      "rotationDegrees": -90.0
     }
   ],
+  "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "collectCoral",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "dropCoralL1",
+      "waypointRelativePos": 1.0037986704653385,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -71,7 +75,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": 0.0
   },
   "reversed": false,

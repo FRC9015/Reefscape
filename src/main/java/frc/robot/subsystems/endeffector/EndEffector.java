@@ -19,12 +19,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
+/** The EndEffector subsystem controls the end effector mechanism. */
 public class EndEffector extends SubsystemBase {
   private final EndEffectorIO io;
   private final EndEffectorIOInputsAutoLogged inputs = new EndEffectorIOInputsAutoLogged();
   private final Alert encoderDisconnectedAlert;
   private final Alert coralDetectionAlert;
 
+  /**
+   * Constructs an EndEffector subsystem.
+   *
+   * @param io The input/output interface for the end effector.
+   */
   public EndEffector(EndEffectorIO io) {
     this.io = io;
     encoderDisconnectedAlert = new Alert("End effector encoder disconnected!", AlertType.kError);
@@ -111,5 +117,15 @@ public class EndEffector extends SubsystemBase {
    */
   public Command runEffector(double rpm) {
     return this.startEnd(() -> setRPM(rpm), () -> stop());
+  }
+
+  /**
+   * Runs the end effector in reverse at the specified RPM.
+   *
+   * @param rpm The desired RPM for the end effector.
+   * @return A command that runs the end effector in reverse.
+   */
+  public Command runEffectorReverse(double rpm) {
+    return this.startEnd(() -> setRPM(-rpm), () -> stop());
   }
 }
