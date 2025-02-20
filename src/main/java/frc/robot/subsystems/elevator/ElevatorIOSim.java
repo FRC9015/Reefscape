@@ -15,7 +15,6 @@ package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import java.util.logging.Logger;
 
 
 /**
