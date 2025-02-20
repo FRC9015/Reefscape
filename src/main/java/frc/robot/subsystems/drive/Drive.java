@@ -437,7 +437,7 @@ public class Drive extends SubsystemBase {
   public double getDistanceToPose(Translation2d targetpose) {
     return getPose().getTranslation().getDistance(targetpose);
   }
-  
+
   public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
     Logger.recordOutput("flippath", AutoBuilder.shouldFlip());
     return AutoBuilder.shouldFlip()

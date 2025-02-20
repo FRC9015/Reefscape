@@ -59,26 +59,15 @@ public class Elevator extends SubsystemBase {
   public void setPreset(ElevatorIOInputs.ElevatorState state) {
     double targetPosition = state.getEncoderPosition();
     pidController.setSetpoint(targetPosition);
-    double output = pidController.calculate(inputs.elevatorPosition);
+    pidController.calculate(inputs.elevatorPosition);
     io.setElevatorPosition(state);
     io.updateInputs(inputs);
     Logger.recordOutput("Elevator/Setpoint", targetPosition);
   }
 
-  /**
-   * Manually runs the elevator with the specified output.
-   *
-   * @param output Motor output in the range [-1.0, 1.0].
-   */
-  public void runOpenLoop(double output) {
-    io.updateInputs(inputs);
-    Logger.recordOutput("Elevator/Output", output);
-    Logger.recordOutput("Elevator/CurrentPosition", inputs.elevatorPosition);
-    // Adjust motor output to the elevator manually
-    io.setElevatorPosition(ElevatorIOInputs.ElevatorState.Default);
-  }
-
   public Command executePreset(ElevatorIOInputs.ElevatorState state) {
+    Logger.recordOutput("Elevator/State", state);
+    Logger.recordOutput("Elevator/CurrentPosition", inputs.elevatorPosition);
     return run(() -> this.setPreset(state));
   }
 }
