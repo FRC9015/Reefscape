@@ -13,9 +13,10 @@
 
 package frc.robot.subsystems.elevator;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import java.util.logging.Logger;
+
 
 /**
  * Simulation implementation of the ElevatorIO interface using WPILib's ElevatorSim. This simulates
@@ -49,24 +50,25 @@ public class ElevatorIOSim implements ElevatorIO {
   private boolean positionControl = false;
   private double appliedVolts = 0.0;
 
+
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
     // Run position control if enabled
     if (positionControl) {
       double targetPosition = inputs.getDesiredEncoderPosition();
       appliedVolts = elevatorController.calculate(elevatorSim.getPositionMeters(), targetPosition);
+      elevatorSim.setInputVoltage(appliedVolts);
     }
 
     // Simulate opposing motors
-    double clampedVolts = MathUtil.clamp(appliedVolts, -12.0, 12.0);
     elevatorSim.update(0.02); // Simulate a 20ms timestep
 
     // Update inputs with simulated data
     inputs.elevatorEncoderConnected = true; // Simulate that the encoder is always connected
     inputs.elevatorPosition = elevatorSim.getPositionMeters(); // Position in meters
     inputs.elevatorAppliedVolts = appliedVolts; // Voltage applied to the motors
-    inputs.elevatorCurrentAmps =
-        elevatorSim.getCurrentDrawAmps() * 2; // Approximate current for two motors
+    inputs.elevatorCurrentAmps = 
+    elevatorSim.getCurrentDrawAmps(); // Approximate current for two motors
   }
 
   @Override
