@@ -15,16 +15,13 @@ package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
@@ -35,10 +32,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final TalonFX elevatorMotor;
   private final TalonFX elevatorMotor1;
   private final CANcoder elevatorEncoder;
-  private final CANcoder elevatorEncoder1;
   private final Follower elevatorFollower;
-  private final Follower elevatorEncoderFollower;
-
   private final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0);
 
   private final StatusSignal<Angle> encoderPositionSignal;
@@ -48,26 +42,23 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final Debouncer encoderConnectedDebounce = new Debouncer(0.5);
   private final NeutralOut neutralOut = new NeutralOut();
 
-  public ElevatorIOTalonFX(int motorId, int motorId1, int encoderId, int encoderId1) {
+  public ElevatorIOTalonFX(int motorId, int motorId1, int encoderId) {
     elevatorMotor = new TalonFX(motorId);
     elevatorEncoder = new CANcoder(encoderId);
     elevatorMotor1 = new TalonFX(motorId1);
-    elevatorEncoder1 = new CANcoder(encoderId1);
     elevatorFollower = new Follower(motorId, true);
-    elevatorEncoderFollower = new Follower(encoderId, true);
     elevatorMotor1.setControl(elevatorFollower);
-    elevatorEncoder1.setControl(elevatorEncoderFollower);
 
-    // Configure the motor
-    TalonFXConfiguration motorConfig = new TalonFXConfiguration();
-    motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    elevatorMotor.getConfigurator().apply(motorConfig);
+    // // Configure the motor
+    // TalonFXConfiguration motorConfig = new TalonFXConfiguration();
+    // motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    // motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    // elevatorMotor.getConfigurator().apply(motorConfig);
 
-    // Configure the encoder
-    CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
-    encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    elevatorEncoder.getConfigurator().apply(encoderConfig);
+    // // Configure the encoder
+    // CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+    // encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    // elevatorEncoder.getConfigurator().apply(encoderConfig);
 
     // Signals
     encoderPositionSignal = elevatorEncoder.getPosition();
@@ -88,9 +79,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   }
 
   @Override
-  public void setElevatorPosition(ElevatorIOInputs.ElevatorState state) {
-    double desiredPosition = state.getEncoderPosition();
-    elevatorMotor.setControl(positionVoltageRequest.withPosition(desiredPosition));
+  public void setElevatorPosition(double value) {
+    elevatorMotor.setVoltage(MathUtil.clamp(value, -12, 12));
   }
 
   @Override

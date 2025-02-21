@@ -14,11 +14,13 @@
 package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs;
+import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs.ElevatorState;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
@@ -29,7 +31,7 @@ public class Elevator extends SubsystemBase {
   private final Alert encoderDisconnectedAlert;
 
   // Elevator PID constants
-  private static final double kP = 10.0;
+  private static final double kP = 1;
   private static final double kI = 0.0;
   private static final double kD = 0.0;
   private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
@@ -38,6 +40,7 @@ public class Elevator extends SubsystemBase {
     this.io = io;
     this.pidController = new PIDController(kP, kI, kD);
     this.pidController.setTolerance(kToleranceMeters);
+    this.setDefaultCommand(executePreset(ElevatorState.Default));
 
     encoderDisconnectedAlert = new Alert("Disconnected elevator encoder.", AlertType.kError);
   }
@@ -59,8 +62,7 @@ public class Elevator extends SubsystemBase {
   public void setPreset(ElevatorIOInputs.ElevatorState state) {
     double targetPosition = state.getEncoderPosition();
     pidController.setSetpoint(targetPosition);
-    pidController.calculate(inputs.elevatorPosition);
-    io.setElevatorPosition(state);
+    io.setElevatorPosition(pidController.calculate(inputs.elevatorPosition));
     io.updateInputs(inputs);
     Logger.recordOutput("Elevator/Setpoint", targetPosition);
   }

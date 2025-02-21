@@ -23,10 +23,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.AutoCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -40,9 +38,6 @@ import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.endeffector.EndEffectorIOSim;
 import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.photon.PhotonInterface;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -55,8 +50,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Climber climber;
-  private final Intake intake;
+  // private final Climber climber;
+  // private final Intake intake;
   private final EndEffector endEffector;
   private final Elevator elevator;
 
@@ -86,10 +81,10 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 photonInterface);
 
-        climber = new Climber(1);
+        // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
-        intake = new Intake(new IntakeIOTalonFX(5));
-        elevator = new Elevator(new ElevatorIOTalonFX(7, 8, 9, 10));
+        // intake = new Intake(new IntakeIOTalonFX(5));
+        elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
         break;
 
       case SIM:
@@ -103,9 +98,9 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight),
                 photonInterface);
 
-        climber = new Climber(1);
+        // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
-        intake = new Intake(new IntakeIOSim());
+        // intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
         break;
 
@@ -119,10 +114,10 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 photonInterface);
-        climber = new Climber(1);
+        // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
-        intake = new Intake(new IntakeIOTalonFX(5));
-        elevator = new Elevator(new ElevatorIOTalonFX(7, 8, 9, 10));
+        // intake = new Intake(new IntakeIOTalonFX(5));
+        elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
         break;
     }
 
@@ -131,11 +126,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeCoral", endEffector.runEffectorReverse(3000));
     NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
     NamedCommands.registerCommand("L3Position", elevator.executePreset(ElevatorState.CoralL3));
-    NamedCommands.registerCommand("IntakeCoral", intake.runIntake(3000));
-    NamedCommands.registerCommand("EjectCoral", intake.runIntakeReverse(3000));
-    NamedCommands.registerCommand(
-        "WarmUpBeforeAuto",
-        AutoCommands.pathfindToAutoStartPoseWhileWarmup("4 L1 Coral Auto", endEffector, intake));
+    // NamedCommands.registerCommand("IntakeCoral", intake.runIntake(3000));
+    // NamedCommands.registerCommand("EjectCoral", intake.runIntakeReverse(3000));
+    // NamedCommands.registerCommand(
+    //     "WarmUpBeforeAuto",
+    //     AutoCommands.pathfindToAutoStartPoseWhileWarmup("4 L1 Coral Auto", endEffector, intake));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -197,18 +192,18 @@ public class RobotContainer {
 
     driverController.x().onTrue(drive.pfToPose(Constants.FieldConstants.REEF_D, 0.0));
     driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D, 0.0));
-    driverController.povDown().onTrue(climber.unwindCommand());
-    driverController.povUp().onTrue(climber.retractCommand());
-    driverController
-        .rightBumper()
-        .whileTrue(
-            intake
-                .runIntake(0.3)
-                .alongWith(endEffector.runEffector(0.25))
-                .until(() -> intake.isCoralDetected()));
-    driverController
-        .leftBumper()
-        .whileTrue(intake.runIntake(-0.3).alongWith(endEffector.runEffectorReverse(0.25)));
+    // driverController.povDown().onTrue(climber.unwindCommand());
+    // driverController.povUp().onTrue(climber.retractCommand());
+    // driverController
+    //     .rightBumper()
+    //     .whileTrue(
+    //         intake
+    //             .runIntake(0.3)
+    //             .alongWith(endEffector.runEffector(0.25))
+    //             .until(() -> intake.isCoralDetected()));
+    // driverController
+    //     .leftBumper()
+    //     .whileTrue(intake.runIntake(-0.3).alongWith(endEffector.runEffectorReverse(0.25)));
     // Slow mode
     driverController
         .leftTrigger()
