@@ -4,15 +4,25 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPoint;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.intake.Intake;
+
+import java.util.Arrays;
 import java.util.List;
 
 public class AutoCommands {
@@ -72,4 +82,49 @@ public class AutoCommands {
         Commands.runOnce(() -> endEffector.setRPM(6000), endEffector),
         Commands.runOnce(() -> intake.setRPM(6000), intake));
   }
+
+  private Pose2d findClosestReefPose(Pose2d currentPose) {
+    Pose2d[] reefPoses = {
+      Constants.FieldConstants.REEF_A, 
+      Constants.FieldConstants.REEF_B, 
+      Constants.FieldConstants.REEF_C, 
+      Constants.FieldConstants.REEF_D, 
+      Constants.FieldConstants.REEF_E, 
+      Constants.FieldConstants.REEF_F};
+    Pose2d closestPose = reefPoses[0];
+    double minDistance = Double.MAX_VALUE;
+    
+    for (Pose2d reefPose : reefPoses) {
+        double distance = currentPose.getTranslation().getDistance(reefPose.getTranslation());
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestPose = reefPose;
+        }
+    }
+    
+    return closestPose;
+}
+
+public boolean isNearReef(Drive drive) {
+  Pose2d currentPose = drive.getPose();
+  Pose2d closestReefPose = findClosestReefPose(currentPose);
+  
+  // Check if the robot is within 2 meters of the closest reef pose
+  boolean isWithinTwoMeters = currentPose.getTranslation().getDistance(closestReefPose.getTranslation()) <= 2.0;
+ 
+  // Return true if both conditions are met
+  return isWithinTwoMeters;
+}
+
+  
+  public Command getReefPathCommand(Drive drive, Elevator elevator, EndEffector endEffector) {
+    Pose2d currentPose = drive.getPose();
+    Pose2d targetPose = findClosestReefPose(currentPose);
+    Trigger isBotWithinReefPerimeter = new Trigger(()-> isNearReef(drive));
+    return new SequentialCommandGroup(
+        AutoBuilder.pathfindToPose(targetPose, Constants.AutoConstants.PP_CONSTRAINTS)
+
+    );
+}
+
 }
