@@ -62,7 +62,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     // inputs.intakeCurrentAmps = currentSignal.getValueAsDouble();
 
     // Commented out for now
-    // inputs.coralDetected = !coralSensor.get(); // Coral detected if the sensor is triggered
+    inputs.coralDetected = coralSensor.get(); // Coral detected if the sensor is triggered
     // (active low)
   }
 
