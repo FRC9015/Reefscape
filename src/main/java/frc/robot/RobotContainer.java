@@ -192,18 +192,9 @@ public class RobotContainer {
 
     driverController.x().onTrue(drive.pfToPose(Constants.FieldConstants.REEF_D, 0.0));
     driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D, 0.0));
-    // driverController.povDown().onTrue(climber.unwindCommand());
-    // driverController.povUp().onTrue(climber.retractCommand());
-    // driverController
-    //     .rightBumper()
-    //     .whileTrue(
-    //         intake
-    //             .runIntake(0.3)
-    //             .alongWith(endEffector.runEffector(0.25))
-    //             .until(() -> intake.isCoralDetected()));
-    // driverController
-    //     .leftBumper()
-    //     .whileTrue(intake.runIntake(-0.3).alongWith(endEffector.runEffectorReverse(0.25)));
+    driverController
+        .rightBumper()
+        .whileTrue(endEffector.runEffectorReverse(0.25));
     // Slow mode
     driverController
         .leftTrigger()
@@ -214,10 +205,10 @@ public class RobotContainer {
                 () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
 
-    operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.Default));
-    operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL2));
-    operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL3));
-    operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.CoralL4));
+    operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
+    operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
+    operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
+    operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
 
     driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
   }
