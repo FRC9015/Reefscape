@@ -20,7 +20,7 @@ public interface ElevatorIO {
   public static class ElevatorIOInputs {
     // Define ElevatorState enum with encoder positions
     public enum ElevatorState {
-      Default(0.060059),
+      Default(0.08059),
       CoralL2(1.989),
       DealgifyL2(1.5),
       CoralL3(4.9768007),

@@ -244,7 +244,7 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
     estimatedBowPose = photon.getEstimatedBowPose();
-    estimatedPortPose = photon.getEstimatedPortPose();
+    estimatedPortPose = photon.getEstimatedPortPose(getPose());
 
     // if (estimatedPose.isPresent()) {
     //   stdDevs =
@@ -400,12 +400,6 @@ public class Drive extends SubsystemBase {
 
   public void updatePose() {
 
-    // if (estimatedBowPose.isPresent()) {
-    //   addVisionMeasurement(
-    //       estimatedBowPose.get().estimatedPose.toPose2d() ,
-    //       estimatedBowPose.get().timestampSeconds,
-    //       stdDevs);
-    // }
     if (estimatedPortPose.isPresent()) {
       addVisionMeasurement(
           estimatedPortPose.get().estimatedPose.toPose2d(),
