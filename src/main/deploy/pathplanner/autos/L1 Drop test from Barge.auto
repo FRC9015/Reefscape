@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Drive Straight 1"
+            "pathName": "L1 Coral Path (Shortened)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }
