@@ -20,12 +20,12 @@ public interface ElevatorIO {
   public static class ElevatorIOInputs {
     // Define ElevatorState enum with encoder positions
     public enum ElevatorState {
-      Default(0.0),
-      CoralL2(1.0),
+      Default(0.08059),
+      CoralL2(1.989),
       DealgifyL2(1.5),
-      CoralL3(2.0),
+      CoralL3(4.9768007),
       DealgifyL3(2.5),
-      CoralL4(3.0);
+      CoralL4(7.9338);
 
       // Field to store the encoder position
       private final double encoderPosition;
@@ -59,7 +59,7 @@ public interface ElevatorIO {
   public default void updateInputs(ElevatorIOInputs inputs) {}
 
   /** Sets the elevator position based on the desired state. */
-  public default void setElevatorPosition(ElevatorIOInputs.ElevatorState state) {}
+  public default void setElevatorPosition(double value) {}
 
   /** Run slam elevator at amps */
   default void runCurrent(double amps) {}

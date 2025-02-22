@@ -245,7 +245,7 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
     estimatedBowPose = photon.getEstimatedBowPose();
-    estimatedPortPose = photon.getEstimatedPortPose();
+    estimatedPortPose = photon.getEstimatedPortPose(getPose());
 
     // if (estimatedPose.isPresent()) {
     //   stdDevs =
@@ -401,12 +401,6 @@ public class Drive extends SubsystemBase {
 
   public void updatePose() {
 
-    // if (estimatedBowPose.isPresent()) {
-    //   addVisionMeasurement(
-    //       estimatedBowPose.get().estimatedPose.toPose2d() ,
-    //       estimatedBowPose.get().timestampSeconds,
-    //       stdDevs);
-    // }
     if (estimatedPortPose.isPresent()) {
       addVisionMeasurement(
           estimatedPortPose.get().estimatedPose.toPose2d(),
@@ -438,7 +432,7 @@ public class Drive extends SubsystemBase {
   public double getDistanceToPose(Translation2d targetpose) {
     return getPose().getTranslation().getDistance(targetpose);
   }
-  
+
   public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
     Logger.recordOutput("flippath", AutoBuilder.shouldFlip());
     return AutoBuilder.shouldFlip()

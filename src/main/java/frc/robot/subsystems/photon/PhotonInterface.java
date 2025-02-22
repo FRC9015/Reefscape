@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Inch;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -36,11 +37,11 @@ public class PhotonInterface extends SubsystemBase {
   Transform3d portPose =
       new Transform3d(
           new Translation3d(
-              -Units.Meters.convertFrom(4.5, Inch),
-              -Units.Meters.convertFrom(16, Inch),
-              Units.Meters.convertFrom(5, Inch)),
+              -Units.Meters.convertFrom(0, Inch),
+              -Units.Meters.convertFrom(15, Inch),
+              Units.Meters.convertFrom(7, Inch)),
           new Rotation3d(
-              0, -Units.Radians.convertFrom(15, Degree), Units.Radians.convertFrom(270, Degree)));
+              0, Units.Radians.convertFrom(15, Degree), Units.Radians.convertFrom(270, Degree)));
 
   PhotonPoseEstimator photonPoseEstimatorBow;
   PhotonPoseEstimator photonPoseEstimatorPort;
@@ -55,7 +56,7 @@ public class PhotonInterface extends SubsystemBase {
     }
 
     bow = new PhotonCamera("Bow");
-    port = new PhotonCamera("Port");
+    port = new PhotonCamera("Starboard");
 
     photonPoseEstimatorBow =
         new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, bowPose);
@@ -69,9 +70,9 @@ public class PhotonInterface extends SubsystemBase {
   @Override
   public void periodic() {
 
-    SmartDashboard.putBoolean("April Tag", bow.getLatestResult().getTargets().size() == 2);
-    Logger.recordOutput("Tags/TwoTag", bow.getLatestResult().getTargets().size() == 2);
-    Logger.recordOutput("Tags/Number", bow.getLatestResult().getTargets().size());
+    SmartDashboard.putBoolean("Tag Starboard", port.getLatestResult().getTargets().size() == 2);
+    Logger.recordOutput("Tags/TwoTag", port.getLatestResult().getTargets().size() == 2);
+    Logger.recordOutput("Tags/Number", port.getLatestResult().getTargets().size());
   }
 
   public Translation2d get2DEstimatedPose() {
@@ -90,20 +91,19 @@ public class PhotonInterface extends SubsystemBase {
 
   // makes an estimated pose out of the date from the starboard camera
   public Optional<EstimatedRobotPose> getEstimatedBowPose() {
-    if (bow.getLatestResult().getTargets().size() == 0) {
+    if (bow.getAllUnreadResults().size() == 0) {
 
       return Optional.empty();
     }
 
-    return photonPoseEstimatorBow.update(bow.getLatestResult());
+    return photonPoseEstimatorBow.update(bow.getAllUnreadResults().get(0));
   }
 
-  public Optional<EstimatedRobotPose> getEstimatedPortPose() {
-    if (port.getLatestResult().getTargets().size() == 0) {
-
+  public Optional<EstimatedRobotPose> getEstimatedPortPose(Pose2d robotPose) {
+    if (port.getAllUnreadResults().size() == 0) {
       return Optional.empty();
     }
-
+    photonPoseEstimatorPort.setReferencePose(robotPose);
     return photonPoseEstimatorPort.update(port.getLatestResult());
   }
 }
