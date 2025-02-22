@@ -125,14 +125,12 @@ public class RobotContainer {
     // Named commands for pathplanner autos
     NamedCommands.registerCommand("shootCoral", endEffector.runEffector(3000));
     NamedCommands.registerCommand("IntakeCoral", endEffector.runEffectorReverse(3000));
+
+    NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));
     NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
     NamedCommands.registerCommand("L3Position", elevator.executePreset(ElevatorState.CoralL3));
-    // NamedCommands.registerCommand("IntakeCoral", intake.runIntake(3000));
-    // NamedCommands.registerCommand("EjectCoral", intake.runIntakeReverse(3000));
-    // NamedCommands.registerCommand(
-    //     "WarmUpBeforeAuto",
-    //     AutoCommands.pathfindToAutoStartPoseWhileWarmup("4 L1 Coral Auto", endEffector, intake));
-
+    NamedCommands.registerCommand("L4Position", elevator.executePreset(ElevatorState.CoralL4));
+    
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
