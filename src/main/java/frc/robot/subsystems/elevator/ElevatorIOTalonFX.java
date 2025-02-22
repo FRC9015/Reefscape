@@ -20,6 +20,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -45,6 +46,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   private final Debouncer encoderConnectedDebounce = new Debouncer(0.5);
   private final NeutralOut neutralOut = new NeutralOut();
+  private final VoltageOut voltageOut = new VoltageOut(0.0);
 
   public ElevatorIOTalonFX(int motorId, int motorId1, int encoderId) {
     elevatorMotor = new TalonFX(motorId);
@@ -84,7 +86,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
   @Override
   public void setElevatorPosition(double value) {
-    elevatorMotor.setVoltage(MathUtil.clamp(value, -12, 12));
+    elevatorMotor.setControl(voltageOut.withOutput(MathUtil.clamp(value, -12, 12)));
   }
 
   @Override

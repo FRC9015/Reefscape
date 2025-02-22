@@ -25,6 +25,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+// import frc.robot.subsystems.algae.pivot.Pivot;
+// import frc.robot.subsystems.algae.pivot.PivotIOSim;
+// import frc.robot.subsystems.algae.pivot.PivotIOSparkFlex;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -38,6 +41,9 @@ import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.endeffector.EndEffectorIOSim;
 import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.photon.PhotonInterface;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -51,9 +57,10 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   // private final Climber climber;
-  // private final Intake intake;
+  private final Intake intake;
   private final EndEffector endEffector;
   private final Elevator elevator;
+  // private final Pivot pivot;
 
   private final PhotonInterface photonInterface = new PhotonInterface();
   // Driver Controller
@@ -62,7 +69,7 @@ public class RobotContainer {
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Triggers
-  // private final Trigger robotInPosition;
+  // private final Trigger coralFound;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -83,8 +90,10 @@ public class RobotContainer {
 
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
-        // intake = new Intake(new IntakeIOTalonFX(5));
+        intake = new Intake(new IntakeIOTalonFX(1));
         elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
+        // pivot = new Pivot(new PivotIOSparkFlex(6));
+        // coralFound = new Trigger(() -> intake.isCoralDetected());
         break;
 
       case SIM:
@@ -100,8 +109,10 @@ public class RobotContainer {
 
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
-        // intake = new Intake(new IntakeIOSim());
+        intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
+        // coralFound = new Trigger(() -> intake.isCoralDetected());
+        // pivot = new Pivot(new PivotIOSim());
         break;
 
       default:
@@ -116,8 +127,10 @@ public class RobotContainer {
                 photonInterface);
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
-        // intake = new Intake(new IntakeIOTalonFX(5));
+        intake = new Intake(new IntakeIOTalonFX(1));
         elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
+        // pivot = new Pivot(new PivotIOSparkFlex(6));
+        // coralFound = new Trigger(() -> intake.isCoralDetected());
         break;
     }
 
@@ -192,7 +205,9 @@ public class RobotContainer {
 
     driverController.x().onTrue(drive.pfToPose(Constants.FieldConstants.REEF_D, 0.0));
     driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D, 0.0));
-    driverController.rightBumper().whileTrue(endEffector.runEffectorReverse(0.25));
+    // driverController.leftBumper().whileTrue(pivot.pivotDown(0.25));
+    // driverController.rightBumper().whileTrue(pivot.pivotUp(0.25));
+
     // Slow mode
     driverController
         .leftTrigger()
@@ -207,8 +222,10 @@ public class RobotContainer {
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
     operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
     operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
-    operatorController.leftBumper().onTrue(endEffector.runEffectorReverse(0.25));
-    operatorController.rightBumper().onTrue(endEffector.runEffectorReverse(0.5));
+    operatorController.leftBumper().whileTrue(endEffector.runEffectorReverse(0.25));
+    operatorController.rightBumper().whileTrue(endEffector.runEffectorReverse(0.5));
+
+    // coralFound.whileTrue(endEffector.runEffectorReverse(0.25));
 
     driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
   }
