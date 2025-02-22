@@ -77,6 +77,6 @@ public class AlgaeIOTalonFX implements AlgaeIO {
 
   @Override
   public void setRPM(double rpm) {
-    motor.setControl(velocityRequest.withVelocity(rpm));
+    motor.set(rpm);
   }
 }
