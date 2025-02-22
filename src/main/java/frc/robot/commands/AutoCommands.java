@@ -19,6 +19,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.intake.Intake;
 
@@ -83,6 +84,14 @@ public class AutoCommands {
         Commands.runOnce(() -> intake.setRPM(6000), intake));
   }
 
+
+/**
+ * Finds the closest reef pose to the current robot position.
+ * 
+ * @param currentPose The current pose of the robot.
+ * @return The Pose2d of the closest reef.
+ */
+
   private Pose2d findClosestReefPose(Pose2d currentPose) {
     Pose2d[] reefPoses = {
       Constants.FieldConstants.REEF_A, 
@@ -105,25 +114,67 @@ public class AutoCommands {
     return closestPose;
 }
 
+/**
+ * Checks if the robot is within 2 meters of the nearest reef pose.
+ * 
+ * @param drive The Drive subsystem to get the current robot pose.
+ * @return true if the robot is within 2 meters of the nearest reef, false otherwise.
+ */
+
+//(THIS BOOLEAN UPDATER MUST RUN PERIODICALLY TO SERVE ITS INTENDED PURPOSE)
 public boolean isNearReef(Drive drive) {
+  boolean isWithinTwoMeters = false;
   Pose2d currentPose = drive.getPose();
   Pose2d closestReefPose = findClosestReefPose(currentPose);
   
   // Check if the robot is within 2 meters of the closest reef pose
-  boolean isWithinTwoMeters = currentPose.getTranslation().getDistance(closestReefPose.getTranslation()) <= 2.0;
+  isWithinTwoMeters = currentPose.getTranslation().getDistance(closestReefPose.getTranslation()) <= 2.0;
  
   // Return true if both conditions are met
   return isWithinTwoMeters;
 }
 
-  
-  public Command getReefPathCommand(Drive drive, Elevator elevator, EndEffector endEffector) {
+/**
+ * Checks if the robot is near a reef and executes elevator and end effector commands if true.
+ * 
+ * @param desiredElevatorState The desired state for the elevator.
+ * @param drive The Drive subsystem.
+ * @param elevator The Elevator subsystem.
+ * @param endEffector The EndEffector subsystem.
+ * @return A Command to execute elevator preset and run end effector if near reef, or an empty command if not.
+ */
+
+public Command check(ElevatorIOInputs.ElevatorState desiredElevatorState, Drive drive, Elevator elevator, EndEffector endEffector) {
+  boolean isBotWithinReefPerimeter =  isNearReef(drive);
+  if (isBotWithinReefPerimeter) {
+    return new ParallelCommandGroup(
+      elevator.executePreset(desiredElevatorState),
+      endEffector.runEffector(3000)
+    );
+
+  }
+
+  System.out.println("Robot not sufficiently within reef location.");
+  return new InstantCommand();
+
+}
+
+/**
+ * Creates a command to pathfind to the nearest reef pose and execute scoring actions.
+ * 
+ * @param drive The Drive subsystem.
+ * @param elevator The Elevator subsystem.
+ * @param endEffector The EndEffector subsystem.
+ * @param desiredState The desired state for the elevator.
+ * @return A Command that combines pathfinding to the nearest reef and checking for scoring conditions.
+ */
+
+public Command getReefPathCommand(Drive drive, Elevator elevator, EndEffector endEffector, ElevatorIOInputs.ElevatorState desiredState) {
     Pose2d currentPose = drive.getPose();
     Pose2d targetPose = findClosestReefPose(currentPose);
-    Trigger isBotWithinReefPerimeter = new Trigger(()-> isNearReef(drive));
-    return new SequentialCommandGroup(
-        AutoBuilder.pathfindToPose(targetPose, Constants.AutoConstants.PP_CONSTRAINTS)
-
+    return new ParallelCommandGroup(
+        drive.pathfindToPoseFlipped(targetPose, 0),
+        check(desiredState, drive, elevator, endEffector)    
     );
 }
 
