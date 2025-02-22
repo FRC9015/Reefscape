@@ -1,3 +1,3 @@
 package frc.robot.subsystems.algae.pivot;
 
-public class PivotIOSim {}
+public class PivotIOSim implements PivotIO {}

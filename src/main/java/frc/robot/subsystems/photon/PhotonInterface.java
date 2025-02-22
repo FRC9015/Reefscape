@@ -13,7 +13,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.io.IOException; 
+import java.io.IOException;
 import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
@@ -104,6 +104,6 @@ public class PhotonInterface extends SubsystemBase {
       return Optional.empty();
     }
     photonPoseEstimatorPort.setReferencePose(robotPose);
-    return photonPoseEstimatorPort.update(port.getAllUnreadResults().get(0));
+    return photonPoseEstimatorPort.update(port.getLatestResult());
   }
 }

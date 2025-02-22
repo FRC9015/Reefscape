@@ -43,10 +43,10 @@ public interface PivotIO {
   public default void setPivotPosition(double value) {}
 
   /** Moves the Pivot Up. */
-  public default void pivotUp(double speed){}
+  public default void pivotUp(double speed) {}
 
   /** Moves the Pivot Down. */
-  public default void pivotDown(double speed){}
+  public default void pivotDown(double speed) {}
 
   /** Run slam pivot at amps. */
   default void runCurrent(double amps) {}

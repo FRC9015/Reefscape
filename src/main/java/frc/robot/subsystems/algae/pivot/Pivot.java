@@ -24,6 +24,7 @@ public class Pivot extends SubsystemBase {
     this.io = io;
     this.pidController = new PIDController(kP, kI, kD);
     this.pidController.setTolerance(kToleranceMeters);
+    // this.setDefaultCommand(executePreset(PivotPosition.Default));
     encoderDisconnectedAlert = new Alert("Pivot encoder disconnected!", AlertType.kError);
   }
 
@@ -65,4 +66,9 @@ public class Pivot extends SubsystemBase {
     return run(() -> io.pivotDown(speed));
   }
 
+  public Command executePreset(PivotIOInputs.PivotPosition state) {
+    Logger.recordOutput("Pivot/State", state);
+    Logger.recordOutput("Pivot/CurrentPosition", inputs.pivotPosition);
+    return run(() -> this.setPreset(state));
+  }
 }
