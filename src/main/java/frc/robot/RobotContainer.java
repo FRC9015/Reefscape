@@ -22,12 +22,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-// import frc.robot.subsystems.algae.pivot.Pivot;
-// import frc.robot.subsystems.algae.pivot.PivotIOSim;
-// import frc.robot.subsystems.algae.pivot.PivotIOSparkFlex;
+import frc.robot.subsystems.algae.pivot.Pivot;
+import frc.robot.subsystems.algae.pivot.PivotIOSim;
+import frc.robot.subsystems.algae.pivot.PivotIOSparkFlex;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -60,7 +61,7 @@ public class RobotContainer {
   private final Intake intake;
   private final EndEffector endEffector;
   private final Elevator elevator;
-  // private final Pivot pivot;
+  private final Pivot pivot;
 
   private final PhotonInterface photonInterface = new PhotonInterface();
   // Driver Controller
@@ -69,7 +70,7 @@ public class RobotContainer {
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Triggers
-  // private final Trigger coralFound;
+  private final Trigger coralFound;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -92,8 +93,8 @@ public class RobotContainer {
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
         intake = new Intake(new IntakeIOTalonFX(1));
         elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
-        // pivot = new Pivot(new PivotIOSparkFlex(6));
-        // coralFound = new Trigger(() -> intake.isCoralDetected());
+        pivot = new Pivot(new PivotIOSparkFlex(6));
+        coralFound = new Trigger(() -> intake.isCoralDetected());
         break;
 
       case SIM:
@@ -111,8 +112,8 @@ public class RobotContainer {
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
-        // coralFound = new Trigger(() -> intake.isCoralDetected());
-        // pivot = new Pivot(new PivotIOSim());
+        coralFound = new Trigger(() -> intake.isCoralDetected());
+        pivot = new Pivot(new PivotIOSim());
         break;
 
       default:
@@ -129,8 +130,8 @@ public class RobotContainer {
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
         intake = new Intake(new IntakeIOTalonFX(1));
         elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
-        // pivot = new Pivot(new PivotIOSparkFlex(6));
-        // coralFound = new Trigger(() -> intake.isCoralDetected());
+        pivot = new Pivot(new PivotIOSparkFlex(6));
+        coralFound = new Trigger(() -> intake.isCoralDetected());
         break;
     }
 
@@ -207,7 +208,6 @@ public class RobotContainer {
     driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D, 0.0));
     // driverController.leftBumper().whileTrue(pivot.pivotDown(0.25));
     // driverController.rightBumper().whileTrue(pivot.pivotUp(0.25));
-
     // Slow mode
     driverController
         .leftTrigger()
@@ -225,7 +225,7 @@ public class RobotContainer {
     operatorController.leftBumper().whileTrue(endEffector.runEffectorReverse(0.25));
     operatorController.rightBumper().whileTrue(endEffector.runEffectorReverse(0.5));
 
-    // coralFound.whileTrue(endEffector.runEffectorReverse(0.25));
+    coralFound.whileTrue(endEffector.runEffectorReverse(0.25));
 
     driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
   }

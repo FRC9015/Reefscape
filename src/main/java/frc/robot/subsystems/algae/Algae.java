@@ -31,7 +31,7 @@ public class Algae extends SubsystemBase {
     encoderDisconnectedAlert.set(!inputs.algaeEncoderConnected);
   }
 
-  public Command setSpeed(double rpm){
+  public Command setSpeed(double rpm) {
     return run(() -> io.setRPM(rpm));
   }
 }

@@ -35,8 +35,8 @@ public class Elevator extends SubsystemBase {
   private double kP = 2.0;
   private double kI = 0.0;
   private double kD = 0.0;
-  private double kS = 0.0;
-  private double kG = 0.0;
+  private double kS = .2;
+  private double kG = 1;
   private double kV = 0.0;
   private double kA = 0.0;
 
