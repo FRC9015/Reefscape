@@ -87,7 +87,7 @@ public class RobotContainer {
 
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
-        intake = new Intake(new IntakeIOTalonFX(0));
+        intake = new Intake(new IntakeIOTalonFX(1));
         elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
         coralFound = new Trigger(() -> intake.isCoralDetected());
         break;
@@ -122,7 +122,7 @@ public class RobotContainer {
                 photonInterface);
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
-        intake = new Intake(new IntakeIOTalonFX(0));
+        intake = new Intake(new IntakeIOTalonFX(1));
         elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
         coralFound = new Trigger(() -> intake.isCoralDetected());
         break;
