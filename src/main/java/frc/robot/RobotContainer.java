@@ -200,6 +200,7 @@ public class RobotContainer {
     driverController.x().onTrue(drive.pfToPose(Constants.FieldConstants.REEF_D, 0.0));
     driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D, 0.0));
     driverController.rightBumper().whileTrue(endEffector.runEffectorReverse(0.25));
+    driverController.povUp().whileTrue(getAutonomousCommand());
     // Slow mode
     driverController
         .leftTrigger()
@@ -211,16 +212,16 @@ public class RobotContainer {
                 () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
 
     operatorController.povDown()
-    .and(()-> !intake.isCoralDetected())
+    .and(() -> !intake.isCoralDetected())
         .onTrue(elevator.executePreset(ElevatorState.Default));
     operatorController.povLeft()
-    .and(()-> !intake.isCoralDetected())
+    .and(() -> !intake.isCoralDetected())
         .onTrue(elevator.executePreset(ElevatorState.CoralL2));
     operatorController.povRight()
-    .and(()-> !intake.isCoralDetected())
+    .and(() -> !intake.isCoralDetected())
         .onTrue(elevator.executePreset(ElevatorState.CoralL3));
     operatorController.povUp()
-    .and(()-> !intake.isCoralDetected())
+    .and(() -> !intake.isCoralDetected())
         .onTrue(elevator.executePreset(ElevatorState.CoralL4));
     operatorController.leftBumper().whileTrue(endEffector.runEffectorReverse(0.25));
     operatorController.rightBumper().whileTrue(endEffector.runEffectorReverse(0.5));

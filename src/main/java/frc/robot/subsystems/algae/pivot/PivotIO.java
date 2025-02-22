@@ -40,12 +40,18 @@ public interface PivotIO {
   public default void updateInputs(PivotIOInputs inputs) {}
 
   /** Sets the pivot position based on the desired state. */
-  public default void setPivotPosition(PivotIOInputs.PivotPosition pivotPosition) {}
+  public default void setPivotPosition(double value) {}
 
-  /** Run slam pivot at amps */
+  /** Moves the Pivot Up. */
+  public default void pivotUp(double speed){}
+
+  /** Moves the Pivot Down. */
+  public default void pivotDown(double speed){}
+
+  /** Run slam pivot at amps. */
   default void runCurrent(double amps) {}
 
-  /** Stop slam pivot */
+  /** Stop slam pivot. */
   default void stop() {}
 
   /** Enable or disable brake mode on the pivot motor(s). */
