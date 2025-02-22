@@ -207,8 +207,8 @@ public class RobotContainer {
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
     operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
     operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
-    operatorController.leftBumper().onTrue(endEffector.runEffectorReverse(0.25));
-    operatorController.rightBumper().onTrue(endEffector.runEffectorReverse(0.5));
+    operatorController.leftBumper().whileTrue(endEffector.runEffectorReverse(0.25));
+    operatorController.rightBumper().whileTrue(endEffector.runEffectorReverse(0.5));
 
     driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
   }

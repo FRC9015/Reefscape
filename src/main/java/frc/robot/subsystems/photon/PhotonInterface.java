@@ -36,9 +36,9 @@ public class PhotonInterface extends SubsystemBase {
   Transform3d portPose =
       new Transform3d(
           new Translation3d(
-              -Units.Meters.convertFrom(4.5, Inch),
+              -Units.Meters.convertFrom(3, Inch),
               -Units.Meters.convertFrom(16, Inch),
-              Units.Meters.convertFrom(5, Inch)),
+              Units.Meters.convertFrom(7, Inch)),
           new Rotation3d(
               0, -Units.Radians.convertFrom(15, Degree), Units.Radians.convertFrom(270, Degree)));
 
@@ -55,7 +55,7 @@ public class PhotonInterface extends SubsystemBase {
     }
 
     bow = new PhotonCamera("Bow");
-    port = new PhotonCamera("Port");
+    port = new PhotonCamera("Starboard");
 
     photonPoseEstimatorBow =
         new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, bowPose);
