@@ -23,7 +23,7 @@ public interface ElevatorIO {
       Default(0.060059),
       CoralL2(1.989),
       DealgifyL2(1.5),
-      CoralL3(3.9768007),
+      CoralL3(4.9768007),
       DealgifyL3(2.5),
       CoralL4(7.9338);
 

@@ -13,11 +13,10 @@
 
 package frc.robot.subsystems.elevator;
 
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs;
@@ -30,30 +29,27 @@ public class Elevator extends SubsystemBase {
 
   private PIDController pidController;
   private final Alert encoderDisconnectedAlert;
+  private ElevatorFeedforward feedforward;
 
   // Elevator PID constants - Initial values
-  private double kP = 1.0;
+  private double kP = 1.5;
   private double kI = 0.0;
   private double kD = 0.0;
-  private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
+  private double kS = 0.0;
+  private double kG = 0.0;
+  private double kV = 0.0;
+  private double kA = 0.0;
 
-  private ShuffleboardTab elevatorTab; // Shuffleboard Tab
+  private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
 
   public Elevator(ElevatorIO io) {
     this.io = io;
     this.pidController = new PIDController(kP, kI, kD);
+    this.feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
     this.pidController.setTolerance(kToleranceMeters);
     this.setDefaultCommand(executePreset(ElevatorState.Default));
 
     encoderDisconnectedAlert = new Alert("Disconnected elevator encoder.", AlertType.kError);
-
-    // Create a Shuffleboard tab for the elevator
-    elevatorTab = Shuffleboard.getTab("Elevator");
-
-    // Add PID controller values to shuffleboard
-    elevatorTab.add("Elevator P Gain", kP);
-    elevatorTab.add("Elevator I Gain", kI);
-    elevatorTab.add("Elevator D Gain", kD);
   }
 
   /** Periodic method to update inputs, PID calculations, and alerts. */
@@ -64,22 +60,6 @@ public class Elevator extends SubsystemBase {
 
     // Update alert
     encoderDisconnectedAlert.set(!inputs.elevatorEncoderConnected);
-
-    // Update PID values from Shuffleboard
-    updatePIDValues();
-  }
-
-  private void updatePIDValues() {
-    double newP = elevatorTab.add("Elevator P Gain", kP).getEntry().getDouble(kP);
-    double newI = elevatorTab.add("Elevator I Gain", kI).getEntry().getDouble(kI);
-    double newD = elevatorTab.add("Elevator D Gain", kD).getEntry().getDouble(kD);
-
-    if (newP != kP || newI != kI || newD != kD) {
-        kP = newP;
-        kI = newI;
-        kD = newD;
-        pidController.setPID(kP, kI, kD);
-    }
   }
 
   /**
@@ -90,7 +70,9 @@ public class Elevator extends SubsystemBase {
   public void setPreset(ElevatorIOInputs.ElevatorState state) {
     double targetPosition = state.getEncoderPosition();
     pidController.setSetpoint(targetPosition);
-    io.setElevatorPosition(pidController.calculate(inputs.elevatorPosition));
+    io.setElevatorPosition(
+        pidController.calculate(inputs.elevatorPosition)
+            + feedforward.calculate(inputs.elevatorPosition));
     io.updateInputs(inputs);
     Logger.recordOutput("Elevator/Setpoint", targetPosition);
   }
