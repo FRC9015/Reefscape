@@ -13,12 +13,14 @@
 
 package frc.robot.subsystems.elevator;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs.ElevatorState;
 import org.littletonrobotics.junction.Logger;
@@ -35,7 +37,7 @@ public class Elevator extends SubsystemBase {
   private double kP = 2.0;
   private double kI = 0.0;
   private double kD = 0.0;
-  private double kS = .2;
+  private double kS = 0.2;
   private double kG = 1;
   private double kV = 0.0;
   private double kA = 0.0;
@@ -63,16 +65,34 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
-   * Sets the elevator to the specified preset state using PID control.
-   *
-   * @param state The desired preset state.
+    added fixed logic for L3 (encoder position 3.82) and L4 (7.375)
+    When the elevator is between these two positions, the output is scaled from Constants.SLOW_MODE_CONSTANT
+    (at L3) to Constants.ANTI_CAPSIZE_CONSTANT (at L4), but stays at Constants.SLOW_MODE_CONSTANT for L3 and moving to L4.
+   
+    @param state The desired preset state.
    */
   public void setPreset(ElevatorIOInputs.ElevatorState state) {
     double targetPosition = state.getEncoderPosition();
     pidController.setSetpoint(targetPosition);
-    io.setElevatorPosition(
-        pidController.calculate(inputs.elevatorPosition)
-            + feedforward.calculate(inputs.elevatorPosition));
+    double output = pidController.calculate(inputs.elevatorPosition) + feedforward.calculate(inputs.elevatorPosition);
+
+    // Interpolated slow mode scaling for L3 to L4
+    if (state == ElevatorIOInputs.ElevatorState.CoralL3 || state == ElevatorIOInputs.ElevatorState.CoralL4) {
+      double l3Pos = ElevatorIOInputs.ElevatorState.CoralL3.getEncoderPosition(); // Expected: 3.82
+      double l4Pos = ElevatorIOInputs.ElevatorState.CoralL4.getEncoderPosition(); // Expected: 7.375
+
+      // Keep only at current position between L3 and L4
+      double currentPos = MathUtil.clamp(inputs.elevatorPosition, l3Pos, l4Pos);
+      // Compute the interpolation fraction (0 at L3, 1 at L4)
+      double fraction = (currentPos - l3Pos) / (l4Pos - l3Pos);
+      // Linearly interpolate scaling factor at L3 use SLOW_MODE_CONSTANT gradually increasing at L4 to ANTI_CAPSIZE_CONSTANT
+      double scalingFactor = (1 - fraction) * Constants.SLOW_MODE_CONSTANT
+                             + fraction * Constants.ANTI_CAPSIZE_CONSTANT;
+      output *= scalingFactor;
+    }
+    // Interpolated slow mode scaling for L3 to L4
+
+    io.setElevatorPosition(output);
     io.updateInputs(inputs);
     Logger.recordOutput("Elevator/Setpoint", targetPosition);
   }
