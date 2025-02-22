@@ -15,12 +15,16 @@ package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
@@ -49,16 +53,16 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     elevatorFollower = new Follower(motorId, true);
     elevatorMotor1.setControl(elevatorFollower);
 
-    // // Configure the motor
-    // TalonFXConfiguration motorConfig = new TalonFXConfiguration();
-    // motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    // motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    // elevatorMotor.getConfigurator().apply(motorConfig);
+    // Configure the motor
+    TalonFXConfiguration motorConfig = new TalonFXConfiguration();
+    motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    elevatorMotor.getConfigurator().apply(motorConfig);
 
-    // // Configure the encoder
-    // CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
-    // encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    // elevatorEncoder.getConfigurator().apply(encoderConfig);
+    // Configure the encoder
+    CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+    encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+    elevatorEncoder.getConfigurator().apply(encoderConfig);
 
     // Signals
     encoderPositionSignal = elevatorEncoder.getPosition();
