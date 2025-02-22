@@ -210,10 +210,18 @@ public class RobotContainer {
                 () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
 
-    operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
-    operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
-    operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
-    operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
+    operatorController.povDown()
+    .and(()-> !intake.isCoralDetected())
+        .onTrue(elevator.executePreset(ElevatorState.Default));
+    operatorController.povLeft()
+    .and(()-> !intake.isCoralDetected())
+        .onTrue(elevator.executePreset(ElevatorState.CoralL2));
+    operatorController.povRight()
+    .and(()-> !intake.isCoralDetected())
+        .onTrue(elevator.executePreset(ElevatorState.CoralL3));
+    operatorController.povUp()
+    .and(()-> !intake.isCoralDetected())
+        .onTrue(elevator.executePreset(ElevatorState.CoralL4));
     operatorController.leftBumper().whileTrue(endEffector.runEffectorReverse(0.25));
     operatorController.rightBumper().whileTrue(endEffector.runEffectorReverse(0.5));
 
