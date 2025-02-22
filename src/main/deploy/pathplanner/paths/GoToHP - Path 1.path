@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.780020491803279,
+        "x": 7.456352459016394,
         "y": 7.267674180327869
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.022619766060343,
+        "x": 7.698951733273457,
         "y": 7.501765316827602
       },
       "isLocked": false,
@@ -90,7 +90,7 @@
   "folder": "GoToHP Paths- From Start Zones",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
