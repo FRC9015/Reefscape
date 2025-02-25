@@ -13,12 +13,14 @@
 
 package frc.robot.subsystems.elevator;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs.ElevatorState;
 import org.littletonrobotics.junction.Logger;
@@ -64,9 +66,11 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
-   * Sets the elevator to the specified preset state using PID control.
-   *
-   * @param state The desired preset state.
+    added fixed logic for L3 (encoder position 3.82) and L4 (7.375)
+    When the elevator is between these two positions, the output is scaled from Constants.SLOW_MODE_CONSTANT
+    (at L3) to Constants.ANTI_CAPSIZE_CONSTANT (at L4), but stays at Constants.SLOW_MODE_CONSTANT for L3 and moving to L4.
+   
+    @param state The desired preset state.
    */
   public void setPreset(ElevatorIOInputs.ElevatorState state) {
     double targetPosition = state.getEncoderPosition();
