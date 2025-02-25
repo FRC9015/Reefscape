@@ -32,13 +32,14 @@ public class Elevator extends SubsystemBase {
   private ElevatorFeedforward feedforward;
 
   // Elevator PID constants - Initial values
-  private double kP = 2.0;
+  private double kP = 4.5;
   private double kI = 0.0;
-  private double kD = 0.0;
-  private double kS = .2;
+  private double kD = 0.05;
+  private double kS = 0;
   private double kG = 1;
-  private double kV = 0.0;
+  private double kV = 0;
   private double kA = 0.0;
+  private double offset = 0;
 
   private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
 
@@ -69,11 +70,18 @@ public class Elevator extends SubsystemBase {
    */
   public void setPreset(ElevatorIOInputs.ElevatorState state) {
     double targetPosition = state.getEncoderPosition();
-    pidController.setSetpoint(targetPosition);
+    pidController.setSetpoint(targetPosition - offset);
     io.setElevatorPosition(
         pidController.calculate(inputs.elevatorPosition)
             + feedforward.calculate(inputs.elevatorPosition));
+
+    inputs.setpoint = targetPosition;
+    if (Math.abs(targetPosition - inputs.elevatorPosition) <= 0.05) {
+      inputs.elevatorAtSetpoint = true;
+    }
+
     io.updateInputs(inputs);
+
     Logger.recordOutput("Elevator/Setpoint", targetPosition);
   }
 
@@ -81,5 +89,9 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Elevator/State", state);
     Logger.recordOutput("Elevator/CurrentPosition", inputs.elevatorPosition);
     return run(() -> this.setPreset(state));
+  }
+
+  public Boolean elevatorAtPosition() {
+    return inputs.elevatorAtSetpoint;
   }
 }
