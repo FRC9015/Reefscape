@@ -123,8 +123,8 @@ public class RobotContainer {
     }
 
     // Named commands for pathplanner autos
-    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(3000));
-    NamedCommands.registerCommand("IntakeCoral", endEffector.runEffectorReverse(3000));
+    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(3000).withTimeout(2));
+    NamedCommands.registerCommand("IntakeCoral", endEffector.runEffectorReverse(3000).withTimeout(2));
 
     NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));
     NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
