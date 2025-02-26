@@ -1,21 +1,15 @@
 package frc.robot.subsystems.algae;
 
-import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 
@@ -34,7 +28,6 @@ public class AlgaeIOTalonFX implements AlgaeIO {
   // private final DigitalInput algaeSensor;--> Do we need this?
   public AlgaeIOTalonFX(int motorId1) {
     motor = new TalonFX(motorId1);
-   
 
     // Configure motors
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
@@ -44,7 +37,7 @@ public class AlgaeIOTalonFX implements AlgaeIO {
 
     TalonFXConfiguration followerConfig = new TalonFXConfiguration();
     followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    followerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; 
+    followerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     appliedVoltsSignal = motor.getMotorVoltage();
     currentSignal = motor.getStatorCurrent();
