@@ -32,7 +32,8 @@ public class PhotonInterface extends SubsystemBase {
               -Units.Meters.convertFrom(1, Inch),
               Units.Meters.convertFrom(5, Inch)),
           new Rotation3d(
-              0, -Units.Radians.convertFrom(15, Degree), Units.Radians.convertFrom(180, Degree)));
+              0, -Units.Radians.convertFrom(15, Degree), Units.Radians.convertFrom(180,
+Degree)));
 
   Transform3d portPose =
       new Transform3d(
@@ -63,7 +64,8 @@ public class PhotonInterface extends SubsystemBase {
     photonPoseEstimatorBow.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
     photonPoseEstimatorPort =
-        new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, portPose);
+        new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+portPose);
     photonPoseEstimatorPort.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
   }
 

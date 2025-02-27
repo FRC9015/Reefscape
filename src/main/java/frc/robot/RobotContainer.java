@@ -54,8 +54,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link
+Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot
+(including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -145,13 +147,15 @@ public class RobotContainer {
 
     // Named commands for pathplanner autos
     NamedCommands.registerCommand("shootCoral", endEffector.runEffector(3000).withTimeout(2));
-    NamedCommands.registerCommand("IntakeCoral", endEffector.runEffectorReverse(3000).withTimeout(2));
+    NamedCommands.registerCommand("IntakeCoral",
+endEffector.runEffectorReverse(3000).withTimeout(2));
 
-    NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));
+    NamedCommands.registerCommand("DefaultPosition",
+elevator.executePreset(ElevatorState.Default));
     NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
     NamedCommands.registerCommand("L3Position", elevator.executePreset(ElevatorState.CoralL3));
     NamedCommands.registerCommand("L4Position", elevator.executePreset(ElevatorState.CoralL4));
-    
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -211,7 +215,8 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     driverController.x().onTrue(drive.pfToPose(Constants.FieldConstants.REEF_D, 0.0));
-    driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D, 0.0));
+    driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
+0.0));
     // driverController.leftBumper().whileTrue(pivot.pivotDown(0.25));
     // driverController.rightBumper().whileTrue(pivot.pivotUp(0.25));
     // Slow mode
@@ -237,7 +242,8 @@ public class RobotContainer {
 
     driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
     //Pathfind to source
-    driverController.leftBumper().onTrue(drive.pathfindToPose(new Pose2d(new Translation2d(1.654,6.932),new Rotation2d(120)), 0));
+    driverController.leftBumper().onTrue(drive.pathfindToPose(new Pose2d(new
+Translation2d(1.654,6.932),new Rotation2d(120)), 0));
   }
 
   /**

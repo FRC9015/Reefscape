@@ -67,15 +67,18 @@ import org.photonvision.EstimatedRobotPose;
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
   static final double ODOMETRY_FREQUENCY =
-      new CANBus(TunerConstants.swerveDrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
+      new CANBus(TunerConstants.swerveDrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 :
+100.0;
   public static final double DRIVE_BASE_RADIUS =
       Math.max(
           Math.max(
               Math.hypot(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
-              Math.hypot(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY)),
+              Math.hypot(TunerConstants.FrontRight.LocationX,
+TunerConstants.FrontRight.LocationY)),
           Math.max(
               Math.hypot(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
-              Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
+              Math.hypot(TunerConstants.BackRight.LocationX,
+TunerConstants.BackRight.LocationY)));
 
   // PathPlanner config constants
   private static final double ROBOT_MASS_KG = 74.088;
@@ -116,7 +119,8 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition()
       };
   private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new
+Pose2d());
 
   private Optional<EstimatedRobotPose> estimatedBowPose, estimatedPortPose;
   private Matrix<N3, N1> stdDevs =
@@ -146,7 +150,8 @@ public class Drive extends SubsystemBase {
     modules[3] = new Module(brModuleIO, 3, TunerConstants.BackRight);
 
     // Usage reporting for swerve template
-    HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_AdvantageKit);
+    HAL.report(tResourceType.kResourceType_RobotDrive,
+tInstances.kRobotDriveSwerve_AdvantageKit);
 
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
@@ -256,7 +261,8 @@ public class Drive extends SubsystemBase {
     // }
 
     stdDevs =
-        VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
+        VecBuilder.fill(getPose().getX(), getPose().getY(),
+getPose().getRotation().getRadians());
     updatePose();
   }
 
@@ -297,7 +303,8 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Stops the drive and turns the modules to an X arrangement to resist movement. The modules will
+   * Stops the drive and turns the modules to an X arrangement to resist movement. The modules
+will
    * return to their normal orientations the next time a nonzero velocity is requested.
    */
   public void stopWithX() {
@@ -318,7 +325,8 @@ public class Drive extends SubsystemBase {
 
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
+    return run(() ->
+runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 
   public Command followPathCommand(String pathname) {
@@ -422,7 +430,8 @@ public class Drive extends SubsystemBase {
   public static Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
       new Translation2d(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
-      new Translation2d(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
+      new Translation2d(TunerConstants.FrontRight.LocationX,
+TunerConstants.FrontRight.LocationY),
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
