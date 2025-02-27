@@ -49,7 +49,7 @@ public class PhotonInterface extends SubsystemBase {
   public PhotonInterface() {
     try {
       fieldLayout =
-          AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025Reefscape.m_resourceFile);
+          AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
     } catch (IOException e) {
       System.out.println("Couldn't Find April Tag Layout File");
       e.printStackTrace();
