@@ -31,10 +31,10 @@ public interface IntakeIO {
   public default void updateInputs(IntakeIOInputs inputs) {}
 
   /** Stop intake`from running */
-  default void stop() {}
+  public default void stop() {}
 
   /** Enable or disable brake mode on the intake motor. */
-  default void setBrakeMode(boolean enable) {}
+  public default void setBrakeMode(boolean enable) {}
 
-  default void setRPM(double rpm) {}
+  public default void setRPM(double rpm) {}
 }

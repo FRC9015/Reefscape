@@ -27,10 +27,16 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.algae.Algae;
+import frc.robot.subsystems.algae.AlgaeIO;
+import frc.robot.subsystems.algae.AlgaeIOSim;
 import frc.robot.subsystems.algae.AlgaeIOTalonFX;
 import frc.robot.subsystems.algae.pivot.Pivot;
+import frc.robot.subsystems.algae.pivot.PivotIO;
 import frc.robot.subsystems.algae.pivot.PivotIOSim;
 import frc.robot.subsystems.algae.pivot.PivotIOSparkFlex;
+// import frc.robot.subsystems.algae.pivot.Pivot;
+// import frc.robot.subsystems.algae.pivot.PivotIOSim;
+// import frc.robot.subsystems.algae.pivot.PivotIOSparkFlex;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -38,13 +44,16 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs.ElevatorState;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endeffector.EndEffector;
+import frc.robot.subsystems.endeffector.EndEffectorIO;
 import frc.robot.subsystems.endeffector.EndEffectorIOSim;
 import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.photon.PhotonInterface;
@@ -73,7 +82,7 @@ public class RobotContainer {
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Triggers
-  private final Trigger coralFound;
+  private final Trigger coralPassed;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -98,7 +107,7 @@ public class RobotContainer {
         algae = new Algae(new AlgaeIOTalonFX(0));
         elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
         pivot = new Pivot(new PivotIOSparkFlex(6));
-        coralFound = new Trigger(() -> intake.isCoralDetected());
+        coralPassed = new Trigger(() -> intake.isCoralDetected());
         break;
 
       case SIM:
@@ -116,8 +125,8 @@ public class RobotContainer {
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
-        algae = new Algae(new AlgaeIOTalonFX(0));
-        coralFound = new Trigger(() -> intake.isCoralDetected());
+        algae = new Algae(new AlgaeIOSim());
+        coralPassed = new Trigger(() -> intake.isCoralDetected());
         pivot = new Pivot(new PivotIOSim());
         break;
 
@@ -132,12 +141,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 photonInterface);
         // climber = new Climber(1);
-        endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
-        intake = new Intake(new IntakeIOTalonFX(1));
-        elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
-        pivot = new Pivot(new PivotIOSparkFlex(6));
-        algae = new Algae(new AlgaeIOTalonFX(0));
-        coralFound = new Trigger(() -> intake.isCoralDetected());
+        endEffector = new EndEffector(new EndEffectorIO() {});
+        intake = new Intake(new IntakeIO() {});
+        elevator = new Elevator(new ElevatorIO() {});
+        coralPassed = new Trigger(() -> intake.isCoralDetected());
+        algae = new Algae(new AlgaeIO() {});
+        pivot = new Pivot(new PivotIO() {});
         break;
     }
 
@@ -214,6 +223,7 @@ public class RobotContainer {
     driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D, 0.0));
     // driverController.leftBumper().whileTrue(pivot.pivotDown(0.25));
     // driverController.rightBumper().whileTrue(pivot.pivotUp(0.25));
+
     // Slow mode
     driverController
         .leftTrigger()
@@ -235,9 +245,8 @@ public class RobotContainer {
     operatorController.b().whileTrue(algae.setSpeed(-5));
     operatorController.leftTrigger().whileTrue(endEffector.runEffector(0.15));
 
-    coralFound.whileTrue(endEffector.runEffectorReverse(0.25));
+    // coralFound.whileTrue(endEffector.runEffectorReverse(0.25));
 
-    driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
   }
 
   /**

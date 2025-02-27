@@ -34,7 +34,8 @@ public class Intake extends SubsystemBase {
   /** Periodically updates the intake's state and logs inputs. */
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Intake", inputs);
+    Logger.processInputs("Intake/Inputs", inputs);
+    Logger.recordOutput("Intake/Sensor", isCoralDetected());
 
     // Update alerts
     encoderDisconnectedAlert.set(!inputs.intakeEncoderConnected);
