@@ -73,16 +73,6 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
-   * added fixed logic for L3 (encoder position 3.82) and L4 (7.375) When the elevator is between
-   * these two positions, the output is scaled from Constants.SLOW_MODE_CONSTANT (at L3) to
-   * Constants.ANTI_CAPSIZE_CONSTANT (at L4), but stays at Constants.SLOW_MODE_CONSTANT for L3 and
-   * moving to L4.
-   *
-   * <p>Sets the elevator to a preset state. added fixed logic for L3 (encoder position 3.82) and L4
-   * (7.375) When the elevator is between these two positions, the output is scaled from
-   * Constants.SLOW_MODE_CONSTANT (at L3) to Constants.ANTI_CAPSIZE_CONSTANT (at L4), but stays at
-   * Constants.SLOW_MODE_CONSTANT for L3 and moving to L4.
-   *
    * @param state The desired preset state.
    */
   public void setPreset(ElevatorIOInputs.ElevatorState state) {
@@ -92,7 +82,6 @@ public class Elevator extends SubsystemBase {
         pidController.calculate(inputs.elevatorPosition + offset)
             + feedforward.calculate(inputs.elevatorPosition + offset);
     inputs.setpoint = targetPosition;
-
     if (Math.abs(targetPosition - inputs.elevatorPosition + offset) <= 0.03) {
       inputs.elevatorAtSetpoint = true;
     }

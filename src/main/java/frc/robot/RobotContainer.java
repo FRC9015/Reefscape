@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.algae.Algae;
+import frc.robot.subsystems.algae.AlgaeIOSim;
 import frc.robot.subsystems.algae.AlgaeIOTalonFX;
 import frc.robot.subsystems.algae.pivot.Pivot;
 import frc.robot.subsystems.algae.pivot.PivotIOSim;
@@ -50,6 +51,7 @@ import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.photon.PhotonInterface;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import frc.robot.Constants.MotorIDConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -60,10 +62,9 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  // private final Climber climber;
   private final Intake intake;
   private final EndEffector endEffector;
-  public static Elevator elevator;
+  private final Elevator elevator;
   private final Pivot pivot;
   private final Algae algae;
 
@@ -93,13 +94,11 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 photonInterface);
 
-        // climber = new Climber(1);
-        endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
+        endEffector = new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
         intake = new Intake(new IntakeIOTalonFX(1));
-        algae = new Algae(new AlgaeIOTalonFX(0));
-        elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8, 0));
-        pivot = new Pivot(new PivotIOSparkFlex(6));
-        coralFound = new Trigger(() -> intake.isCoralDetected());
+        elevator = new Elevator(new ElevatorIOTalonFX(MotorIDConstants.ELEVATOR_MOTOR_ID1, MotorIDConstants.ELEVATOR_MOTOR_ID2, MotorIDConstants.ELEVATOR_ENCODER_ID, 0));
+        pivot = new Pivot(new PivotIOSparkFlex(MotorIDConstants.PIVOT_MOTOR_ID));
+        algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         break;
 
       case SIM:
@@ -117,8 +116,7 @@ public class RobotContainer {
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
-        algae = new Algae(new AlgaeIOTalonFX(0));
-        coralFound = new Trigger(() -> intake.isCoralDetected());
+        algae = new Algae(new AlgaeIOSim());
         pivot = new Pivot(new PivotIOSim());
         break;
 
@@ -133,19 +131,19 @@ public class RobotContainer {
                 new ModuleIO() {},
                 photonInterface);
         // climber = new Climber(1);
-        endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
+        endEffector = new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
         intake = new Intake(new IntakeIOTalonFX(1));
-        elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8, 0));
-        pivot = new Pivot(new PivotIOSparkFlex(6));
-        algae = new Algae(new AlgaeIOTalonFX(0));
-        coralFound = new Trigger(() -> intake.isCoralDetected());
+        elevator = new Elevator(new ElevatorIOTalonFX(MotorIDConstants.ELEVATOR_MOTOR_ID1, MotorIDConstants.ELEVATOR_MOTOR_ID2, MotorIDConstants.ELEVATOR_ENCODER_ID, 0));
+        pivot = new Pivot(new PivotIOSparkFlex(MotorIDConstants.PIVOT_MOTOR_ID));
+        algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
+        
         break;
     }
+    coralFound = new Trigger(() -> intake.isCoralDetected());
 
     // Named commands for pathplanner autos
-    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(3000).withTimeout(2));
-    NamedCommands.registerCommand(
-        "IntakeCoral", endEffector.runEffectorReverse(3000).withTimeout(2));
+    NamedCommands.registerCommand("IntakeCoral", endEffector.runEffector(0.5).withTimeout(2));
+    NamedCommands.registerCommand("shootCoral", endEffector.runEffectorReverse(0.5).withTimeout(2));
 
     NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));
     NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
@@ -253,13 +251,5 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
-  }
-
-  public Command seriouslyZeroTheElevator() {
-    return elevator.zeroTheElevator();
-  }
-
-  public Boolean seriouslygetZeroSwitch() {
-    return elevator.getElevatorLimitSwitch();
   }
 }

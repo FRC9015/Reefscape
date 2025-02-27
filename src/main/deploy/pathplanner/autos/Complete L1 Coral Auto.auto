@@ -17,21 +17,15 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "L1 Coral Path"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L1 Coral Path"
+            "name": "shootCoral"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }
