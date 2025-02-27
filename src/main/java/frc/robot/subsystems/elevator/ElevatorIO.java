@@ -26,12 +26,12 @@ public interface ElevatorIO {
      * positions.
      */
     public enum ElevatorState {
-      Default(0.25),
-      CoralL2(1.9),
+      Default(0.058),
+      CoralL2(1.7),
       DealgifyL2(1.5),
-      CoralL3(4.2),
+      CoralL3(4.0),
       DealgifyL3(2.5),
-      CoralL4(7.775);
+      CoralL4(7.575);
 
       // Field to store the encoder position
       private final double encoderPosition;

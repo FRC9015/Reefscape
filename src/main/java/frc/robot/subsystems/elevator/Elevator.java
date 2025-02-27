@@ -43,7 +43,7 @@ public class Elevator extends SubsystemBase {
   private double kG = 1;
   private double kV = 0;
   private double kA = 0.0;
-  private double offset = 0;
+  private double offset = -0.17;
 
   private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
 
@@ -89,11 +89,11 @@ public class Elevator extends SubsystemBase {
     double targetPosition = state.getEncoderPosition();
     pidController.setSetpoint(targetPosition);
     double output =
-        pidController.calculate(inputs.elevatorPosition)
-            + feedforward.calculate(inputs.elevatorPosition);
+        pidController.calculate(inputs.elevatorPosition + offset)
+            + feedforward.calculate(inputs.elevatorPosition + offset);
     inputs.setpoint = targetPosition;
 
-    if (Math.abs(targetPosition - inputs.elevatorPosition) <= 0.03) {
+    if (Math.abs(targetPosition - inputs.elevatorPosition + offset) <= 0.03) {
       inputs.elevatorAtSetpoint = true;
     }
     io.setElevatorPosition(output);
@@ -109,7 +109,7 @@ public class Elevator extends SubsystemBase {
    */
   public Command executePreset(ElevatorIOInputs.ElevatorState state) {
     Logger.recordOutput("Elevator/State", state);
-    Logger.recordOutput("Elevator/CurrentPosition", inputs.elevatorPosition);
+    Logger.recordOutput("Elevator/CurrentPosition", inputs.elevatorPosition + offset);
     return run(() -> this.setPreset(state));
   }
 
