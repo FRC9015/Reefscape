@@ -17,6 +17,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -142,15 +143,14 @@ public class RobotContainer {
     }
 
     // Named commands for pathplanner autos
-    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(3000));
-    NamedCommands.registerCommand("IntakeCoral", endEffector.runEffectorReverse(3000));
+    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(3000).withTimeout(2));
+    NamedCommands.registerCommand(
+        "IntakeCoral", endEffector.runEffectorReverse(3000).withTimeout(2));
+
+    NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));
     NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
     NamedCommands.registerCommand("L3Position", elevator.executePreset(ElevatorState.CoralL3));
-    // NamedCommands.registerCommand("IntakeCoral", intake.runIntake(3000));
-    // NamedCommands.registerCommand("EjectCoral", intake.runIntakeReverse(3000));
-    // NamedCommands.registerCommand(
-    //     "WarmUpBeforeAuto",
-    //     AutoCommands.pathfindToAutoStartPoseWhileWarmup("4 L1 Coral Auto", endEffector, intake));
+    NamedCommands.registerCommand("L4Position", elevator.executePreset(ElevatorState.CoralL4));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -238,6 +238,12 @@ public class RobotContainer {
     coralFound.whileTrue(endEffector.runEffectorReverse(0.25));
 
     driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
+    // Pathfind to source
+    driverController
+        .leftBumper()
+        .onTrue(
+            drive.pathfindToPose(
+                new Pose2d(new Translation2d(1.654, 6.932), new Rotation2d(120)), 0));
   }
 
   /**
