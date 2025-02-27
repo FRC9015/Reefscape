@@ -19,7 +19,6 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -31,14 +30,15 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class ElevatorIOTalonFX implements ElevatorIO {
 
+  private final DigitalInput zeroSwitch;
   private final TalonFX elevatorMotor;
   private final TalonFX elevatorMotor1;
   private final CANcoder elevatorEncoder;
   private final Follower elevatorFollower;
-  private final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0);
 
   private final StatusSignal<Angle> encoderPositionSignal;
   private final StatusSignal<Voltage> motorAppliedVoltsSignal;
@@ -48,7 +48,16 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final NeutralOut neutralOut = new NeutralOut();
   private final VoltageOut voltageOut = new VoltageOut(0.0);
 
-  public ElevatorIOTalonFX(int motorId, int motorId1, int encoderId) {
+  /**
+   * Constructs an ElevatorIOTalonFX.
+   *
+   * @param motorId The ID of the first motor.
+   * @param motorId1 The ID of the second motor.
+   * @param encoderId The ID of the encoder.
+   * @param limitSwitchPort The port number of the limit switch.
+   */
+  public ElevatorIOTalonFX(int motorId, int motorId1, int encoderId, int limitSwitchPort) {
+    zeroSwitch = new DigitalInput(limitSwitchPort);
     elevatorMotor = new TalonFX(motorId);
     elevatorEncoder = new CANcoder(encoderId);
     elevatorMotor1 = new TalonFX(motorId1);
@@ -97,5 +106,15 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void setBrakeMode(boolean enable) {
     elevatorMotor.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+  }
+
+  @Override
+  public void getZeroSwitch(ElevatorIOInputs inputs) {
+    inputs.zeroSwitchTriggered = zeroSwitch.get();
+  }
+
+  @Override
+  public void zeroElevator() {
+    elevatorEncoder.setPosition(0); // Zero the CANcoder encoder
   }
 }

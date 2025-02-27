@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.algae.Algae;
-import frc.robot.subsystems.algae.AlgaeIO;
 import frc.robot.subsystems.algae.AlgaeIOTalonFX;
 import frc.robot.subsystems.algae.pivot.Pivot;
 import frc.robot.subsystems.algae.pivot.PivotIOSim;
@@ -63,7 +62,7 @@ public class RobotContainer {
   // private final Climber climber;
   private final Intake intake;
   private final EndEffector endEffector;
-  private final Elevator elevator;
+  public static Elevator elevator;
   private final Pivot pivot;
   private final Algae algae;
 
@@ -97,7 +96,7 @@ public class RobotContainer {
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
         intake = new Intake(new IntakeIOTalonFX(1));
         algae = new Algae(new AlgaeIOTalonFX(0));
-        elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
+        elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8, 0));
         pivot = new Pivot(new PivotIOSparkFlex(6));
         coralFound = new Trigger(() -> intake.isCoralDetected());
         break;
@@ -135,7 +134,7 @@ public class RobotContainer {
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
         intake = new Intake(new IntakeIOTalonFX(1));
-        elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
+        elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8, 0));
         pivot = new Pivot(new PivotIOSparkFlex(6));
         algae = new Algae(new AlgaeIOTalonFX(0));
         coralFound = new Trigger(() -> intake.isCoralDetected());
@@ -248,5 +247,13 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public Command seriouslyZeroTheElevator() {
+    return elevator.zeroTheElevator();
+  }
+
+  public Boolean seriouslygetZeroSwitch() {
+    return elevator.getElevatorLimitSwitch();
   }
 }
