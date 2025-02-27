@@ -63,7 +63,7 @@ public class RobotContainer {
   // private final Climber climber;
   private final Intake intake;
   private final EndEffector endEffector;
-  private final Elevator elevator;
+  public static Elevator elevator;
   private final Pivot pivot;
   private final Algae algae;
 
@@ -97,7 +97,7 @@ public class RobotContainer {
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
         intake = new Intake(new IntakeIOTalonFX(1));
         algae = new Algae(new AlgaeIOTalonFX(0));
-        elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
+        elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8, 0));
         pivot = new Pivot(new PivotIOSparkFlex(6));
         coralFound = new Trigger(() -> intake.isCoralDetected());
         break;
@@ -135,7 +135,7 @@ public class RobotContainer {
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
         intake = new Intake(new IntakeIOTalonFX(1));
-        elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
+        elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8, 0));
         pivot = new Pivot(new PivotIOSparkFlex(6));
         algae = new Algae(new AlgaeIOTalonFX(0));
         coralFound = new Trigger(() -> intake.isCoralDetected());
@@ -228,10 +228,12 @@ public class RobotContainer {
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
     operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
     operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
+
     operatorController.leftBumper().whileTrue(endEffector.runEffectorReverse(0.25));
     operatorController.rightBumper().whileTrue(endEffector.runEffectorReverse(0.5));
     operatorController.a().whileTrue(algae.setSpeed(5));
     operatorController.b().whileTrue(algae.setSpeed(-5));
+    operatorController.leftTrigger().whileTrue(endEffector.runEffector(0.15));
 
     coralFound.whileTrue(endEffector.runEffectorReverse(0.25));
 
@@ -251,5 +253,13 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public Command seriouslyZeroTheElevator() {
+    return elevator.zeroTheElevator();
+  }
+
+  public Boolean seriouslygetZeroSwitch() {
+    return elevator.getElevatorLimitSwitch();
   }
 }
