@@ -77,8 +77,8 @@ public class Elevator extends SubsystemBase {
    * these two positions, the output is scaled from Constants.SLOW_MODE_CONSTANT (at L3) to
    * Constants.ANTI_CAPSIZE_CONSTANT (at L4), but stays at Constants.SLOW_MODE_CONSTANT for L3 and
    * moving to L4.
-   
-   * Sets the elevator to a preset state. added fixed logic for L3 (encoder position 3.82) and L4
+   *
+   * <p>Sets the elevator to a preset state. added fixed logic for L3 (encoder position 3.82) and L4
    * (7.375) When the elevator is between these two positions, the output is scaled from
    * Constants.SLOW_MODE_CONSTANT (at L3) to Constants.ANTI_CAPSIZE_CONSTANT (at L4), but stays at
    * Constants.SLOW_MODE_CONSTANT for L3 and moving to L4.
@@ -92,29 +92,9 @@ public class Elevator extends SubsystemBase {
         pidController.calculate(inputs.elevatorPosition)
             + feedforward.calculate(inputs.elevatorPosition);
     inputs.setpoint = targetPosition;
-    
+
     if (Math.abs(targetPosition - inputs.elevatorPosition) <= 0.03) {
       inputs.elevatorAtSetpoint = true;
-      // Interpolated slow mode scaling for L3 to L4
-      if (state == ElevatorIOInputs.ElevatorState.CoralL3
-          || state == ElevatorIOInputs.ElevatorState.CoralL4) {
-        double l3Pos =
-            ElevatorIOInputs.ElevatorState.CoralL3.getEncoderPosition(); // Expected: 3.82
-        double l4Pos =
-            ElevatorIOInputs.ElevatorState.CoralL4.getEncoderPosition(); // Expected: 7.375
-
-        // Keep only at current position between L3 and L4
-        double currentPos = MathUtil.clamp(inputs.elevatorPosition, l3Pos, l4Pos);
-        // Compute the interpolation fraction (0 at L3, 1 at L4)
-        double fraction = (currentPos - l3Pos) / (l4Pos - l3Pos);
-        // Linearly interpolate scaling factor at L3 use SLOW_MODE_CONSTANT gradually increasing at
-        // L4
-        // to ANTI_CAPSIZE_CONSTANT
-        double scalingFactor =
-            (1 - fraction) * Constants.SLOW_MODE_CONSTANT
-                + fraction * Constants.ANTI_CAPSIZE_CONSTANT;
-        output *= scalingFactor;
-      }
     }
     io.setElevatorPosition(output);
     io.updateInputs(inputs);
