@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.780020491803279,
-        "y": 7.267674180327869
+        "x": 7.1372003424657535,
+        "y": 6.136108732876712
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.022619766060343,
-        "y": 7.501765316827602
+        "x": 7.473649988091139,
+        "y": 6.597772389632932
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.346516393442624,
-        "y": 5.361629098360655
+        "x": 5.19888698630137,
+        "y": 5.249593321917807
       },
       "prevControl": {
-        "x": 6.177669366279084,
-        "y": 5.441086451969618
+        "x": 5.545437852659087,
+        "y": 4.871537831345752
       },
       "nextControl": {
-        "x": 4.628430605772795,
-        "y": 5.2929808492209895
+        "x": 4.537756849315069,
+        "y": 5.970826198630136
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 7.0
       },
       "prevControl": {
-        "x": 1.775886809924257,
-        "y": 7.1621494320903905
+        "x": 1.737224203459769,
+        "y": 7.189892027823229
       },
       "nextControl": null,
       "isLocked": false,
@@ -68,9 +68,9 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "EjectCoral",
-      "waypointRelativePos": 0.9886039886039693,
-      "endWaypointRelativePos": null,
+      "name": "shootCoral",
+      "waypointRelativePos": 0.8338983050847456,
+      "endWaypointRelativePos": 1.0915254237288137,
       "command": null
     }
   ],
@@ -90,7 +90,7 @@
   "folder": "GoToHP Paths- From Start Zones",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

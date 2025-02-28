@@ -2,15 +2,14 @@ package frc.robot.subsystems.algae;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -18,21 +17,20 @@ import edu.wpi.first.units.measure.Voltage;
 
 public class AlgaeIOTalonFX implements AlgaeIO {
   private final TalonFX motor;
-  private final CANcoder encoder;
   private final NeutralOut neutralOut = new NeutralOut();
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
 
   private final StatusSignal<AngularVelocity> rpmSignal;
   private final StatusSignal<Voltage> appliedVoltsSignal;
   private final StatusSignal<Current> currentSignal;
+  private final VoltageOut voltageOut = new VoltageOut(0.0);
 
   private final Debouncer encoderConnectedDebounce = new Debouncer(0.5);
 
   // private final DigitalInput algaeSensor;--> Do we need this?
-  public AlgaeIOTalonFX(int motorId1, int encoderId1, String canBusName) {
-    motor = new TalonFX(motorId1, canBusName);
-    encoder = new CANcoder(encoderId1, canBusName);
-
+  public AlgaeIOTalonFX(int motorId1) {
+    motor = new TalonFX(motorId1);
+    rpmSignal = motor.getVelocity();
     // Configure motors
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -43,12 +41,6 @@ public class AlgaeIOTalonFX implements AlgaeIO {
     followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     followerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    // Configure encoders
-    CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
-    encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    encoder.getConfigurator().apply(encoderConfig);
-
-    rpmSignal = encoder.getVelocity();
     appliedVoltsSignal = motor.getMotorVoltage();
     currentSignal = motor.getStatorCurrent();
   }
@@ -77,6 +69,6 @@ public class AlgaeIOTalonFX implements AlgaeIO {
 
   @Override
   public void setRPM(double rpm) {
-    motor.setControl(velocityRequest.withVelocity(rpm));
+    motor.setControl(voltageOut.withOutput(MathUtil.clamp(rpm, -12, 12)));
   }
 }
