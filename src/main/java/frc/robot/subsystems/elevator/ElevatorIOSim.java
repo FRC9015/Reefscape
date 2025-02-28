@@ -13,7 +13,6 @@
 
 package frc.robot.subsystems.elevator;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
@@ -37,8 +36,7 @@ public class ElevatorIOSim implements ElevatorIO {
   // Elevator simulation model
   private final ElevatorSim elevatorSim =
       new ElevatorSim(
-          edu.wpi.first.math.system.plant.DCMotor.getKrakenX60(
-              1), // One motor (we'll simulate the second)
+          edu.wpi.first.math.system.plant.DCMotor.getKrakenX60(2),
           ELEVATOR_GEAR_RATIO,
           ELEVATOR_MASS_KG,
           ELEVATOR_DRUM_RADIUS,
@@ -56,12 +54,10 @@ public class ElevatorIOSim implements ElevatorIO {
     if (positionControl) {
       double targetPosition = inputs.getDesiredEncoderPosition();
       appliedVolts = elevatorController.calculate(elevatorSim.getPositionMeters(), targetPosition);
+      elevatorSim.setInputVoltage(appliedVolts);
     }
 
     // Simulate opposing motors
-    double clampedVolts = MathUtil.clamp(appliedVolts, -12.0, 12.0);
-    simulateOpposingMotors(clampedVolts);
-
     elevatorSim.update(0.02); // Simulate a 20ms timestep
 
     // Update inputs with simulated data
@@ -69,26 +65,12 @@ public class ElevatorIOSim implements ElevatorIO {
     inputs.elevatorPosition = elevatorSim.getPositionMeters(); // Position in meters
     inputs.elevatorAppliedVolts = appliedVolts; // Voltage applied to the motors
     inputs.elevatorCurrentAmps =
-        elevatorSim.getCurrentDrawAmps() * 2; // Approximate current for two motors
+        elevatorSim.getCurrentDrawAmps(); // Approximate current for two motors
   }
 
-  private void simulateOpposingMotors(double voltage) {
-    // Simulate two motors running in opposite directions
-    double effectiveVoltage = voltage / 2; // Split voltage between two motors
-    elevatorSim.setInputVoltage(effectiveVoltage);
-
-    // Simulate the effect of the opposing motor
-    double position = elevatorSim.getPositionMeters();
-    double velocity = elevatorSim.getVelocityMetersPerSecond();
-
-    // Apply a counteracting force to simulate the opposing motor
-    double opposingForce = -effectiveVoltage * ELEVATOR_GEAR_RATIO / ELEVATOR_DRUM_RADIUS;
-    elevatorSim.setState(position, velocity + (opposingForce / ELEVATOR_MASS_KG) * 0.02);
-  }
-
-  @Override
-  public void setElevatorPosition(ElevatorIOInputs.ElevatorState state) {
-    positionControl = true;
-    elevatorController.setSetpoint(state.getEncoderPosition());
-  }
+  // @Override
+  // public void setElevatorPosition(double value) {
+  //   positionControl = true;
+  //   elevatorController.setSetpoint(state.getEncoderPosition());
+  // }
 }

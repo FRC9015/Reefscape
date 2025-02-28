@@ -13,36 +13,57 @@
 
 package frc.robot.subsystems.elevator;
 
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs;
+import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs.ElevatorState;
 import org.littletonrobotics.junction.Logger;
 
+/**
+ * The Elevator subsystem controls the elevator mechanism of the robot. It uses a PID controller and
+ * feedforward to achieve precise positioning.
+ */
 public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
-  private final PIDController pidController;
+  private PIDController pidController;
   private final Alert encoderDisconnectedAlert;
+  private ElevatorFeedforward feedforward;
 
-  // Elevator PID constants
-  private static final double kP = 10.0;
-  private static final double kI = 0.0;
-  private static final double kD = 0.0;
+  // Elevator PID constants - Initial values
+  private double kP = 4.5;
+  private double kI = 0.0;
+  private double kD = 0.05;
+  private double kS = 0;
+  private double kG = 1;
+  private double kV = 0;
+  private double kA = 0.0;
+  private double offset = -0.17;
+
   private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
 
+  /**
+   * Constructs an Elevator subsystem.
+   *
+   * @param io The ElevatorIO instance used for input/output operations.
+   */
   public Elevator(ElevatorIO io) {
     this.io = io;
     this.pidController = new PIDController(kP, kI, kD);
+    this.feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
     this.pidController.setTolerance(kToleranceMeters);
+    this.setDefaultCommand(executePreset(ElevatorState.Default));
 
     encoderDisconnectedAlert = new Alert("Disconnected elevator encoder.", AlertType.kError);
   }
 
   /** Periodic method to update inputs, PID calculations, and alerts. */
+  @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
@@ -52,33 +73,54 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
-   * Sets the elevator to the specified preset state using PID control.
-   *
    * @param state The desired preset state.
    */
   public void setPreset(ElevatorIOInputs.ElevatorState state) {
     double targetPosition = state.getEncoderPosition();
     pidController.setSetpoint(targetPosition);
-    double output = pidController.calculate(inputs.elevatorPosition);
-    io.setElevatorPosition(state);
+    double output =
+        pidController.calculate(inputs.elevatorPosition + offset)
+            + feedforward.calculate(inputs.elevatorPosition + offset);
+    inputs.setpoint = targetPosition;
+    if (Math.abs(targetPosition - inputs.elevatorPosition + offset) <= 0.03) {
+      inputs.elevatorAtSetpoint = true;
+    }
+    io.setElevatorPosition(output);
     io.updateInputs(inputs);
     Logger.recordOutput("Elevator/Setpoint", targetPosition);
   }
 
   /**
-   * Manually runs the elevator with the specified output.
+   * Executes a command to set the elevator to a preset state.
    *
-   * @param output Motor output in the range [-1.0, 1.0].
+   * @param state The desired preset state.
+   * @return A command that sets the elevator to the preset state.
    */
-  public void runOpenLoop(double output) {
-    io.updateInputs(inputs);
-    Logger.recordOutput("Elevator/Output", output);
-    Logger.recordOutput("Elevator/CurrentPosition", inputs.elevatorPosition);
-    // Adjust motor output to the elevator manually
-    io.setElevatorPosition(ElevatorIOInputs.ElevatorState.Default);
+  public Command executePreset(ElevatorIOInputs.ElevatorState state) {
+    Logger.recordOutput("Elevator/State", state);
+    Logger.recordOutput("Elevator/CurrentPosition", inputs.elevatorPosition + offset);
+    return run(() -> this.setPreset(state));
   }
 
-  public Command executePreset(ElevatorIOInputs.ElevatorState state) {
-    return run(() -> this.setPreset(state));
+  /**
+   * Checks if the elevator is at the set position.
+   *
+   * @return True if the elevator is at the set position, false otherwise.
+   */
+  public Boolean elevatorAtPosition() {
+    return inputs.elevatorAtSetpoint;
+  }
+
+  /**
+   * Zeros the elevator position.
+   *
+   * @return A command that zeros the elevator.
+   */
+  public Command zeroTheElevator() {
+    return run(() -> io.zeroElevator());
+  }
+
+  public Boolean getElevatorLimitSwitch() {
+    return inputs.zeroSwitchTriggered;
   }
 }

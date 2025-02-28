@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GoToHP - Path 1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L1 Coral Path"
+            "pathName": "Drive Straight Path"
           }
         },
         {

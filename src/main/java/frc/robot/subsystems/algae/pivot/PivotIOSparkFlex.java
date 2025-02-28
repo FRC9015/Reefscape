@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class PivotIOSparkFlex implements PivotIO {
@@ -29,7 +30,7 @@ public class PivotIOSparkFlex implements PivotIO {
     this.pivotConfig = new SparkMaxConfig();
 
     pivotConfig.inverted(true).idleMode(IdleMode.kBrake);
-    pivotConfig.encoder.positionConversionFactor(1).velocityConversionFactor(1);
+    pivotConfig.encoder.positionConversionFactor(60).velocityConversionFactor(1);
     pivotConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
@@ -43,10 +44,18 @@ public class PivotIOSparkFlex implements PivotIO {
   }
 
   @Override
-  public void setPivotPosition(PivotIOInputs.PivotPosition state) {
-    double currentPosition = state.getPivotPosition();
-    TrapezoidProfile.State pivotState = new TrapezoidProfile.State(currentPosition, 0);
-    motorSetpoint = pivotProfile.calculate(0.02, pivotState, motorGoal);
-    pivotPIDController.setReference(currentPosition, SparkFlex.ControlType.kPosition);
+  public void setPivotPosition(double value) {
+    value = MathUtil.clamp(value, -12, 12);
+    pivotPIDController.setReference(value, SparkFlex.ControlType.kVoltage);
+  }
+
+  @Override
+  public void pivotUp(double speed) {
+    pivotMotor.set(speed);
+  }
+
+  @Override
+  public void pivotDown(double speed) {
+    pivotMotor.set(-speed);
   }
 }

@@ -47,8 +47,8 @@
   "reversed": false,
   "folder": "GoToHP Paths- From Start Zones",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 0.0
+    "velocity": 0.0,
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
