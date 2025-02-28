@@ -30,7 +30,7 @@ import frc.robot.subsystems.algae.Algae;
 import frc.robot.subsystems.algae.AlgaeIOTalonFX;
 import frc.robot.subsystems.algae.pivot.Pivot;
 import frc.robot.subsystems.algae.pivot.PivotIOSim;
-import frc.robot.subsystems.algae.pivot.PivotIOSparkFlex;
+import frc.robot.subsystems.algae.pivot.PivotIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -95,9 +95,9 @@ public class RobotContainer {
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
         intake = new Intake(new IntakeIOTalonFX(1));
-        algae = new Algae(new AlgaeIOTalonFX(0));
+        algae = new Algae(new AlgaeIOTalonFX(4));
         elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
-        pivot = new Pivot(new PivotIOSparkFlex(6));
+        pivot = new Pivot(new PivotIOTalonFX(3));
         coralFound = new Trigger(() -> intake.isCoralDetected());
         break;
 
@@ -116,7 +116,7 @@ public class RobotContainer {
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
-        algae = new Algae(new AlgaeIOTalonFX(0));
+        algae = new Algae(new AlgaeIOTalonFX(4));
         coralFound = new Trigger(() -> intake.isCoralDetected());
         pivot = new Pivot(new PivotIOSim());
         break;
@@ -135,8 +135,8 @@ public class RobotContainer {
         endEffector = new EndEffector(new EndEffectorIOTalonFX(2));
         intake = new Intake(new IntakeIOTalonFX(1));
         elevator = new Elevator(new ElevatorIOTalonFX(9, 10, 8));
-        pivot = new Pivot(new PivotIOSparkFlex(6));
-        algae = new Algae(new AlgaeIOTalonFX(0));
+        pivot = new Pivot(new PivotIOTalonFX(3));
+        algae = new Algae(new AlgaeIOTalonFX(4));
         coralFound = new Trigger(() -> intake.isCoralDetected());
         break;
     }
@@ -231,9 +231,11 @@ public class RobotContainer {
 
     operatorController.leftBumper().whileTrue(endEffector.runEffectorReverse(0.25));
     operatorController.rightBumper().whileTrue(endEffector.runEffectorReverse(0.5));
-    operatorController.a().whileTrue(algae.setSpeed(5));
-    operatorController.b().whileTrue(algae.setSpeed(-5));
+    operatorController.a().whileTrue(algae.setSpeed(5)).whileFalse(algae.setSpeed(0));
+    operatorController.b().whileTrue(algae.setSpeed(-5)).whileFalse(algae.setSpeed(0));
     operatorController.leftTrigger().whileTrue(endEffector.runEffector(0.15));
+    operatorController.x().whileTrue(pivot.pivotUp(1)).whileFalse(pivot.pivotUp(0));
+    operatorController.y().whileTrue(pivot.pivotUp(-1)).whileFalse(pivot.pivotUp(0));
 
     coralFound.whileTrue(endEffector.runEffectorReverse(0.25));
 
