@@ -31,7 +31,6 @@ public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
   public static final double SLOW_MODE_CONSTANT = 0.55;
-  public static final double ANTI_CAPSIZE_CONSTANT = 0.275;
 
   // public static final Transform3d CAMERA_1_TO_ROBOT = new Transform3d();
 
@@ -91,5 +90,17 @@ public final class Constants {
   public static class AutoConstants {
     public static final PathConstraints PP_CONSTRAINTS =
         new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+  }
+
+  public static class MotorIDConstants {
+    public static final int END_EFFECTOR_MOTOR_ID = 2;
+    public static final int INTAKE_MOTOR_ID = 1;
+    public static final int PIVOT_MOTOR_ID = 3;
+    public static final int ALGAE_MOTOR_ID = 4;
+
+    public static final int ELEVATOR_MOTOR_ID1 = 9;
+    public static final int ELEVATOR_MOTOR_ID2 = 10;
+    public static final int ELEVATOR_ENCODER_ID = 8;
+    public static final double ELEVATOR_MAGNET_OFFSET = 0.75;
   }
 }
