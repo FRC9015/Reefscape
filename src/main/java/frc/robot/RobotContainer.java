@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.MotorIDConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.algae.Algae;
@@ -51,7 +52,6 @@ import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.photon.PhotonInterface;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import frc.robot.Constants.MotorIDConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -94,9 +94,16 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 photonInterface);
 
-        endEffector = new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
+        endEffector =
+            new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
         intake = new Intake(new IntakeIOTalonFX(1));
-        elevator = new Elevator(new ElevatorIOTalonFX(MotorIDConstants.ELEVATOR_MOTOR_ID1, MotorIDConstants.ELEVATOR_MOTOR_ID2, MotorIDConstants.ELEVATOR_ENCODER_ID, 0));
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    MotorIDConstants.ELEVATOR_MOTOR_ID1,
+                    MotorIDConstants.ELEVATOR_MOTOR_ID2,
+                    MotorIDConstants.ELEVATOR_ENCODER_ID,
+                    0));
         pivot = new Pivot(new PivotIOSparkFlex(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         break;
@@ -131,20 +138,28 @@ public class RobotContainer {
                 new ModuleIO() {},
                 photonInterface);
         // climber = new Climber(1);
-        endEffector = new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
+        endEffector =
+            new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
         intake = new Intake(new IntakeIOTalonFX(1));
-        elevator = new Elevator(new ElevatorIOTalonFX(MotorIDConstants.ELEVATOR_MOTOR_ID1, MotorIDConstants.ELEVATOR_MOTOR_ID2, MotorIDConstants.ELEVATOR_ENCODER_ID, 0));
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    MotorIDConstants.ELEVATOR_MOTOR_ID1,
+                    MotorIDConstants.ELEVATOR_MOTOR_ID2,
+                    MotorIDConstants.ELEVATOR_ENCODER_ID,
+                    0));
         pivot = new Pivot(new PivotIOSparkFlex(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
-        
+
         break;
     }
 
     // Named commands for pathplanner autos
     NamedCommands.registerCommand("IntakeCoral", endEffector.runEffector(0.5).withTimeout(2));
     NamedCommands.registerCommand("shootCoral", endEffector.shootAutoCommand().withTimeout(2));
-    //Debug
-    NamedCommands.registerCommand("Debug", Commands.run(()->System.out.println("This event marker works in theory")));
+    // Debug
+    NamedCommands.registerCommand(
+        "Debug", Commands.run(() -> System.out.println("This event marker works in theory")));
 
     NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));
     NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
@@ -152,8 +167,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("L4Position", elevator.executePreset(ElevatorState.CoralL4));
 
     coralFound = new Trigger(() -> intake.isCoralDetected());
-
-    
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
