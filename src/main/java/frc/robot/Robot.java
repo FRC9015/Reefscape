@@ -55,7 +55,6 @@ public class Robot extends LoggedRobot {
         Logger.recordMetadata("GitDirty", "Unknown");
         break;
     }
-
     // Set up data receivers & replay source
     switch (Constants.currentMode) {
       case REAL:
@@ -82,14 +81,14 @@ public class Robot extends LoggedRobot {
     Logger.start();
 
     // Check for valid swerve config
-    var modules =
+    SwerveModuleConstants[] modules =
         new SwerveModuleConstants[] {
           TunerConstants.FrontLeft,
           TunerConstants.FrontRight,
           TunerConstants.BackLeft,
           TunerConstants.BackRight
         };
-    for (var constants : modules) {
+    for (SwerveModuleConstants constants : modules) {
       if (constants.DriveMotorType != DriveMotorArrangement.TalonFX_Integrated
           || constants.SteerMotorType != SteerMotorArrangement.TalonFX_Integrated) {
         throw new RuntimeException(

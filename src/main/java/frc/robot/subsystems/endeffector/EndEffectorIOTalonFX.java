@@ -14,6 +14,7 @@
 package frc.robot.subsystems.endeffector;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -63,7 +64,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
   @Override
   public void updateInputs(EndEffectorIOInputs inputs) {
     // Refresh signals
-    var encoderStatus = BaseStatusSignal.refreshAll(rpmSignal);
+    StatusCode encoderStatus = BaseStatusSignal.refreshAll(rpmSignal);
 
     // Update inputs
     inputs.endEffectorEncoderConnected = encoderConnectedDebounce.calculate(encoderStatus.isOK());

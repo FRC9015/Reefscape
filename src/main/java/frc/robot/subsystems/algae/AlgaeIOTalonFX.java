@@ -1,6 +1,7 @@
 package frc.robot.subsystems.algae;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -48,7 +49,7 @@ public class AlgaeIOTalonFX implements AlgaeIO {
   @Override
   public void updateInputs(AlgaeIOInputs inputs) {
     // Refresh signals
-    var encoderStatus = BaseStatusSignal.refreshAll(rpmSignal);
+    StatusCode encoderStatus = BaseStatusSignal.refreshAll(rpmSignal);
 
     // Update inputs
     inputs.algaeEncoderConnected = encoderConnectedDebounce.calculate(encoderStatus.isOK());

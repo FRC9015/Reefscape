@@ -85,12 +85,18 @@ public class AutoCommands {
    */
   private Pose2d findClosestReefPose(Pose2d currentPose) {
     Pose2d[] reefPoses = {
-      Constants.FieldConstants.REEF_A,
-      Constants.FieldConstants.REEF_B,
-      Constants.FieldConstants.REEF_C,
-      Constants.FieldConstants.REEF_D,
-      Constants.FieldConstants.REEF_E,
-      Constants.FieldConstants.REEF_F
+      Constants.FieldConstants.REEF_AR,
+      Constants.FieldConstants.REEF_BR,
+      Constants.FieldConstants.REEF_CR,
+      Constants.FieldConstants.REEF_DR,
+      Constants.FieldConstants.REEF_ER,
+      Constants.FieldConstants.REEF_FR,
+      Constants.FieldConstants.REEF_AL,
+      Constants.FieldConstants.REEF_BL,
+      Constants.FieldConstants.REEF_CL,
+      Constants.FieldConstants.REEF_DL,
+      Constants.FieldConstants.REEF_EL,
+      Constants.FieldConstants.REEF_FL
     };
     Pose2d closestPose = reefPoses[0];
     double minDistance = Double.MAX_VALUE;
