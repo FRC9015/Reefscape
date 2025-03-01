@@ -14,6 +14,7 @@
 package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -86,7 +87,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
     // Refresh signals
-    var encoderStatus = BaseStatusSignal.refreshAll(encoderPositionSignal);
+    StatusCode encoderStatus = BaseStatusSignal.refreshAll(encoderPositionSignal);
 
     // Update elevator inputs
     inputs.elevatorEncoderConnected = encoderConnectedDebounce.calculate(encoderStatus.isOK());

@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.CameraConstants;
 import frc.robot.Constants.MotorIDConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -46,7 +47,9 @@ import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.endeffector.EndEffectorIOSim;
 import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
-import frc.robot.subsystems.photon.PhotonInterface;
+import frc.robot.subsystems.photon.Vision;
+import frc.robot.subsystems.photon.VisionIOPhotonVision;
+import frc.robot.subsystems.photon.VisionIOSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -64,7 +67,7 @@ public class RobotContainer {
   private final Pivot pivot;
   private final Algae algae;
 
-  private final PhotonInterface photonInterface = new PhotonInterface();
+  private final Vision photon;
   // Driver Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
   // Operator Controller
@@ -87,9 +90,12 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontLeft),
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight),
-                photonInterface);
-
+                new ModuleIOTalonFX(TunerConstants.BackRight));
+        photon =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
+                new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
         // intake = new Intake(new IntakeIOTalonFX(3));
@@ -112,9 +118,8 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontLeft),
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight),
-                photonInterface);
-
+                new ModuleIOSim(TunerConstants.BackRight));
+        photon = new Vision(drive::addVisionMeasurement, new VisionIOSim(), new VisionIOSim());
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
         // intake = new Intake(new IntakeIOSim());
@@ -131,8 +136,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {},
-                photonInterface);
+                new ModuleIO() {});
+        photon =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
+                new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
         // climber = new Climber(1);
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));

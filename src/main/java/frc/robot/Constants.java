@@ -17,11 +17,14 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -67,6 +70,28 @@ public final class Constants {
             0.2,
             new Rotation3d(0, 0, 0) // Sample metrics for rear-mounted camera in meters
             );
+    public static AprilTagFieldLayout aprilTagLayout =
+        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+    public static final Transform3d bowPose =
+        new Transform3d(
+            new Translation3d(
+                Units.inchesToMeters(15), Units.inchesToMeters(0), Units.inchesToMeters(7)),
+            new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(0)));
+
+    public static final Transform3d starboardPose =
+        new Transform3d(
+            new Translation3d(
+                Units.inchesToMeters(0), -Units.inchesToMeters(15), Units.inchesToMeters(7)),
+            new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(270)));
+
+    public static double linearStdDevBaseline = 0.02; // Meters
+    public static double angularStdDevBaseline = 0.06; // Radians
+
+    public static double[] cameraStdDevFactors =
+        new double[] {
+          1.0, // Camera 0
+          1.0 // Camera 1
+        };
   }
 
   public static class FieldConstants {
