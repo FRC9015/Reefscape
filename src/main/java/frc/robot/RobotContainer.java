@@ -139,16 +139,21 @@ public class RobotContainer {
         
         break;
     }
-    coralFound = new Trigger(() -> intake.isCoralDetected());
 
     // Named commands for pathplanner autos
     NamedCommands.registerCommand("IntakeCoral", endEffector.runEffector(0.5).withTimeout(2));
     NamedCommands.registerCommand("shootCoral", endEffector.shootAutoCommand().withTimeout(2));
+    //Debug
+    NamedCommands.registerCommand("Debug", Commands.run(()->System.out.println("This event marker works in theory")));
 
     NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));
     NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
     NamedCommands.registerCommand("L3Position", elevator.executePreset(ElevatorState.CoralL3));
     NamedCommands.registerCommand("L4Position", elevator.executePreset(ElevatorState.CoralL4));
+
+    coralFound = new Trigger(() -> intake.isCoralDetected());
+
+    
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
