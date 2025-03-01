@@ -1,5 +1,8 @@
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import org.littletonrobotics.junction.Logger;
+
 // import com.ctre.phoenix6.BaseStatusSignal;
 // import com.ctre.phoenix6.StatusSignal;
 // import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -12,7 +15,6 @@ package frc.robot.subsystems.intake;
 // import edu.wpi.first.units.measure.AngularVelocity;
 // import edu.wpi.first.units.measure.Current;
 // import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 public class IntakeIOTalonFX implements IntakeIO {
 
@@ -64,6 +66,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     // Commented out for now
     inputs.coralDetected = coralSensor.get(); // Coral detected if the sensor is triggered
     // (active low)
+    Logger.recordOutput("sensor", coralSensor.get());
   }
 
   @Override

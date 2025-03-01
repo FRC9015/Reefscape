@@ -31,7 +31,7 @@ public interface ElevatorIO {
       DealgifyL2(1.5),
       CoralL3(4.0),
       DealgifyL3(2.5),
-      CoralL4(7.575);
+      CoralL4(7.6);
 
       // Field to store the encoder position
       private final double encoderPosition;

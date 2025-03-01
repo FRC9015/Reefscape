@@ -13,6 +13,9 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
+
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -71,19 +74,37 @@ public final class Constants {
         new Pose2d(new Translation2d(3.25, 3.8), new Rotation2d());
     public static final Pose2d bargeFar = new Pose2d(new Translation2d(7.6, 6.6), new Rotation2d());
     public static final Pose2d bargeNear = new Pose2d(new Translation2d(7.6, 5), new Rotation2d());
-
+    public static final Pose2d SourceL =
+        new Pose2d(
+            new Translation2d(1.403, 6.991), new Rotation2d(Radians.convertFrom(-55, Degrees)));
     // Reef poses/locations
-    public static final Pose2d REEF_A =
-        new Pose2d(new Translation2d(3.033, 4.103), new Rotation2d());
-    public static final Pose2d REEF_B =
-        new Pose2d(new Translation2d(3.261, 5.230), new Rotation2d());
-    public static final Pose2d REEF_C =
-        new Pose2d(new Translation2d(5.287, 5.386), new Rotation2d());
+    public static final Pose2d REEF_AR =
+        new Pose2d(new Translation2d(3.104, 3.865), new Rotation2d());
+    public static final Pose2d REEF_AL =
+        new Pose2d(new Translation2d(3.119, 4.215), new Rotation2d());
 
-    public static final Pose2d REEF_D = new Pose2d(new Translation2d(6, 4.103), new Rotation2d());
-    public static final Pose2d REEF_E =
+    public static final Pose2d REEF_BR =
+        new Pose2d(new Translation2d(3.723, 5.126), new Rotation2d(5 * Math.PI / 3));
+    public static final Pose2d REEF_BL =
+        new Pose2d(new Translation2d(3.977, 5.335), new Rotation2d(5 * Math.PI / 3));
+
+    public static final Pose2d REEF_CR =
+        new Pose2d(new Translation2d(5.074, 5.252), new Rotation2d(4 * Math.PI / 3));
+    // everything under this comment is not proper pose above is proper pose
+    public static final Pose2d REEF_CL =
+        new Pose2d(new Translation2d(5.287, 5.386), new Rotation2d(4 * Math.PI / 3));
+
+    public static final Pose2d REEF_DR = new Pose2d(new Translation2d(6, 4.103), new Rotation2d());
+    public static final Pose2d REEF_DL = new Pose2d(new Translation2d(6, 4.103), new Rotation2d());
+
+    public static final Pose2d REEF_ER =
         new Pose2d(new Translation2d(5.632, 2.832), new Rotation2d());
-    public static final Pose2d REEF_F =
+    public static final Pose2d REEF_EL =
+        new Pose2d(new Translation2d(5.632, 2.832), new Rotation2d());
+
+    public static final Pose2d REEF_FR =
+        new Pose2d(new Translation2d(3.836, 2.616), new Rotation2d());
+    public static final Pose2d REEF_FL =
         new Pose2d(new Translation2d(3.836, 2.616), new Rotation2d());
   }
 
@@ -101,6 +122,6 @@ public final class Constants {
     public static final int ELEVATOR_MOTOR_ID1 = 9;
     public static final int ELEVATOR_MOTOR_ID2 = 10;
     public static final int ELEVATOR_ENCODER_ID = 8;
-    public static final double ELEVATOR_MAGNET_OFFSET = 0.75;
+    public static final double ELEVATOR_MAGNET_OFFSET = 0.19;
   }
 }

@@ -23,8 +23,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.MotorIDConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.algae.Algae;
@@ -46,12 +46,8 @@ import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.endeffector.EndEffectorIOSim;
 import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.photon.PhotonInterface;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import frc.robot.Constants.MotorIDConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -62,7 +58,7 @@ import frc.robot.Constants.MotorIDConstants;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Intake intake;
+  // private final Intake intake;
   private final EndEffector endEffector;
   private final Elevator elevator;
   private final Pivot pivot;
@@ -75,7 +71,7 @@ public class RobotContainer {
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Triggers
-  private final Trigger coralFound;
+  // private final Trigger coralFound;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -94,9 +90,16 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight),
                 photonInterface);
 
-        endEffector = new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
-        intake = new Intake(new IntakeIOTalonFX(1));
-        elevator = new Elevator(new ElevatorIOTalonFX(MotorIDConstants.ELEVATOR_MOTOR_ID1, MotorIDConstants.ELEVATOR_MOTOR_ID2, MotorIDConstants.ELEVATOR_ENCODER_ID, 0));
+        endEffector =
+            new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
+        // intake = new Intake(new IntakeIOTalonFX(3));
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    MotorIDConstants.ELEVATOR_MOTOR_ID1,
+                    MotorIDConstants.ELEVATOR_MOTOR_ID2,
+                    MotorIDConstants.ELEVATOR_ENCODER_ID,
+                    0));
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         break;
@@ -114,7 +117,7 @@ public class RobotContainer {
 
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
-        intake = new Intake(new IntakeIOSim());
+        // intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
         algae = new Algae(new AlgaeIOSim());
         pivot = new Pivot(new PivotIOSim());
@@ -131,15 +134,22 @@ public class RobotContainer {
                 new ModuleIO() {},
                 photonInterface);
         // climber = new Climber(1);
-        endEffector = new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
-        intake = new Intake(new IntakeIOTalonFX(1));
-        elevator = new Elevator(new ElevatorIOTalonFX(MotorIDConstants.ELEVATOR_MOTOR_ID1, MotorIDConstants.ELEVATOR_MOTOR_ID2, MotorIDConstants.ELEVATOR_ENCODER_ID, 0));
+        endEffector =
+            new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
+        // intake = new Intake(new IntakeIOTalonFX(3));
+        elevator =
+            new Elevator(
+                new ElevatorIOTalonFX(
+                    MotorIDConstants.ELEVATOR_MOTOR_ID1,
+                    MotorIDConstants.ELEVATOR_MOTOR_ID2,
+                    MotorIDConstants.ELEVATOR_ENCODER_ID,
+                    0));
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
-        
+
         break;
     }
-    coralFound = new Trigger(() -> intake.isCoralDetected());
+    // coralFound = new Trigger(() -> intake.isCoralDetected());
 
     // Named commands for pathplanner autos
     NamedCommands.registerCommand("IntakeCoral", endEffector.runEffector(0.5).withTimeout(2));
@@ -208,8 +218,10 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    driverController.x().onTrue(drive.pfToPose(Constants.FieldConstants.REEF_D, 0.0));
-    driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D, 0.0));
+    driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0.0));
+    driverController.y().onTrue(drive.pathfindToPose(Constants.FieldConstants.SourceL, 0.0));
+    // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
+    // 0.0));
     // driverController.leftBumper().whileTrue(pivot.pivotDown(0.25));
     // driverController.rightBumper().whileTrue(pivot.pivotUp(0.25));
     // Slow mode
@@ -227,7 +239,9 @@ public class RobotContainer {
     operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
     operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
 
-    operatorController.leftBumper().whileTrue(endEffector.runEffectorReverse(0.25));
+    // operatorController
+    //     .leftBumper()
+    //     .whileTrue(endEffector.runEffectorReverse(0.15).until(coralFound));
     operatorController.rightBumper().whileTrue(endEffector.runEffectorReverse(0.5));
     operatorController.a().whileTrue(algae.setSpeed(5)).whileFalse(algae.setSpeed(0));
     operatorController.b().whileTrue(algae.setSpeed(-5)).whileFalse(algae.setSpeed(0));
@@ -235,12 +249,10 @@ public class RobotContainer {
     operatorController.x().whileTrue(pivot.pivotUp(1)).whileFalse(pivot.pivotUp(0));
     operatorController.y().whileTrue(pivot.pivotUp(-1)).whileFalse(pivot.pivotUp(0));
 
-    coralFound.whileTrue(endEffector.runEffectorReverse(0.25));
-
-    driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeFar, 0.0));
+    // coralFound.whileTrue(endEffector.runEffectorReverse(0.10));
     // Pathfind to source
     driverController
-        .leftBumper()
+        .povDown()
         .onTrue(
             drive.pathfindToPose(
                 new Pose2d(new Translation2d(1.654, 6.932), new Rotation2d(120)), 0));

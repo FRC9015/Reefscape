@@ -43,7 +43,7 @@ public class Elevator extends SubsystemBase {
   private double kG = 1;
   private double kV = 0;
   private double kA = 0.0;
-  private double offset = -0.17;
+  private double offset = 0.0;
 
   private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
 
