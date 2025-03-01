@@ -40,7 +40,7 @@
     {
       "name": "shootCoral",
       "waypointRelativePos": 0.4999999999999896,
-      "endWaypointRelativePos": 0.6120607787274474,
+      "endWaypointRelativePos": null,
       "command": null
     }
   ],
