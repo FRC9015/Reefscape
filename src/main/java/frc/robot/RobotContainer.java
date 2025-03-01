@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CameraConstants;
 import frc.robot.Constants.MotorIDConstants;
@@ -47,6 +48,9 @@ import frc.robot.subsystems.elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.subsystems.endeffector.EndEffectorIOSim;
 import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.photon.Vision;
 import frc.robot.subsystems.photon.VisionIOPhotonVision;
 import frc.robot.subsystems.photon.VisionIOSim;
@@ -61,7 +65,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  // private final Intake intake;
+  private final Intake intake;
   private final EndEffector endEffector;
   private final Elevator elevator;
   private final Pivot pivot;
@@ -74,7 +78,7 @@ public class RobotContainer {
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Triggers
-  // private final Trigger coralFound;
+  private final Trigger coralFound;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -98,7 +102,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
-        // intake = new Intake(new IntakeIOTalonFX(3));
+        intake = new Intake(new IntakeIOTalonFX(0));
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
@@ -108,6 +112,7 @@ public class RobotContainer {
                     0));
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
+        coralFound = new Trigger(() -> intake.isCoralDetected());
         break;
 
       case SIM:
@@ -122,10 +127,11 @@ public class RobotContainer {
         photon = new Vision(drive::addVisionMeasurement, new VisionIOSim(), new VisionIOSim());
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
-        // intake = new Intake(new IntakeIOSim());
+        intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
         algae = new Algae(new AlgaeIOSim());
         pivot = new Pivot(new PivotIOSim());
+        coralFound = new Trigger(() -> intake.isCoralDetected());
         break;
 
       default:
@@ -145,7 +151,7 @@ public class RobotContainer {
         // climber = new Climber(1);
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
-        // intake = new Intake(new IntakeIOTalonFX(3));
+        intake = new Intake(new IntakeIOTalonFX(0));
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
@@ -155,14 +161,15 @@ public class RobotContainer {
                     0));
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
-
+        coralFound = new Trigger(() -> intake.isCoralDetected());
         break;
     }
-    // coralFound = new Trigger(() -> intake.isCoralDetected());
 
     // Named commands for pathplanner autos
-    NamedCommands.registerCommand("IntakeCoral", endEffector.runEffector(0.5).withTimeout(2));
+    NamedCommands.registerCommand("IntakeCoral", endEffector.runEffector(0.25));
     NamedCommands.registerCommand("shootCoral", endEffector.runEffectorReverse(0.5).withTimeout(2));
+    NamedCommands.registerCommand(
+        "TestCommand", Commands.run(() -> System.out.println("TestCommand Works")));
 
     NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));
     NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
@@ -258,7 +265,7 @@ public class RobotContainer {
     operatorController.x().whileTrue(pivot.pivotUp(1)).whileFalse(pivot.pivotUp(0));
     operatorController.y().whileTrue(pivot.pivotUp(-1)).whileFalse(pivot.pivotUp(0));
 
-    // coralFound.whileTrue(endEffector.runEffectorReverse(0.10));
+    coralFound.whileTrue(endEffector.runEffectorReverse(0.10));
     // Pathfind to source
     driverController
         .povDown()
