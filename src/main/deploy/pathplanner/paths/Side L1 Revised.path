@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.672131147545101,
-        "y": 6.104866803278688
+        "x": 7.26375,
+        "y": 6.08225
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.724419861070459,
-        "y": 6.104866803278688
+        "x": 7.507796765045989,
+        "y": 6.136482614454661
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.670184426229508,
-        "y": 6.104866803278688
+        "x": 5.31375,
+        "y": 5.039
       },
       "prevControl": {
-        "x": 5.420184426229508,
-        "y": 6.104866803278688
+        "x": 5.06375,
+        "y": 5.039
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,21 +31,9 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "shootCoral",
-      "waypointRelativePos": 0.2796771130104442,
-      "endWaypointRelativePos": 0.5018993352326675,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "shootCoral"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.5,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -54,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 179.99999999952385
+    "rotation": -118.73979529168805
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -179.283840054958
+    "rotation": 179.33537173285816
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

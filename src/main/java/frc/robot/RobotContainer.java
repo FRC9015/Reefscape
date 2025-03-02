@@ -174,7 +174,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));
     NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
     NamedCommands.registerCommand("L3Position", elevator.executePreset(ElevatorState.CoralL3));
-    NamedCommands.registerCommand("L4Position", elevator.executePreset(ElevatorState.CoralL4));
+    NamedCommands.registerCommand(
+        "L4Position", elevator.executePreset(ElevatorState.CoralL4).withTimeout(2
+        ));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
