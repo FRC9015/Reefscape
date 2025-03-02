@@ -54,7 +54,7 @@
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 1.007597340930674,
-      "maxWaypointRelativePos": 1.04,
+      "maxWaypointRelativePos": 1.035,
       "constraints": {
         "maxVelocity": 0.1,
         "maxAcceleration": 3.0,
@@ -70,8 +70,13 @@
     {
       "name": "shootCoral",
       "waypointRelativePos": 0.8338983050847456,
-      "endWaypointRelativePos": 1.0915254237288137,
-      "command": null
+      "endWaypointRelativePos": 1.1417266187050334,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootCoral"
+        }
+      }
     }
   ],
   "globalConstraints": {
