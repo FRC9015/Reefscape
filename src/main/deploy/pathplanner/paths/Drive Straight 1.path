@@ -3,45 +3,59 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.7452806122448985,
-        "y": 6.103093112244897
+        "x": 7.292999999999999,
+        "y": 6.08225
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.9618635802067566,
-        "y": 6.103093112244897
+        "x": 4.894235781197724,
+        "y": 6.587507297591168
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.723,
-        "y": 5.126
+        "x": 3.6442622950819668,
+        "y": 5.121875
       },
       "prevControl": {
-        "x": 3.4880768448035226,
-        "y": 5.040494964168583
+        "x": 3.4093391398854895,
+        "y": 5.036369964168583
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
+  "rotationTargets": [],
+  "constraintZones": [
     {
-      "waypointRelativePos": 0.23209549071618,
-      "rotationDegrees": 45.0
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.6367521367521368,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
     }
   ],
-  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "shootCoral",
       "waypointRelativePos": 0.8959731543624161,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootCoral"
+        }
+      }
     }
   ],
   "globalConstraints": {
