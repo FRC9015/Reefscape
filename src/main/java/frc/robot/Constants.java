@@ -19,12 +19,16 @@ import static edu.wpi.first.units.Units.Radians;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -52,24 +56,6 @@ public final class Constants {
   }
 
   public class CameraConstants {
-    public static final String CAMERA_2_NAME = "Camera2";
-    public static final String CAMERA_1_NAME = "Camera1";
-    // Camera positions relative to the robot's center in meters
-    public static final Transform3d CAMERA_1_TO_ROBOT =
-        new Transform3d(
-            0.3,
-            0.0,
-            0.2,
-            new Rotation3d(0, 0, Math.PI) // Sample metrics for front-mounted camera in meters
-            );
-
-    public static final Transform3d CAMERA_2_TO_ROBOT =
-        new Transform3d(
-            -0.3,
-            0.0,
-            0.2,
-            new Rotation3d(0, 0, 0) // Sample metrics for rear-mounted camera in meters
-            );
     public static AprilTagFieldLayout aprilTagLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     public static final Transform3d bowPose =
@@ -84,14 +70,8 @@ public final class Constants {
                 Units.inchesToMeters(0), -Units.inchesToMeters(15), Units.inchesToMeters(7)),
             new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(270)));
 
-    public static double linearStdDevBaseline = 0.02; // Meters
-    public static double angularStdDevBaseline = 0.06; // Radians
-
-    public static double[] cameraStdDevFactors =
-        new double[] {
-          1.0, // Camera 0
-          1.0 // Camera 1
-        };
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
   }
 
   public static class FieldConstants {
