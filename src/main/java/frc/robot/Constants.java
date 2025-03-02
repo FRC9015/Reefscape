@@ -79,6 +79,8 @@ public final class Constants {
         new Pose2d(new Translation2d(3.25, 3.8), new Rotation2d());
     public static final Pose2d bargeFar = new Pose2d(new Translation2d(7.6, 6.6), new Rotation2d());
     public static final Pose2d bargeNear = new Pose2d(new Translation2d(7.6, 5), new Rotation2d());
+    public static final Pose2d bargeMid =
+        new Pose2d(new Translation2d(6.925, 6.182), new Rotation2d(Math.PI));
     public static final Pose2d SourceL =
         new Pose2d(
             new Translation2d(1.403, 6.991), new Rotation2d(Radians.convertFrom(-55, Degrees)));
@@ -127,6 +129,6 @@ public final class Constants {
     public static final int ELEVATOR_MOTOR_ID1 = 9;
     public static final int ELEVATOR_MOTOR_ID2 = 10;
     public static final int ELEVATOR_ENCODER_ID = 8;
-    public static final double ELEVATOR_MAGNET_OFFSET = 0.19;
+    public static final double ELEVATOR_MAGNET_OFFSET = 0.15;
   }
 }

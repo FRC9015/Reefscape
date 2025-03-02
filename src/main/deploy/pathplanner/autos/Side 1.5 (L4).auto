@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Side L1"
+            "pathName": "Side L1 Revised"
           }
         },
         {
@@ -27,6 +27,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DefaultPosition"
           }
         },
         {
