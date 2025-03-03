@@ -166,8 +166,7 @@ public class RobotContainer {
 
     // Named commands for pathplanner autos
     NamedCommands.registerCommand("IntakeCoral", endEffector.runEffector(0.25));
-    NamedCommands.registerCommand(
-        "shootCoral", endEffector.runEffectorReverse(0.5).withTimeout(1.35));
+    NamedCommands.registerCommand("shootCoral", endEffector.runEffectorReverse(0.5).withTimeout(1));
     NamedCommands.registerCommand(
         "TestCommand", Commands.run(() -> System.out.println("TestCommand Works")));
 
@@ -176,7 +175,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
     NamedCommands.registerCommand("L3Position", elevator.executePreset(ElevatorState.CoralL3));
     NamedCommands.registerCommand(
-        "L4Position", elevator.executePreset(ElevatorState.CoralL4).withTimeout(2));
+        "L4Position", elevator.executePreset(ElevatorState.CoralL4).withTimeout(1));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -236,7 +235,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CR, 0.0));
+    driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0.0));
     driverController.y().onTrue(drive.pathfindToPose(Constants.FieldConstants.SourceL, 0.0));
     driverController.a().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0));
     // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
