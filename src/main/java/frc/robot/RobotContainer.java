@@ -17,6 +17,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -52,7 +53,7 @@ import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.photon.Vision;
 import frc.robot.subsystems.photon.VisionIOPhotonVision;
-import frc.robot.subsystems.photon.VisionIOSim;
+import frc.robot.subsystems.photon.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -123,7 +124,9 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        photon = new Vision(drive::addVisionMeasurement, new VisionIOSim(), new VisionIOSim());
+        photon = new Vision(drive::addVisionMeasurement, 
+            new VisionIOPhotonVisionSim("Starboard",CameraConstants.starboardPose), 
+            new VisionIOPhotonVisionSim("Bow",CameraConstants.bowPose));
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
