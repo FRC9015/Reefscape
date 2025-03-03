@@ -16,28 +16,28 @@
     },
     {
       "anchor": {
-        "x": 5.19888698630137,
-        "y": 5.249593321917807
+        "x": 4.992,
+        "y": 5.263
       },
       "prevControl": {
-        "x": 5.545437852659087,
-        "y": 4.871537831345752
+        "x": 5.338550866357717,
+        "y": 4.884944509427945
       },
       "nextControl": {
-        "x": 4.537756849315069,
-        "y": 5.970826198630136
+        "x": 4.330869863013699,
+        "y": 5.984232876712329
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 1.403,
+        "y": 6.991
       },
       "prevControl": {
-        "x": 1.737224203459769,
-        "y": 7.189892027823229
+        "x": 1.140224203459769,
+        "y": 7.180892027823228
       },
       "nextControl": null,
       "isLocked": false,
@@ -53,7 +53,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.007597340930674,
+      "minWaypointRelativePos": 1.01,
       "maxWaypointRelativePos": 1.04,
       "constraints": {
         "maxVelocity": 0.1,
@@ -70,8 +70,13 @@
     {
       "name": "shootCoral",
       "waypointRelativePos": 0.8338983050847456,
-      "endWaypointRelativePos": 1.0915254237288137,
-      "command": null
+      "endWaypointRelativePos": 1.1417266187050334,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "shootCoral"
+        }
+      }
     }
   ],
   "globalConstraints": {
