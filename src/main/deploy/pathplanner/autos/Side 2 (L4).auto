@@ -36,9 +36,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "To Source"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "To Source"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              }
+            ]
           }
         },
         {
