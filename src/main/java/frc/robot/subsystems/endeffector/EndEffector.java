@@ -119,6 +119,10 @@ public class EndEffector extends SubsystemBase {
     return this.startEnd(() -> setRPM(rpm), () -> stop());
   }
 
+  public Command runEffectorAutoCommand(double rpm) {
+    return this.run(() -> setRPM(-rpm));
+  }
+
   /**
    * Runs the end effector in reverse at the specified RPM.
    *

@@ -15,8 +15,10 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -169,17 +171,22 @@ public class RobotContainer {
     }
 
     // Named commands for pathplanner autos
-    NamedCommands.registerCommand("IntakeCoral", endEffector.runEffector(0.25));
-    NamedCommands.registerCommand("shootCoral", endEffector.runEffectorReverse(0.5).withTimeout(1));
+    NamedCommands.registerCommand(
+        "IntakeCoral",
+        endEffector.runEffectorAutoCommand(0.1).until(() -> !intake.isCoralDetected()));
+
+    NamedCommands.registerCommand(
+        "shootCoral", endEffector.runEffectorReverse(0.8).withTimeout(0.4));
     NamedCommands.registerCommand(
         "TestCommand", Commands.run(() -> System.out.println("TestCommand Works")));
-
+    new EventTrigger("coral?").and(coralFound).whileTrue(endEffector.runEffectorReverse(0.1));
     NamedCommands.registerCommand(
         "DefaultPosition", elevator.executePreset(ElevatorState.Default).withTimeout(1));
     NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
     NamedCommands.registerCommand("L3Position", elevator.executePreset(ElevatorState.CoralL3));
     NamedCommands.registerCommand(
-        "L4Position", elevator.executePreset(ElevatorState.CoralL4).withTimeout(1));
+        "L4Position",
+        elevator.executePreset(ElevatorState.CoralL4).withTimeout(1).unless(coralFound));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -239,7 +246,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0.0));
+    driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CR, 0.0));
     driverController.y().onTrue(drive.pathfindToPose(Constants.FieldConstants.SourceL, 0.0));
     driverController.a().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0));
     // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
@@ -270,9 +277,12 @@ public class RobotContainer {
     operatorController.leftTrigger().whileTrue(endEffector.runEffector(0.15));
     operatorController.x().whileTrue(pivot.pivotUp(1)).whileFalse(pivot.pivotUp(0));
     operatorController.y().whileTrue(pivot.pivotUp(-1)).whileFalse(pivot.pivotUp(0));
+    coralFound
+        .and(() -> DriverStation.isTeleopEnabled())
+        .whileTrue(endEffector.runEffectorReverse(0.1));
 
-    coralFound.whileTrue(endEffector.runEffectorReverse(0.10));
     // Pathfind to source
+
   }
 
   /**

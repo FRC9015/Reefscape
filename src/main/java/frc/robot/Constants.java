@@ -96,7 +96,7 @@ public final class Constants {
         new Pose2d(new Translation2d(3.977, 5.335), new Rotation2d(5 * Math.PI / 3));
 
     public static final Pose2d REEF_CR =
-        new Pose2d(new Translation2d(5.074, 5.252), new Rotation2d(4 * Math.PI / 3));
+        new Pose2d(new Translation2d(4.992, 5.263), new Rotation2d(4 * Math.PI / 3));
     // everything under this comment is not proper pose above is proper pose
     public static final Pose2d REEF_CL =
         new Pose2d(new Translation2d(5.287, 5.386), new Rotation2d(4 * Math.PI / 3));
