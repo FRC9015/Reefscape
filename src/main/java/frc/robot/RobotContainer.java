@@ -252,7 +252,6 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    driverController.x().onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CR, 0.0));
     driverController.y().onTrue(drive.pathfindToPose(Constants.FieldConstants.SourceL, 0.0));
     driverController.a().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0));
     // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
@@ -283,8 +282,88 @@ public class RobotContainer {
     operatorController.leftTrigger().whileTrue(endEffector.runEffector(0.15));
     operatorController.x().whileTrue(pivot.pivotUp(1)).whileFalse(pivot.pivotUp(0));
     operatorController.y().whileTrue(pivot.pivotUp(-1)).whileFalse(pivot.pivotUp(0));
-    operatorButtonBox.button(Constants.ButtonBoxIds.REEF_AL.getButtonID()).onTrue(Commands.runOnce(() -> System.out.println("I AM BUTTON 0")));
 
+    // Button Box
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AL, 0.0));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BL, 0.0));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CL, 0.0));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DL, 0.0));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_EL, 0.0));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FL, 0.0));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AR, 0.0));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0.0));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CR, 0.0));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DR, 0.0));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_ER, 0.0));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FR, 0.0));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.ELEVATOR_L1.getButtonID())
+        .onTrue(
+            elevator
+                .executePreset(ElevatorState.Default)
+                .withTimeout(1)
+                .andThen(endEffector.runEffectorReverse(0.5))
+                .withTimeout(0.75));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.ELEVATOR_L2.getButtonID())
+        .onTrue(
+            elevator
+                .executePreset(ElevatorState.CoralL2)
+                .withTimeout(1)
+                .andThen(endEffector.runEffectorReverse(0.5))
+                .withTimeout(0.75)
+                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.5)));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.ELEVATOR_L3.getButtonID())
+        .onTrue(
+            elevator
+                .executePreset(ElevatorState.CoralL3)
+                .withTimeout(1)
+                .andThen(endEffector.runEffectorReverse(0.5))
+                .withTimeout(0.75)
+                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75)));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.ELEVATOR_L4.getButtonID())
+        .onTrue(
+            elevator
+                .executePreset(ElevatorState.CoralL4)
+                .withTimeout(1)
+                .andThen(endEffector.runEffectorReverse(0.5))
+                .withTimeout(0.75)
+                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75)));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.ABORT.getButtonID())
+        .onTrue(
+            Commands.run(() -> endEffector.stop(), endEffector)
+                .andThen(() -> intake.stop(), intake)
+                .andThen(() -> elevator.getCurrentCommand().cancel(), elevator)
+                .andThen(() -> pivot.getCurrentCommand().cancel(), pivot)
+                .andThen(() -> algae.getCurrentCommand().cancel(), algae)
+                .andThen(() -> drive.getCurrentCommand().cancel(), drive));
 
     coralFound
         .and(() -> DriverStation.isTeleopEnabled())
