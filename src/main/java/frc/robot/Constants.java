@@ -121,39 +121,37 @@ public final class Constants {
         public static final int ELEVATOR_ENCODER_ID = 8;
         public static final double ELEVATOR_MAGNET_OFFSET = 0.15;
     }
+    
+    public static enum ButtonBoxIds {
+        REEF_AL(10),
+        REEF_AR(12),
+        REEF_BL(6),
+        REEF_BR(8),
+        REEF_CL(3),
+        REEF_CR(5),
+        REEF_DL(20),
+        REEF_DR(1),
+        REEF_EL(18),
+        REEF_ER(22),
+        REEF_FL(14),
+        REEF_FR(16),
+        ELEVATOR_L1(32),
+        ELEVATOR_L2(30),
+        ELEVATOR_L3(28),
+        ELEVATOR_L4(26),
+        ABORT(24);
 
-    public static final class buttonBoxIOInputs {
-        public static enum buttonBoxIds {
-            REEF_AL(10),
-            REEF_AR(12),
-            REEF_BL(6),
-            REEF_BR(8),
-            REEF_CL(3),
-            REEF_CR(5),
-            REEF_DL(20),
-            REEF_DR(1),
-            REEF_EL(18),
-            REEF_ER(22),
-            REEF_FL(14),
-            REEF_FR(16),
-            ELEVATOR_L1(32),
-            ELEVATOR_L2(30),
-            ELEVATOR_L3(28),
-            ELEVATOR_L4(26),
-            ABORT(24);
+        // Field to store the button ID
+        private final int buttonID;
 
-            // Field to store the button ID
-            private final int buttonID;
+        // Constructor to assign the button ID
+        ButtonBoxIds(int buttonID) {
+            this.buttonID = buttonID;
+        }
 
-            // Constructor to assign the button ID
-            buttonBoxIds(int buttonID) {
-                this.buttonID = buttonID;
-            }
-
-            // Getter for button ID
-            public int getButtonID() {
-                return buttonID;
-            }
+        // Getter for button ID
+        public int getButtonID() {
+            return buttonID;
         }
     }
 }

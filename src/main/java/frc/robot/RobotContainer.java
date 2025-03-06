@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -77,6 +78,8 @@ public class RobotContainer {
   private final CommandXboxController driverController = new CommandXboxController(0);
   // Operator Controller
   private final CommandXboxController operatorController = new CommandXboxController(1);
+  // Operator Button Box
+  private final CommandGenericHID operatorButtonBox = new CommandGenericHID(2);
 
   // Triggers
   private final Trigger coralFound;
@@ -173,7 +176,10 @@ public class RobotContainer {
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
         "IntakeCoral",
-        endEffector.runEffectorAutoCommand(0.1).until(() -> !intake.isCoralDetected()));
+        endEffector
+            .runEffectorAutoCommand(0.15)
+            .until(() -> !intake.isCoralDetected())
+            .andThen(() -> endEffector.stop()));
 
     NamedCommands.registerCommand(
         "shootCoral", endEffector.runEffectorReverse(0.8).withTimeout(0.4));
@@ -277,9 +283,12 @@ public class RobotContainer {
     operatorController.leftTrigger().whileTrue(endEffector.runEffector(0.15));
     operatorController.x().whileTrue(pivot.pivotUp(1)).whileFalse(pivot.pivotUp(0));
     operatorController.y().whileTrue(pivot.pivotUp(-1)).whileFalse(pivot.pivotUp(0));
+    operatorButtonBox.button(Constants.ButtonBoxIds.REEF_AL.getButtonID()).onTrue(Commands.runOnce(() -> System.out.println("I AM BUTTON 0")));
+
+
     coralFound
         .and(() -> DriverStation.isTeleopEnabled())
-        .whileTrue(endEffector.runEffectorReverse(0.1));
+        .whileTrue(endEffector.runEffectorReverse(0.15));
 
     // Pathfind to source
 
