@@ -116,7 +116,7 @@ public class EndEffector extends SubsystemBase {
    * @return A command that runs the end effector.
    */
   public Command runEffector(double rpm) {
-    return this.startEnd(() -> setRPM(rpm), () -> stop());
+    return this.startEnd(() -> setRPM(-rpm), () -> stop());
   }
 
   /**
@@ -126,6 +126,6 @@ public class EndEffector extends SubsystemBase {
    * @return A command that runs the end effector in reverse.
    */
   public Command runEffectorReverse(double rpm) {
-    return this.startEnd(() -> setRPM(-rpm), () -> stop());
+    return this.startEnd(() -> setRPM(rpm), () -> stop());
   }
 }

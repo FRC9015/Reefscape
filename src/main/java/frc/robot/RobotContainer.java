@@ -17,6 +17,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -169,8 +170,11 @@ public class RobotContainer {
     }
 
     // Named commands for pathplanner autos
-    NamedCommands.registerCommand("IntakeCoral", endEffector.runEffector(0.25));
-    NamedCommands.registerCommand("shootCoral", endEffector.runEffectorReverse(0.5).withTimeout(1));
+    NamedCommands.registerCommand("IntakeCoral", endEffector.runEffector(0.6).until(() -> coralFound.getAsBoolean())
+    .andThen(endEffector.runEffector(0.2)
+    .until(() -> !coralFound.getAsBoolean()))
+    .andThen(() -> endEffector.stop()));
+    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(0.5).withTimeout(1));
     NamedCommands.registerCommand(
         "TestCommand", Commands.run(() -> System.out.println("TestCommand Works")));
 
@@ -263,15 +267,15 @@ public class RobotContainer {
 
     // operatorController
     //     .leftBumper()
-    //     .whileTrue(endEffector.runEffectorReverse(0.15).until(coralFound));
-    operatorController.rightBumper().whileTrue(endEffector.runEffectorReverse(0.5));
+    //     .whileTrue(endEffector.runEffector(0.15).until(coralFound));
+    operatorController.rightBumper().whileTrue(endEffector.runEffector(0.5));
     operatorController.a().whileTrue(algae.setSpeed(5)).whileFalse(algae.setSpeed(0));
     operatorController.b().whileTrue(algae.setSpeed(-5)).whileFalse(algae.setSpeed(0));
-    operatorController.leftTrigger().whileTrue(endEffector.runEffector(0.15));
+    operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(0.15));
     operatorController.x().whileTrue(pivot.pivotUp(1)).whileFalse(pivot.pivotUp(0));
     operatorController.y().whileTrue(pivot.pivotUp(-1)).whileFalse(pivot.pivotUp(0));
 
-    coralFound.whileTrue(endEffector.runEffectorReverse(0.10));
+    coralFound.and(()-> DriverStation.isTeleop()).whileTrue(endEffector.runEffector(0.10));
     // Pathfind to source
   }
 

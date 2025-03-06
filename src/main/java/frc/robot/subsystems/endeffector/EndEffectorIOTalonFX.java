@@ -75,7 +75,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
 
   @Override
   public void stop() {
-    motor1.setControl(neutralOut);
+    motor1.stopMotor();
   }
 
   @Override
