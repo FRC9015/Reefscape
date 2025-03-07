@@ -1,6 +1,6 @@
 package frc.robot.subsystems.intake;
 
-import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import org.littletonrobotics.junction.Logger;
 
 // import com.ctre.phoenix6.BaseStatusSignal;
@@ -28,8 +28,8 @@ public class IntakeIOTalonFX implements IntakeIO {
 
   // private final Debouncer encoderConnectedDebounce = new Debouncer(0.5);
 
-  private final AnalogInput coralInSensor;
-  private final AnalogInput coralSetSensor;
+  private final DigitalInput coralInSensor;
+  private final DigitalInput coralSetSensor;
 
   /**
    * Constructs an IntakeIOTalonFX.
@@ -38,8 +38,8 @@ public class IntakeIOTalonFX implements IntakeIO {
    */
   public IntakeIOTalonFX(int coralInChannel, int coralSetChannel) {
     // motor = new TalonFX(motorId);
-    coralInSensor = new AnalogInput(coralInChannel);
-    coralSetSensor = new AnalogInput(coralSetChannel);
+    coralInSensor = new DigitalInput(coralInChannel);
+    coralSetSensor = new DigitalInput(coralSetChannel);
 
     // // Configure motor
     // TalonFXConfiguration motorConfig = new TalonFXConfiguration();
@@ -66,11 +66,11 @@ public class IntakeIOTalonFX implements IntakeIO {
     // inputs.intakeCurrentAmps = currentSignal.getValueAsDouble();
 
     // Commented out for now
-    inputs.coralIn = coralInSensor.getVoltage() > 4; // Coral detected if the sensor is triggered
-    inputs.coralSet = coralSetSensor.getVoltage() > 4;
+    inputs.coralIn = coralInSensor.get(); // Coral detected if the sensor is triggered
+    inputs.coralSet = coralSetSensor.get();
     // (active low)
-    Logger.recordOutput("InSensor", coralInSensor.getVoltage() > 4);
-    Logger.recordOutput("SetSensor", coralSetSensor.getVoltage() > 4);
+    Logger.recordOutput("coralIn?", !coralInSensor.get());
+    Logger.recordOutput("coralSet?", !coralSetSensor.get());
   }
 
   @Override

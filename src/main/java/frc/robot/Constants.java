@@ -61,14 +61,14 @@ public final class Constants {
     public static final Transform3d bowPose =
         new Transform3d(
             new Translation3d(
-                Units.inchesToMeters(15), Units.inchesToMeters(0), Units.inchesToMeters(7)),
-            new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(0)));
+                Units.inchesToMeters(13.5), Units.inchesToMeters(0), Units.inchesToMeters(7)),
+            new Rotation3d(0, -Units.degreesToRadians(15), Units.degreesToRadians(0)));
 
     public static final Transform3d starboardPose =
         new Transform3d(
             new Translation3d(
-                Units.inchesToMeters(0), -Units.inchesToMeters(15), Units.inchesToMeters(7)),
-            new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(270)));
+                Units.inchesToMeters(0), -Units.inchesToMeters(13.5), Units.inchesToMeters(7)),
+            new Rotation3d(0, -Units.degreesToRadians(15), Units.degreesToRadians(270)));
 
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
@@ -86,33 +86,34 @@ public final class Constants {
             new Translation2d(1.403, 6.991), new Rotation2d(Radians.convertFrom(-55, Degrees)));
     // Reef poses/locations
     public static final Pose2d REEF_AR =
-        new Pose2d(new Translation2d(3.104, 3.865), new Rotation2d());
+        new Pose2d(new Translation2d(2.992, 3.819), new Rotation2d());
     public static final Pose2d REEF_AL =
-        new Pose2d(new Translation2d(3.119, 4.215), new Rotation2d());
+        new Pose2d(new Translation2d(2.992, 4.169), new Rotation2d());
 
     public static final Pose2d REEF_BR =
-        new Pose2d(new Translation2d(3.723, 5.126), new Rotation2d(5 * Math.PI / 3));
+        new Pose2d(new Translation2d(3.589, 5.141), new Rotation2d(5 * Math.PI / 3));
     public static final Pose2d REEF_BL =
-        new Pose2d(new Translation2d(3.977, 5.335), new Rotation2d(5 * Math.PI / 3));
+        new Pose2d(new Translation2d(3.891, 5.315), new Rotation2d(5 * Math.PI / 3));
 
     public static final Pose2d REEF_CR =
-        new Pose2d(new Translation2d(4.992, 5.263), new Rotation2d(4 * Math.PI / 3));
-    // everything under this comment is not proper pose above is proper pose
+        new Pose2d(new Translation2d(5.023, 5.391), new Rotation2d(4 * Math.PI / 3));
     public static final Pose2d REEF_CL =
-        new Pose2d(new Translation2d(5.287, 5.386), new Rotation2d(4 * Math.PI / 3));
+        new Pose2d(new Translation2d(5.315, 5.228), new Rotation2d(4 * Math.PI / 3));
 
-    public static final Pose2d REEF_DR = new Pose2d(new Translation2d(6, 4.103), new Rotation2d());
-    public static final Pose2d REEF_DL = new Pose2d(new Translation2d(6, 4.103), new Rotation2d());
+    public static final Pose2d REEF_DR =
+        new Pose2d(new Translation2d(5.972, 4.229), new Rotation2d(Math.PI));
+    public static final Pose2d REEF_DL =
+        new Pose2d(new Translation2d(5.972, 3.889), new Rotation2d(Math.PI));
 
     public static final Pose2d REEF_ER =
-        new Pose2d(new Translation2d(5.632, 2.832), new Rotation2d());
+        new Pose2d(new Translation2d(5.427, 2.832), new Rotation2d(2 * Math.PI / 3));
     public static final Pose2d REEF_EL =
-        new Pose2d(new Translation2d(5.632, 2.832), new Rotation2d());
+        new Pose2d(new Translation2d(5.109, 2.688), new Rotation2d(2 * Math.PI / 3));
 
     public static final Pose2d REEF_FR =
-        new Pose2d(new Translation2d(3.836, 2.616), new Rotation2d());
+        new Pose2d(new Translation2d(3.608, 2.842), new Rotation2d(Math.PI / 3));
     public static final Pose2d REEF_FL =
-        new Pose2d(new Translation2d(3.836, 2.616), new Rotation2d());
+        new Pose2d(new Translation2d(3.887, 2.668), new Rotation2d(Math.PI / 3));
   }
 
   public static class AutoConstants {
@@ -129,7 +130,7 @@ public final class Constants {
     public static final int ELEVATOR_MOTOR_ID1 = 9;
     public static final int ELEVATOR_MOTOR_ID2 = 10;
     public static final int ELEVATOR_ENCODER_ID = 8;
-    public static final double ELEVATOR_MAGNET_OFFSET = 0.15;
+    public static final double ELEVATOR_MAGNET_OFFSET = 0.07;
   }
 
   public static enum ButtonBoxIds {

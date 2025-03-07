@@ -56,6 +56,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.PhoenixUtil;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -92,7 +93,7 @@ public class Drive extends SubsystemBase {
               1),
           getModuleTranslations());
   private static final PathConstraints PP_CONSTRAINTS =
-      new PathConstraints(2.0, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+      new PathConstraints(1.0, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
@@ -117,8 +118,8 @@ public class Drive extends SubsystemBase {
           rawGyroRotation,
           lastModulePositions,
           new Pose2d(),
-          VecBuilder.fill(1, 1, 1),
-          VecBuilder.fill(0.1, 0.1, 0.1));
+          VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+          VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
 
   /**
    * Constructs a new Drive.
@@ -154,7 +155,7 @@ public class Drive extends SubsystemBase {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(2, 0.3, 0.0), new PIDConstants(5.0, 0.0, 0.02)),
+            new PIDConstants(2, 0.0, 0.12), new PIDConstants(5.0, 0.0, 0.02)),
         //     new PIDConstants(4.5, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.02)),
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
@@ -404,8 +405,8 @@ public class Drive extends SubsystemBase {
   }
 
   public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
-    Logger.recordOutput("flippath", AutoBuilder.shouldFlip());
-    return AutoBuilder.shouldFlip()
+    Logger.recordOutput("isRed?", PhoenixUtil.isRed());
+    return PhoenixUtil.isRed()
         ? this.pathfindToPoseFlipped(targetpose, endVelocity)
         : this.pfToPose(targetpose, endVelocity);
   }

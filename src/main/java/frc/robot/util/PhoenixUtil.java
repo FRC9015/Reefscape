@@ -14,6 +14,7 @@
 package frc.robot.util;
 
 import com.ctre.phoenix6.StatusCode;
+import edu.wpi.first.wpilibj.DriverStation;
 import java.util.function.Supplier;
 
 public class PhoenixUtil {
@@ -23,5 +24,13 @@ public class PhoenixUtil {
       StatusCode error = command.get();
       if (error.isOK()) break;
     }
+  }
+
+  public static boolean isRed() {
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      return alliance.get() == DriverStation.Alliance.Red;
+    }
+    return false;
   }
 }

@@ -16,7 +16,10 @@ package frc.robot.subsystems.endeffector;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.littletonrobotics.junction.Logger;
 
 /** The EndEffector subsystem controls the end effector mechanism. */
@@ -119,8 +122,19 @@ public class EndEffector extends SubsystemBase {
     return this.startEnd(() -> setVoltage(-voltage), () -> stop());
   }
 
-  public Command runEffectorAutoCommand(double voltage) {
+  public Command runEffectorAuto(double voltage) {
     return this.run(() -> setVoltage(-voltage));
+  }
+
+  public Command runEffectorAutoCommand() {
+    return new SequentialCommandGroup(
+        new InstantCommand(this::autoEffectorVoltage),
+        new WaitCommand(0.4),
+        new InstantCommand(this::stop));
+  }
+
+  private void autoEffectorVoltage() {
+    io.setRPM(-6);
   }
 
   /**

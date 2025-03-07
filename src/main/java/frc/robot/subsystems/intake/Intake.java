@@ -76,11 +76,11 @@ public class Intake extends SubsystemBase {
    * @return True if coral is detected, false otherwise.
    */
   public boolean isCoralIn() {
-    return inputs.coralIn;
+    return !inputs.coralIn;
   }
 
   public boolean isCoralSet() {
-    return inputs.coralSet && !inputs.coralIn;
+    return !inputs.coralSet && inputs.coralIn;
   }
 
   /**
