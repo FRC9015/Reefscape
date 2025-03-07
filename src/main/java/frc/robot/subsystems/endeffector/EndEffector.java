@@ -52,9 +52,9 @@ public class EndEffector extends SubsystemBase {
    *
    * @param rpm The desired RPM for the end effector.
    */
-  public void setRPM(double rpm) {
-    io.setRPM(rpm);
-    Logger.recordOutput("EndEffector/SetRPM", rpm);
+  public void setVoltage(double voltage) {
+    io.setRPM(voltage);
+    Logger.recordOutput("EndEffector/setVoltage", voltage);
   }
 
   /** Stops the end effector. */
@@ -112,24 +112,24 @@ public class EndEffector extends SubsystemBase {
   /**
    * Runs the end effector at the specified RPM.
    *
-   * @param rpm The desired RPM for the end effector.
+   * @param voltage Voltage provided to the motor.
    * @return A command that runs the end effector.
    */
-  public Command runEffector(double rpm) {
-    return this.startEnd(() -> setRPM(-rpm), () -> stop());
+  public Command runEffector(double voltage) {
+    return this.startEnd(() -> setVoltage(-voltage), () -> stop());
   }
 
-  public Command runEffectorAutoCommand(double rpm) {
-    return this.run(() -> setRPM(-rpm));
+  public Command runEffectorAutoCommand(double voltage) {
+    return this.run(() -> setVoltage(-voltage));
   }
 
   /**
    * Runs the end effector in reverse at the specified RPM.
    *
-   * @param rpm The desired RPM for the end effector.
+   * @param voltage Voltage provided to the motor.
    * @return A command that runs the end effector in reverse.
    */
-  public Command runEffectorReverse(double rpm) {
-    return this.startEnd(() -> setRPM(rpm), () -> stop());
+  public Command runEffectorReverse(double voltage) {
+    return this.startEnd(() -> setVoltage(voltage), () -> stop());
   }
 }

@@ -19,7 +19,6 @@ import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -107,7 +106,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
-        intake = new Intake(new IntakeIOTalonFX(0));
+        intake = new Intake(new IntakeIOTalonFX(0, 1));
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
@@ -117,7 +116,7 @@ public class RobotContainer {
                     0));
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
-        coralFound = new Trigger(() -> intake.isCoralDetected());
+        coralFound = new Trigger(() -> intake.isCoralIn());
         break;
 
       case SIM:
@@ -140,7 +139,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         algae = new Algae(new AlgaeIOSim());
         pivot = new Pivot(new PivotIOSim());
-        coralFound = new Trigger(() -> intake.isCoralDetected());
+        coralFound = new Trigger(() -> intake.isCoralIn());
         break;
 
       default:
@@ -160,7 +159,7 @@ public class RobotContainer {
         // climber = new Climber(1);
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
-        intake = new Intake(new IntakeIOTalonFX(0));
+        intake = new Intake(new IntakeIOTalonFX(0, 1));
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
@@ -170,19 +169,22 @@ public class RobotContainer {
                     0));
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
-        coralFound = new Trigger(() -> intake.isCoralDetected());
+        coralFound = new Trigger(() -> intake.isCoralIn());
         break;
     }
 
     // Named commands for pathplanner autos
-    NamedCommands.registerCommand("IntakeCoral", endEffector.runEffector(0.6).until(() -> coralFound.getAsBoolean())
-    .andThen(endEffector.runEffector(0.2)
-    .until(() -> !coralFound.getAsBoolean()))
-    .andThen(() -> endEffector.stop()));
-    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(0.5).withTimeout(1));
+    NamedCommands.registerCommand(
+        "IntakeCoral",
+        endEffector
+            .runEffector(0.6)
+            .until(() -> coralFound.getAsBoolean())
+            .andThen(endEffector.runEffector(6).until(() -> !coralFound.getAsBoolean()))
+            .andThen(() -> endEffector.stop()));
+    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(6).withTimeout(1));
     NamedCommands.registerCommand(
         "TestCommand", Commands.run(() -> System.out.println("TestCommand Works")));
-    new EventTrigger("coral?").and(coralFound).whileTrue(endEffector.runEffectorReverse(0.1));
+    new EventTrigger("coral?").and(coralFound).whileTrue(endEffector.runEffectorReverse(6));
     NamedCommands.registerCommand(
         "DefaultPosition", elevator.executePreset(ElevatorState.Default).withTimeout(1));
     NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
@@ -273,10 +275,10 @@ public class RobotContainer {
     // operatorController
     //     .leftBumper()
     //     .whileTrue(endEffector.runEffector(0.15).until(coralFound));
-    operatorController.rightBumper().whileTrue(endEffector.runEffector(0.5));
+    operatorController.rightBumper().whileTrue(endEffector.runEffector(6));
     operatorController.a().whileTrue(algae.setSpeed(5)).whileFalse(algae.setSpeed(0));
     operatorController.b().whileTrue(algae.setSpeed(-5)).whileFalse(algae.setSpeed(0));
-    operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(0.15));
+    operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
     operatorController.x().whileTrue(pivot.pivotUp(1)).whileFalse(pivot.pivotUp(0));
     operatorController.y().whileTrue(pivot.pivotUp(-1)).whileFalse(pivot.pivotUp(0));
 
@@ -323,7 +325,7 @@ public class RobotContainer {
             elevator
                 .executePreset(ElevatorState.Default)
                 .withTimeout(1)
-                .andThen(endEffector.runEffectorReverse(0.5))
+                .andThen(endEffector.runEffectorReverse(6))
                 .withTimeout(0.75));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L2.getButtonID())
@@ -331,7 +333,7 @@ public class RobotContainer {
             elevator
                 .executePreset(ElevatorState.CoralL2)
                 .withTimeout(1)
-                .andThen(endEffector.runEffectorReverse(0.5))
+                .andThen(endEffector.runEffectorReverse(6))
                 .withTimeout(0.75)
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.5)));
     operatorButtonBox
@@ -340,7 +342,7 @@ public class RobotContainer {
             elevator
                 .executePreset(ElevatorState.CoralL3)
                 .withTimeout(1)
-                .andThen(endEffector.runEffectorReverse(0.5))
+                .andThen(endEffector.runEffectorReverse(6))
                 .withTimeout(0.75)
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75)));
     operatorButtonBox
@@ -349,7 +351,7 @@ public class RobotContainer {
             elevator
                 .executePreset(ElevatorState.CoralL4)
                 .withTimeout(1)
-                .andThen(endEffector.runEffectorReverse(0.5))
+                .andThen(endEffector.runEffectorReverse(6))
                 .withTimeout(0.75)
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75)));
     operatorButtonBox
@@ -364,7 +366,8 @@ public class RobotContainer {
 
     coralFound
         .and(() -> DriverStation.isTeleopEnabled())
-        .and(()-> DriverStation.isTeleop()).whileTrue(endEffector.runEffector(0.15));
+        .and(() -> DriverStation.isTeleop())
+        .whileTrue(endEffector.runEffector(6));
 
     // Pathfind to source
 

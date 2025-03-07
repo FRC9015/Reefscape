@@ -25,7 +25,7 @@ public class Vision extends SubsystemBase {
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
 
-  private Matrix<N3, N1> curStdDevs;
+  public Matrix<N3, N1> curStdDevs;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;

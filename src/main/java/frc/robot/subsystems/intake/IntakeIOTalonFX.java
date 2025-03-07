@@ -28,16 +28,18 @@ public class IntakeIOTalonFX implements IntakeIO {
 
   // private final Debouncer encoderConnectedDebounce = new Debouncer(0.5);
 
-  private final AnalogInput coralSensor;
+  private final AnalogInput coralInSensor;
+  private final AnalogInput coralSetSensor;
 
   /**
    * Constructs an IntakeIOTalonFX.
    *
    * @param motorId The ID of the motor.
    */
-  public IntakeIOTalonFX(int coralSensorChannel) {
+  public IntakeIOTalonFX(int coralInChannel, int coralSetChannel) {
     // motor = new TalonFX(motorId);
-    coralSensor = new AnalogInput(coralSensorChannel);
+    coralInSensor = new AnalogInput(coralInChannel);
+    coralSetSensor = new AnalogInput(coralSetChannel);
 
     // // Configure motor
     // TalonFXConfiguration motorConfig = new TalonFXConfiguration();
@@ -64,10 +66,11 @@ public class IntakeIOTalonFX implements IntakeIO {
     // inputs.intakeCurrentAmps = currentSignal.getValueAsDouble();
 
     // Commented out for now
-    inputs.coralDetected =
-        coralSensor.getVoltage() > 4.0; // Coral detected if the sensor is triggered
+    inputs.coralIn = coralInSensor.getVoltage() > 4; // Coral detected if the sensor is triggered
+    inputs.coralSet = coralSetSensor.getVoltage() > 4;
     // (active low)
-    Logger.recordOutput("sensor", coralSensor.getVoltage() > 4.0);
+    Logger.recordOutput("InSensor", coralInSensor.getVoltage() > 4);
+    Logger.recordOutput("SetSensor", coralSetSensor.getVoltage() > 4);
   }
 
   @Override

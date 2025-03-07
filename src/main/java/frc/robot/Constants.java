@@ -57,7 +57,7 @@ public final class Constants {
 
   public static class CameraConstants {
     public static AprilTagFieldLayout aprilTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+        AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     public static final Transform3d bowPose =
         new Transform3d(
             new Translation3d(

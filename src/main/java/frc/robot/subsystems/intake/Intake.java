@@ -23,12 +23,14 @@ public class Intake extends SubsystemBase {
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
   private final Alert encoderDisconnectedAlert;
-  private final Alert coralDetectionAlert;
+  private final Alert coralInAlert;
+  private final Alert coralSetAlert;
 
   public Intake(IntakeIO io) {
     this.io = io;
     encoderDisconnectedAlert = new Alert("Intake encoder disconnected!", AlertType.kError);
-    coralDetectionAlert = new Alert("Coral detected!", AlertType.kInfo);
+    coralInAlert = new Alert("Coral detected!", AlertType.kInfo);
+    coralSetAlert = new Alert("Coral Set!", AlertType.kInfo);
   }
 
   /** Periodically updates the intake's state and logs inputs. */
@@ -38,7 +40,8 @@ public class Intake extends SubsystemBase {
 
     // Update alerts
     encoderDisconnectedAlert.set(!inputs.intakeEncoderConnected);
-    coralDetectionAlert.set(inputs.coralDetected);
+    coralInAlert.set(inputs.coralIn);
+    coralSetAlert.set(inputs.coralSet);
   }
 
   /**
@@ -72,8 +75,12 @@ public class Intake extends SubsystemBase {
    *
    * @return True if coral is detected, false otherwise.
    */
-  public boolean isCoralDetected() {
-    return inputs.coralDetected;
+  public boolean isCoralIn() {
+    return inputs.coralIn;
+  }
+
+  public boolean isCoralSet() {
+    return inputs.coralSet && !inputs.coralIn;
   }
 
   /**
