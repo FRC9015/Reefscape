@@ -55,13 +55,13 @@ public class Pivot extends SubsystemBase {
   }
 
   public Command pivotUp(double speed) {
-    Logger.recordOutput("Pivor/speed", speed);
+    Logger.recordOutput("Pivot/speed", speed);
     Logger.recordOutput("Pivot/CurrentPosition", inputs.pivotPosition);
     return run(() -> io.setPivotPosition(speed));
   }
 
   public Command pivotDown(double speed) {
-    Logger.recordOutput("Pivor/speed", speed);
+    Logger.recordOutput("Pivot/speed", speed);
     Logger.recordOutput("Pivot/CurrentPosition", inputs.pivotPosition);
     return run(() -> io.setPivotPosition(speed));
   }

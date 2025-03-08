@@ -25,14 +25,7 @@ public class Vision extends SubsystemBase {
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
 
-  private final double stdDevMT1A = 0.001401;
-  private final double stdDevMT1C = 0;
-
-  private final double angularStdDevMT1A = 0.0264;
-  private final double angularStdDevMT1C = 0.5;
-
-  private double linearStdDev;
-  private double angularStdDev;
+  public Matrix<N3, N1> curStdDevs;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -138,30 +131,38 @@ public class Vision extends SubsystemBase {
           continue;
         }
 
-        linearStdDev =
-            (stdDevMT1A
-                    * (Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount()))
-                + stdDevMT1C;
-        angularStdDev =
-            (angularStdDevMT1A
-                    * (Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount()))
-                + angularStdDevMT1C;
+        // Pose present. Start running Heuristic
+        var estStdDevs = CameraConstants.kSingleTagStdDevs;
+        int numTags = 0;
+        double avgDist = 0;
 
-        final double stdDevFactor = 10;
+        // Precalculation - see how many tags we found, and calculate an average-distance metric
+        for (var target : tagPoses) {
+          numTags++;
+          avgDist +=
+              target
+                  .toPose2d()
+                  .getTranslation()
+                  .getDistance(observation.pose().toPose2d().getTranslation());
+        }
 
-        linearStdDev = CameraConstants.linearStdDevBaseline * stdDevFactor;
-        angularStdDev = CameraConstants.angularStdDevBaseline * stdDevFactor;
-
-        if (cameraIndex < CameraConstants.cameraStdDevFactors.length) {
-          linearStdDev *= CameraConstants.cameraStdDevFactors[cameraIndex];
-          angularStdDev *= CameraConstants.cameraStdDevFactors[cameraIndex];
+        if (numTags == 0) {
+          // No tags visible. Default to single-tag std devs
+          curStdDevs = CameraConstants.kSingleTagStdDevs;
+        } else {
+          // One or more tags visible, run the full heuristic.
+          avgDist /= numTags;
+          // Decrease std devs if multiple targets are visible
+          if (numTags > 1) estStdDevs = CameraConstants.kMultiTagStdDevs;
+          // Increase std devs based on (average) distance
+          if (numTags == 1 && avgDist > 4)
+            estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+          else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
+          curStdDevs = estStdDevs;
         }
 
         // Send vision observation
-        consumer.accept(
-            observation.pose().toPose2d(),
-            observation.timestamp(),
-            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+        consumer.accept(observation.pose().toPose2d(), observation.timestamp(), curStdDevs);
       }
 
       // Log camera datadata
@@ -171,23 +172,11 @@ public class Vision extends SubsystemBase {
       Logger.recordOutput(
           "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
           robotPoses.toArray(new Pose3d[robotPoses.size()]));
-      Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
-          robotPosesAccepted.toArray(new Pose3d[robotPosesAccepted.size()]));
-      Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
-          robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);
       allRobotPosesRejected.addAll(robotPosesRejected);
     }
-
-    // Log summary data
-    Logger.recordOutput(
-        "Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[allTagPoses.size()]));
-    Logger.recordOutput(
-        "Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[allRobotPoses.size()]));
   }
 
   @FunctionalInterface

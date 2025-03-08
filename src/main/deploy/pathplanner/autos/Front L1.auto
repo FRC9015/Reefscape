@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Drive Straight Path"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shootCoral"
+            "pathName": "Front Path"
           }
         }
       ]

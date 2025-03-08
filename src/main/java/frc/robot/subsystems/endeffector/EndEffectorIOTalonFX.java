@@ -22,6 +22,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -75,7 +76,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
 
   @Override
   public void stop() {
-    motor1.setControl(neutralOut);
+    motor1.stopMotor();
   }
 
   @Override
@@ -84,7 +85,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
   }
 
   @Override
-  public void setRPM(double rpm) {
-    motor1.set(-rpm);
+  public void setRPM(double voltage) {
+    motor1.setVoltage(MathUtil.clamp(voltage, -12.0, 12.0));
   }
 }

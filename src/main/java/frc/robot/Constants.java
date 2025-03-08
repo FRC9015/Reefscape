@@ -19,12 +19,16 @@ import static edu.wpi.first.units.Units.Radians;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -51,47 +55,23 @@ public final class Constants {
     REPLAY
   }
 
-  public class CameraConstants {
-    public static final String CAMERA_2_NAME = "Camera2";
-    public static final String CAMERA_1_NAME = "Camera1";
-    // Camera positions relative to the robot's center in meters
-    public static final Transform3d CAMERA_1_TO_ROBOT =
-        new Transform3d(
-            0.3,
-            0.0,
-            0.2,
-            new Rotation3d(0, 0, Math.PI) // Sample metrics for front-mounted camera in meters
-            );
-
-    public static final Transform3d CAMERA_2_TO_ROBOT =
-        new Transform3d(
-            -0.3,
-            0.0,
-            0.2,
-            new Rotation3d(0, 0, 0) // Sample metrics for rear-mounted camera in meters
-            );
+  public static class CameraConstants {
     public static AprilTagFieldLayout aprilTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+        AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     public static final Transform3d bowPose =
         new Transform3d(
             new Translation3d(
-                Units.inchesToMeters(15), Units.inchesToMeters(0), Units.inchesToMeters(7)),
-            new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(0)));
+                Units.inchesToMeters(13.5), Units.inchesToMeters(0), Units.inchesToMeters(7)),
+            new Rotation3d(0, -Units.degreesToRadians(15), Units.degreesToRadians(0)));
 
     public static final Transform3d starboardPose =
         new Transform3d(
             new Translation3d(
-                Units.inchesToMeters(0), -Units.inchesToMeters(15), Units.inchesToMeters(7)),
-            new Rotation3d(0, Units.degreesToRadians(15), Units.degreesToRadians(270)));
+                Units.inchesToMeters(0), -Units.inchesToMeters(13.5), Units.inchesToMeters(7)),
+            new Rotation3d(0, -Units.degreesToRadians(15), Units.degreesToRadians(270)));
 
-    public static double linearStdDevBaseline = 0.02; // Meters
-    public static double angularStdDevBaseline = 0.06; // Radians
-
-    public static double[] cameraStdDevFactors =
-        new double[] {
-          1.0, // Camera 0
-          1.0 // Camera 1
-        };
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
   }
 
   public static class FieldConstants {
@@ -99,38 +79,41 @@ public final class Constants {
         new Pose2d(new Translation2d(3.25, 3.8), new Rotation2d());
     public static final Pose2d bargeFar = new Pose2d(new Translation2d(7.6, 6.6), new Rotation2d());
     public static final Pose2d bargeNear = new Pose2d(new Translation2d(7.6, 5), new Rotation2d());
+    public static final Pose2d bargeMid =
+        new Pose2d(new Translation2d(7.137, 6.136), new Rotation2d(Math.PI));
     public static final Pose2d SourceL =
         new Pose2d(
             new Translation2d(1.403, 6.991), new Rotation2d(Radians.convertFrom(-55, Degrees)));
     // Reef poses/locations
     public static final Pose2d REEF_AR =
-        new Pose2d(new Translation2d(3.104, 3.865), new Rotation2d());
+        new Pose2d(new Translation2d(2.992, 3.819), new Rotation2d());
     public static final Pose2d REEF_AL =
-        new Pose2d(new Translation2d(3.119, 4.215), new Rotation2d());
+        new Pose2d(new Translation2d(2.992, 4.169), new Rotation2d());
 
     public static final Pose2d REEF_BR =
-        new Pose2d(new Translation2d(3.723, 5.126), new Rotation2d(5 * Math.PI / 3));
+        new Pose2d(new Translation2d(3.589, 5.141), new Rotation2d(5 * Math.PI / 3));
     public static final Pose2d REEF_BL =
-        new Pose2d(new Translation2d(3.977, 5.335), new Rotation2d(5 * Math.PI / 3));
+        new Pose2d(new Translation2d(3.891, 5.315), new Rotation2d(5 * Math.PI / 3));
 
     public static final Pose2d REEF_CR =
-        new Pose2d(new Translation2d(5.074, 5.252), new Rotation2d(4 * Math.PI / 3));
-    // everything under this comment is not proper pose above is proper pose
+        new Pose2d(new Translation2d(5.023, 5.391), new Rotation2d(4 * Math.PI / 3));
     public static final Pose2d REEF_CL =
-        new Pose2d(new Translation2d(5.287, 5.386), new Rotation2d(4 * Math.PI / 3));
+        new Pose2d(new Translation2d(5.315, 5.228), new Rotation2d(4 * Math.PI / 3));
 
-    public static final Pose2d REEF_DR = new Pose2d(new Translation2d(6, 4.103), new Rotation2d());
-    public static final Pose2d REEF_DL = new Pose2d(new Translation2d(6, 4.103), new Rotation2d());
+    public static final Pose2d REEF_DR =
+        new Pose2d(new Translation2d(5.972, 4.229), new Rotation2d(Math.PI));
+    public static final Pose2d REEF_DL =
+        new Pose2d(new Translation2d(5.972, 3.889), new Rotation2d(Math.PI));
 
     public static final Pose2d REEF_ER =
-        new Pose2d(new Translation2d(5.632, 2.832), new Rotation2d());
+        new Pose2d(new Translation2d(5.427, 2.832), new Rotation2d(2 * Math.PI / 3));
     public static final Pose2d REEF_EL =
-        new Pose2d(new Translation2d(5.632, 2.832), new Rotation2d());
+        new Pose2d(new Translation2d(5.109, 2.688), new Rotation2d(2 * Math.PI / 3));
 
     public static final Pose2d REEF_FR =
-        new Pose2d(new Translation2d(3.836, 2.616), new Rotation2d());
+        new Pose2d(new Translation2d(3.608, 2.842), new Rotation2d(Math.PI / 3));
     public static final Pose2d REEF_FL =
-        new Pose2d(new Translation2d(3.836, 2.616), new Rotation2d());
+        new Pose2d(new Translation2d(3.887, 2.668), new Rotation2d(Math.PI / 3));
   }
 
   public static class AutoConstants {
@@ -147,6 +130,39 @@ public final class Constants {
     public static final int ELEVATOR_MOTOR_ID1 = 9;
     public static final int ELEVATOR_MOTOR_ID2 = 10;
     public static final int ELEVATOR_ENCODER_ID = 8;
-    public static final double ELEVATOR_MAGNET_OFFSET = 0.19;
+    public static final double ELEVATOR_MAGNET_OFFSET = 0.07;
+  }
+
+  public static enum ButtonBoxIds {
+    REEF_AL(10),
+    REEF_AR(12),
+    REEF_BL(6),
+    REEF_BR(8),
+    REEF_CL(3),
+    REEF_CR(5),
+    REEF_DL(20),
+    REEF_DR(1),
+    REEF_EL(18),
+    REEF_ER(22),
+    REEF_FL(14),
+    REEF_FR(16),
+    ELEVATOR_L1(32),
+    ELEVATOR_L2(30),
+    ELEVATOR_L3(28),
+    ELEVATOR_L4(26),
+    ABORT(24);
+
+    // Field to store the button ID
+    private final int buttonID;
+
+    // Constructor to assign the button ID
+    ButtonBoxIds(int buttonID) {
+      this.buttonID = buttonID;
+    }
+
+    // Getter for button ID
+    public int getButtonID() {
+      return buttonID;
+    }
   }
 }

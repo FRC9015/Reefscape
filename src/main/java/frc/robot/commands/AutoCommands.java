@@ -73,7 +73,7 @@ public class AutoCommands {
             startPose,
             AutoConstants.PP_CONSTRAINTS,
             returnFirstPathinAuto(desiredAuto).getGoalEndState().velocityMPS()),
-        Commands.runOnce(() -> endEffector.setRPM(6000), endEffector),
+        Commands.runOnce(() -> endEffector.setVoltage(6), endEffector),
         Commands.runOnce(() -> intake.setRPM(6000), intake));
   }
 

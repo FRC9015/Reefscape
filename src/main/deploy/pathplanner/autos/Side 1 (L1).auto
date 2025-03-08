@@ -7,19 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GoToHP - Path 1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L1 Coral Path"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4Position"
+            "pathName": "Side L1 Revised"
           }
         },
         {
