@@ -40,6 +40,12 @@
           "data": {
             "pathName": "To Source"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
+          }
         }
       ]
     }

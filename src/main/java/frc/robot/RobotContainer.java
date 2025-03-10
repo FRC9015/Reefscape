@@ -16,6 +16,8 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -72,9 +74,12 @@ public class RobotContainer {
   private final Elevator elevator;
   private final Pivot pivot;
   private final Algae algae;
-
   private final Vision photon;
+
+  // private final UsbCamera elavatorCamera;
   // Driver Controller
+  private final UsbCamera elavatorCamera;
+
   private final CommandXboxController driverController = new CommandXboxController(0);
   // Operator Controller
   private final CommandXboxController operatorController = new CommandXboxController(1);
@@ -117,6 +122,7 @@ public class RobotContainer {
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
+        elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
       case SIM:
@@ -131,7 +137,7 @@ public class RobotContainer {
         photon =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVisionSim("Starboard", CameraConstants.starboardPose),
+                // new VisionIOPhotonVisionSim("Starboard", CameraConstants.starboardPose),
                 new VisionIOPhotonVisionSim("Bow", CameraConstants.bowPose));
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
@@ -140,6 +146,7 @@ public class RobotContainer {
         algae = new Algae(new AlgaeIOSim());
         pivot = new Pivot(new PivotIOSim());
         coralFound = new Trigger(() -> intake.isCoralIn());
+        elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
       default:
@@ -170,6 +177,7 @@ public class RobotContainer {
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
+        elavatorCamera = CameraServer.startAutomaticCapture();
         break;
     }
 
@@ -187,7 +195,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("L3Position", elevator.executePreset(ElevatorState.CoralL3));
     NamedCommands.registerCommand(
         "L4Position",
-        elevator.executePreset(ElevatorState.CoralL4).withTimeout(1).unless(coralFound));
+        elevator.executePreset(ElevatorState.CoralL4).withTimeout(1.1).unless(coralFound));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -208,6 +216,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    elavatorCamera.setResolution(640, 480);
+    elavatorCamera.setFPS(24);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -269,8 +279,8 @@ public class RobotContainer {
     operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
 
     // operatorController
-    //     .leftBumper()
-    //     .whileTrue(endEffector.runEffector(0.15).until(coralFound));
+    // .leftBumper()
+    // .whileTrue(endEffector.runEffector(0.15).until(coralFound));
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
     operatorController.a().whileTrue(algae.setSpeed(5)).whileFalse(algae.setSpeed(0));
     operatorController.b().whileTrue(algae.setSpeed(-5)).whileFalse(algae.setSpeed(0));
@@ -317,7 +327,7 @@ public class RobotContainer {
         .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FR, 0.0));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L1.getButtonID())
-        .onTrue(endEffector.runEffectorAutoCommand());
+        .onTrue(elevator.executePreset(ElevatorState.CoralL1));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L2.getButtonID())
         .onTrue(

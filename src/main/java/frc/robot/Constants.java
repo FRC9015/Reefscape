@@ -91,9 +91,9 @@ public final class Constants {
         new Pose2d(new Translation2d(2.992, 4.169), new Rotation2d());
 
     public static final Pose2d REEF_BR =
-        new Pose2d(new Translation2d(3.589, 5.141), new Rotation2d(5 * Math.PI / 3));
+        new Pose2d(new Translation2d(3.835, 5.297), new Rotation2d(5 * Math.PI / 3));
     public static final Pose2d REEF_BL =
-        new Pose2d(new Translation2d(3.891, 5.315), new Rotation2d(5 * Math.PI / 3));
+        new Pose2d(new Translation2d(3.910, 5.275), new Rotation2d(5 * Math.PI / 3));
 
     public static final Pose2d REEF_CR =
         new Pose2d(new Translation2d(5.023, 5.391), new Rotation2d(4 * Math.PI / 3));
@@ -130,7 +130,7 @@ public final class Constants {
     public static final int ELEVATOR_MOTOR_ID1 = 9;
     public static final int ELEVATOR_MOTOR_ID2 = 10;
     public static final int ELEVATOR_ENCODER_ID = 8;
-    public static final double ELEVATOR_MAGNET_OFFSET = 0.07;
+    public static final double ELEVATOR_MAGNET_OFFSET = 0.09;
   }
 
   public static enum ButtonBoxIds {

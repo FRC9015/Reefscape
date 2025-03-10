@@ -60,12 +60,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Position"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "shootCoral"
                 }
               }

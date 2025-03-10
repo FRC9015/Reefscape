@@ -7,7 +7,32 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Front Path"
+            "pathName": "FrontPath"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "L4Position"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "shootCoral"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DefaultPosition"
           }
         }
       ]

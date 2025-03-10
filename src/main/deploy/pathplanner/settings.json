@@ -3,7 +3,9 @@
   "robotLength": 0.91,
   "holonomicMode": true,
   "pathFolders": [
-    "GoToHP Paths- From Start Zones"
+    "GoToHP Paths- From Start Zones",
+    "three note",
+    "Two Note"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
