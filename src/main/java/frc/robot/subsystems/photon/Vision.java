@@ -172,6 +172,18 @@ public class Vision extends SubsystemBase {
       Logger.recordOutput(
           "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
           robotPoses.toArray(new Pose3d[robotPoses.size()]));
+
+      if (!robotPosesAccepted.isEmpty()) {
+        Logger.recordOutput(
+            "Vision/Camera" + Integer.toString(cameraIndex) + "/AcceptedRobotPoses",
+            robotPosesAccepted.toArray(new Pose3d[robotPosesAccepted.size()]));
+      }
+      if (!robotPosesRejected.isEmpty()) {
+        Logger.recordOutput(
+            "Vision/Camera" + Integer.toString(cameraIndex) + "/RejectedRobotPoses",
+            robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
+      }
+
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);
