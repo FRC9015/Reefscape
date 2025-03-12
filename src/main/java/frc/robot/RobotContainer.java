@@ -16,14 +16,11 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -58,7 +55,10 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.photon.Vision;
 import frc.robot.subsystems.photon.VisionIOPhotonVision;
 import frc.robot.subsystems.photon.VisionIOPhotonVisionSim;
+import frc.robot.subsystems.photon.VisionProcessor;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.photonvision.*;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -75,10 +75,11 @@ public class RobotContainer {
   private final Pivot pivot;
   private final Algae algae;
   private final Vision photon;
+  private final VisionProcessor visionProcessor;
+  private final PhotonCamera topCamera = new PhotonCamera("Top");
 
-  // private final UsbCamera elavatorCamera;
   // Driver Controller
-  private final UsbCamera elavatorCamera;
+  //   private final UsbCamera elavatorCamera;
 
   private final CommandXboxController driverController = new CommandXboxController(0);
   // Operator Controller
@@ -122,7 +123,7 @@ public class RobotContainer {
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
       case SIM:
@@ -146,7 +147,7 @@ public class RobotContainer {
         algae = new Algae(new AlgaeIOSim());
         pivot = new Pivot(new PivotIOSim());
         coralFound = new Trigger(() -> intake.isCoralIn());
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
       default:
@@ -177,9 +178,11 @@ public class RobotContainer {
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
     }
+
+    visionProcessor = new VisionProcessor(this::onCoralFound);
 
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
@@ -216,18 +219,22 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    elavatorCamera.setResolution(640, 480);
-    elavatorCamera.setFPS(24);
+    // elavatorCamera.setResolution(640, 480);
+    // elavatorCamera.setFPS(24);
+
     // Configure the button bindings
     configureButtonBindings();
+    /**
+     * Use this method to define your button->command mappings. Buttons can be created by
+     * instantiating a {@link GenericHID} or one of its subclasses ({@link
+     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     */
+
+    // Schedule the vision processing command to run periodically
+    CommandScheduler.getInstance().schedule(new VisionProcessingCommand());
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -371,13 +378,76 @@ public class RobotContainer {
 
     // Pathfind to source
 
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    driverController
+        .b()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  visionProcessor.processVision();
+                  PhotonPipelineResult topResult = topCamera.getLatestResult();
+                  if (topResult.hasTargets()) {
+                    switch (elevator.getElevatorState()) {
+                      case CoralL4:
+                        if (visionProcessor.isCoralDetected() == VisionProcessor.TargetType.CORAL) {
+                          endEffector.runEffector(6).withTimeout(1).schedule();
+                        } else {
+                          elevator.executePreset(ElevatorState.CoralL3).schedule();
+                        }
+                        break;
+                      case CoralL3:
+                        if (visionProcessor.isCoralDetected() == VisionProcessor.TargetType.CORAL) {
+                          endEffector.runEffector(6).withTimeout(1).schedule();
+                        } else {
+                          elevator.executePreset(ElevatorState.CoralL2).schedule();
+                        }
+                        break;
+                      case CoralL2:
+                        if (visionProcessor.isCoralDetected() == VisionProcessor.TargetType.CORAL) {
+                          endEffector.runEffector(6).withTimeout(1).schedule();
+                        }
+                        break;
+                      default:
+                        elevator.executePreset(ElevatorState.CoralL4).schedule();
+                        break;
+                    }
+                  } else {
+                    endEffector.stop();
+                  }
+                },
+                endEffector));
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
+  private void onCoralFound(VisionProcessor.TargetType targetType) {
+    if (targetType == VisionProcessor.TargetType.CORAL) {
+      System.out.println("Coral detected!");
+    } else {
+      System.out.println("No coral detected.");
+    }
+  }
+
+  private class VisionProcessingCommand extends Command {
+    @Override
+    public void initialize() {}
+
+    @Override
+    public void execute() {
+      visionProcessor.processVision();
+    }
+
+    @Override
+    public boolean isFinished() {
+      return false;
+    }
+
+    @Override
+    public void end(boolean interrupted) {}
+  }
+
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
