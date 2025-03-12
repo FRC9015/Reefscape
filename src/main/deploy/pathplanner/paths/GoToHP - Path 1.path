@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.780020491803279,
-        "y": 7.267674180327869
+        "x": 7.137,
+        "y": 6.136
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.022619766060343,
-        "y": 7.501765316827602
+        "x": 7.473449645625385,
+        "y": 6.59766365675622
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.346516393442624,
-        "y": 5.361629098360655
+        "x": 4.992,
+        "y": 5.238
       },
       "prevControl": {
-        "x": 6.177669366279084,
-        "y": 5.441086451969618
+        "x": 5.338550866357717,
+        "y": 4.859944509427946
       },
       "nextControl": {
-        "x": 4.628430605772795,
-        "y": 5.2929808492209895
+        "x": 4.330869863013699,
+        "y": 5.9592328767123295
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 1.403,
+        "y": 6.991
       },
       "prevControl": {
-        "x": 1.775886809924257,
-        "y": 7.1621494320903905
+        "x": 1.140224203459769,
+        "y": 7.180892027823228
       },
       "nextControl": null,
       "isLocked": false,
@@ -53,7 +53,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.007597340930674,
+      "minWaypointRelativePos": 1.01,
       "maxWaypointRelativePos": 1.04,
       "constraints": {
         "maxVelocity": 0.1,
@@ -68,9 +68,9 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "EjectCoral",
-      "waypointRelativePos": 0.9886039886039693,
-      "endWaypointRelativePos": null,
+      "name": "shootCoral",
+      "waypointRelativePos": 0.8338983050847456,
+      "endWaypointRelativePos": 1.0915254237288137,
       "command": null
     }
   ],
@@ -84,13 +84,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -45.0
+    "rotation": -55.0
   },
   "reversed": false,
   "folder": "GoToHP Paths- From Start Zones",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

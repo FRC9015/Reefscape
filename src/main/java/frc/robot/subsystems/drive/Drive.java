@@ -55,14 +55,12 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.photon.PhotonInterface;
 import frc.robot.util.LocalADStarAK;
-import java.util.Optional;
+import frc.robot.util.PhoenixUtil;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-import org.photonvision.EstimatedRobotPose;
 
 /** Represents the robot's drive subsystem. */
 public class Drive extends SubsystemBase {
@@ -96,11 +94,10 @@ public class Drive extends SubsystemBase {
               1),
           getModuleTranslations());
   private static final PathConstraints PP_CONSTRAINTS =
-      new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+      new PathConstraints(3.0, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
-  private final PhotonInterface photon;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
@@ -117,11 +114,13 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition()
       };
   private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
-
-  private Optional<EstimatedRobotPose> estimatedBowPose, estimatedPortPose;
-  private Matrix<N3, N1> stdDevs =
-      VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
+      new SwerveDrivePoseEstimator(
+          kinematics,
+          rawGyroRotation,
+          lastModulePositions,
+          new Pose2d(),
+          VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+          VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(15)));
 
   /**
    * Constructs a new Drive.
@@ -137,10 +136,8 @@ public class Drive extends SubsystemBase {
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
-      ModuleIO brModuleIO,
-      PhotonInterface photon) {
+      ModuleIO brModuleIO) {
     this.gyroIO = gyroIO;
-    this.photon = photon;
     modules[0] = new Module(flModuleIO, 0, TunerConstants.FrontLeft);
     modules[1] = new Module(frModuleIO, 1, TunerConstants.FrontRight);
     modules[2] = new Module(blModuleIO, 2, TunerConstants.BackLeft);
@@ -159,7 +156,8 @@ public class Drive extends SubsystemBase {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+            new PIDConstants(2, 0.0, 0.12), new PIDConstants(5.0, 0.0, 0.02)),
+        //     new PIDConstants(4.5, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.02)),
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -191,14 +189,14 @@ public class Drive extends SubsystemBase {
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
-    for (var module : modules) {
+    for (Module module : modules) {
       module.periodic();
     }
     odometryLock.unlock();
 
     // Stop moving when disabled
     if (DriverStation.isDisabled()) {
-      for (var module : modules) {
+      for (Module module : modules) {
         module.stop();
       }
     }
@@ -243,22 +241,6 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
-
-    estimatedBowPose = photon.getEstimatedBowPose();
-    estimatedPortPose = photon.getEstimatedPortPose(getPose());
-
-    // if (estimatedPose.isPresent()) {
-    //   stdDevs =
-    //       VecBuilder.fill(
-    //           estimatedPose.get().estimatedPose.getX(),
-    //           estimatedPose.get().estimatedPose.getY(),
-    //           estimatedPose.get().estimatedPose.getRotation().toRotation2d().getRadians());
-    //   System.out.println(stdDevs);
-    // }
-
-    stdDevs =
-        VecBuilder.fill(getPose().getX(), getPose().getY(), getPose().getRotation().getRadians());
-    updatePose();
   }
 
   /**
@@ -399,16 +381,6 @@ public class Drive extends SubsystemBase {
         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
   }
 
-  public void updatePose() {
-
-    if (estimatedPortPose.isPresent()) {
-      addVisionMeasurement(
-          estimatedPortPose.get().estimatedPose.toPose2d(),
-          estimatedPortPose.get().timestampSeconds,
-          stdDevs);
-    }
-  }
-
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
     return TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -433,11 +405,10 @@ public class Drive extends SubsystemBase {
     return getPose().getTranslation().getDistance(targetpose);
   }
 
+  // change this to whatever color we are playing for ther match flipled is for red
   public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
-    Logger.recordOutput("flippath", AutoBuilder.shouldFlip());
-    return AutoBuilder.shouldFlip()
-        ? this.pathfindToPoseFlipped(targetpose, endVelocity)
-        : this.pfToPose(targetpose, endVelocity);
+    Logger.recordOutput("isRed?", PhoenixUtil.isRed());
+    return this.pathfindToPoseFlipped(targetpose, endVelocity);
   }
 
   public Command pfToPose(Pose2d targetpose, double endVelocity) {

@@ -1,0 +1,85 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Side L1 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4Position"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DefaultPosition"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "To Source 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L1 Coral Path 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4Position"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DefaultPosition"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "To Source 3 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

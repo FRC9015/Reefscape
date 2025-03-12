@@ -16,7 +16,10 @@ package frc.robot.subsystems.endeffector;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.littletonrobotics.junction.Logger;
 
 /** The EndEffector subsystem controls the end effector mechanism. */
@@ -52,9 +55,9 @@ public class EndEffector extends SubsystemBase {
    *
    * @param rpm The desired RPM for the end effector.
    */
-  public void setRPM(double rpm) {
-    io.setRPM(rpm);
-    Logger.recordOutput("EndEffector/SetRPM", rpm);
+  public void setVoltage(double voltage) {
+    io.setRPM(voltage);
+    Logger.recordOutput("EndEffector/setVoltage", voltage);
   }
 
   /** Stops the end effector. */
@@ -112,20 +115,35 @@ public class EndEffector extends SubsystemBase {
   /**
    * Runs the end effector at the specified RPM.
    *
-   * @param rpm The desired RPM for the end effector.
+   * @param voltage Voltage provided to the motor.
    * @return A command that runs the end effector.
    */
-  public Command runEffector(double rpm) {
-    return this.startEnd(() -> setRPM(rpm), () -> stop());
+  public Command runEffector(double voltage) {
+    return this.startEnd(() -> setVoltage(-voltage), () -> stop());
+  }
+
+  public Command runEffectorAuto(double voltage) {
+    return this.run(() -> setVoltage(-voltage));
+  }
+
+  public Command runEffectorAutoCommand() {
+    return new SequentialCommandGroup(
+        new InstantCommand(this::autoEffectorVoltage),
+        new WaitCommand(0.4),
+        new InstantCommand(this::stop));
+  }
+
+  private void autoEffectorVoltage() {
+    io.setRPM(-6);
   }
 
   /**
    * Runs the end effector in reverse at the specified RPM.
    *
-   * @param rpm The desired RPM for the end effector.
+   * @param voltage Voltage provided to the motor.
    * @return A command that runs the end effector in reverse.
    */
-  public Command runEffectorReverse(double rpm) {
-    return this.startEnd(() -> setRPM(-rpm), () -> stop());
+  public Command runEffectorReverse(double voltage) {
+    return this.startEnd(() -> setVoltage(voltage), () -> stop());
   }
 }

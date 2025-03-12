@@ -15,17 +15,24 @@ package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.AutoLog;
 
+/** Interface for the Elevator subsystem. */
 public interface ElevatorIO {
+  /** Class to hold inputs for the Elevator subsystem. */
   @AutoLog
   public static class ElevatorIOInputs {
-    // Define ElevatorState enum with encoder positions
+
+    /**
+     * Enum representing the different states of the elevator with their corresponding encoder
+     * positions.
+     */
     public enum ElevatorState {
-      Default(0.08059),
-      CoralL2(1.989),
+      Default(0.08),
+      CoralL1(0.5),
+      CoralL2(1.7),
       DealgifyL2(1.5),
-      CoralL3(4.9768007),
+      CoralL3(4.0),
       DealgifyL3(2.5),
-      CoralL4(7.9338);
+      CoralL4(7.75);
 
       // Field to store the encoder position
       private final double encoderPosition;
@@ -47,7 +54,9 @@ public interface ElevatorIO {
     public double elevatorCurrentAmps = 0.0;
     public boolean elevatorEncoderConnected = false;
     public double elevatorPosition = 0.0;
+    public double setpoint = 0.0;
     public boolean elevatorAtSetpoint = false;
+    public boolean zeroSwitchTriggered = false;
 
     // Utility method to get the desired encoder position for the current state
     public double getDesiredEncoderPosition() {
@@ -61,12 +70,18 @@ public interface ElevatorIO {
   /** Sets the elevator position based on the desired state. */
   public default void setElevatorPosition(double value) {}
 
-  /** Run slam elevator at amps */
+  /** Run slam elevator at amps. */
   default void runCurrent(double amps) {}
 
-  /** Stop slam elevator */
+  /** Stop slam elevator. */
   default void stop() {}
 
   /** Enable or disable brake mode on the elevator motor. */
   default void setBrakeMode(boolean enable) {}
+
+  /** Get if the Limit Switch is triggered. */
+  default void getZeroSwitch(ElevatorIOInputs inputs) {}
+
+  /** Zero the Elevator Encoder. */
+  default void zeroElevator() {}
 }

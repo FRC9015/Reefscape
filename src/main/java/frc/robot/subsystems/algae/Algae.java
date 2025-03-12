@@ -3,6 +3,7 @@ package frc.robot.subsystems.algae;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Algae extends SubsystemBase {
@@ -28,5 +29,9 @@ public class Algae extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     encoderDisconnectedAlert.set(!inputs.algaeEncoderConnected);
+  }
+
+  public Command setSpeed(double rpm) {
+    return run(() -> io.setRPM(rpm));
   }
 }

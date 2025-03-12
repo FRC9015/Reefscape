@@ -24,7 +24,8 @@ public interface IntakeIO {
     public double intakeCurrentAmps = 0.0;
     public boolean intakeEncoderConnected = false;
     public double intakeRPM = 0.0;
-    public boolean coralDetected = false;
+    public boolean coralIn = false;
+    public boolean coralSet = false;
   }
 
   /** Updates the set of loggable inputs. */
