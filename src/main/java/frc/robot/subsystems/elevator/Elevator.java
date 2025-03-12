@@ -123,4 +123,9 @@ public class Elevator extends SubsystemBase {
   public Boolean getElevatorLimitSwitch() {
     return inputs.zeroSwitchTriggered;
   }
+
+  public Boolean atTippingPoint() {
+    return inputs.elevatorState == ElevatorState.CoralL3 
+    || inputs.elevatorState == ElevatorState.CoralL4;
+  }
 }

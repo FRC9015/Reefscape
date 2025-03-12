@@ -88,6 +88,7 @@ public class RobotContainer {
 
   // Triggers
   private final Trigger coralFound;
+  private final Trigger elevatorAtTippingPoint;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -122,6 +123,7 @@ public class RobotContainer {
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
+        elevatorAtTippingPoint = new Trigger(() -> elevator.atTippingPoint());
         elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
@@ -146,6 +148,7 @@ public class RobotContainer {
         algae = new Algae(new AlgaeIOSim());
         pivot = new Pivot(new PivotIOSim());
         coralFound = new Trigger(() -> intake.isCoralIn());
+        elevatorAtTippingPoint = new Trigger(() -> elevator.atTippingPoint());
         elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
@@ -177,6 +180,7 @@ public class RobotContainer {
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
+        elevatorAtTippingPoint = new Trigger(() -> elevator.atTippingPoint());
         elavatorCamera = CameraServer.startAutomaticCapture();
         break;
     }
@@ -277,6 +281,13 @@ public class RobotContainer {
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
     operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
     operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
+
+    elevatorAtTippingPoint.whileTrue(
+        DriveCommands.joystickDrive(
+        drive,
+        () -> -driverController.getLeftY() * Constants.ANTI_TIP_CONSTANT,
+        () -> -driverController.getLeftX() * Constants.ANTI_TIP_CONSTANT,
+        () -> -driverController.getRightX() * Constants.ANTI_TIP_CONSTANT));
 
     // operatorController
     // .leftBumper()
