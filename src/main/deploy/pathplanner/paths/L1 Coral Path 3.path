@@ -45,7 +45,19 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "L2",
+      "waypointRelativePos": 0.6912751677852359,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "L2Position"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.25,
     "maxAcceleration": 4.0,
