@@ -123,4 +123,13 @@ public class Elevator extends SubsystemBase {
   public Boolean getElevatorLimitSwitch() {
     return inputs.zeroSwitchTriggered;
   }
+
+  /**
+   * Gets the current state of the elevator.
+   *
+   * @return The current state of the elevator.
+   */
+  public ElevatorState getElevatorState() {
+    return inputs.elevatorState;
+  }
 }
