@@ -7,12 +7,17 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionProcessor {
 
+  //For reference, in photon web it is called "reefscapeV5-640-480yolov8n.rknn"
+
   // Create PhotonCamera instances using the same names as set in PhotonVision UI.
   private final PhotonCamera topCamera = new PhotonCamera("Top");
 
-  // Class IDs for coral and algae
+  // Class IDs for coral, algae, L2, L3, and L4
   private final int algaeClassID = 0;
   private final int coralClassID = 1;
+  private final int l2ClassID = 2;
+  private final int l3ClassID = 3;
+  private final int l4ClassID = 4;
 
   // Consumer to notify when coral or algae is detected
   private Consumer<TargetType> targetDetectedConsumer;
@@ -44,6 +49,15 @@ public class VisionProcessor {
       } else if (classID == algaeClassID) {
         System.out.println("Desired target detected: algae");
         return TargetType.ALGAE;
+      } else if (classID == l2ClassID) {
+        System.out.println("Desired target detected: L2");
+        return TargetType.L2;
+      } else if (classID == l3ClassID) {
+        System.out.println("Desired target detected: L3");
+        return TargetType.L3;
+      } else if (classID == l4ClassID) {
+        System.out.println("Desired target detected: L4");
+        return TargetType.L4;
       }
     }
 
@@ -57,6 +71,9 @@ public class VisionProcessor {
   public enum TargetType {
     NONE,
     ALGAE,
-    CORAL
+    CORAL,
+    L2,
+    L3,
+    L4
   }
 }

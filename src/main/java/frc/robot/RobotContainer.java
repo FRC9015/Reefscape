@@ -260,8 +260,8 @@ public class RobotContainer {
             Commands.runOnce(
                     () ->
                         drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())), // HI THis is Raunak :) 
+                    drive) //Hola Raunak :0
                 .ignoringDisable(true));
 
     driverController.y().onTrue(drive.pathfindToPose(Constants.FieldConstants.SourceL, 0.0));
@@ -393,21 +393,21 @@ public class RobotContainer {
                   if (topResult.hasTargets()) {
                     switch (elevator.getElevatorState()) {
                       case CoralL4:
-                        if (visionProcessor.isCoralDetected() == VisionProcessor.TargetType.CORAL) {
+                        if (visionProcessor.isCoralDetected() != VisionProcessor.TargetType.CORAL) {
                           endEffector.runEffector(6).withTimeout(1).schedule();
                         } else {
                           elevator.executePreset(ElevatorState.CoralL3).schedule();
                         }
                         break;
                       case CoralL3:
-                        if (visionProcessor.isCoralDetected() == VisionProcessor.TargetType.CORAL) {
+                        if (visionProcessor.isCoralDetected() != VisionProcessor.TargetType.CORAL) {
                           endEffector.runEffector(6).withTimeout(1).schedule();
                         } else {
                           elevator.executePreset(ElevatorState.CoralL2).schedule();
                         }
                         break;
                       case CoralL2:
-                        if (visionProcessor.isCoralDetected() == VisionProcessor.TargetType.CORAL) {
+                        if (visionProcessor.isCoralDetected() != VisionProcessor.TargetType.CORAL) {
                           endEffector.runEffector(6).withTimeout(1).schedule();
                         }
                         break;
