@@ -185,17 +185,31 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "IntakeCoral",
         endEffector.runEffectorAuto(2).until(intake::isCoralSet).andThen(endEffector::stop));
-    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(6).withTimeout(1));
+    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(6).withTimeout(0.4));
     NamedCommands.registerCommand(
         "TestCommand", Commands.run(() -> System.out.println("TestCommand Works")));
-    new EventTrigger("coral?").and(coralFound).whileTrue(endEffector.runEffectorReverse(6));
+    //new EventTrigger("coral?").and(coralFound).whileTrue(endEffector.runEffectorReverse(6));
     NamedCommands.registerCommand(
-        "DefaultPosition", elevator.executePreset(ElevatorState.Default).withTimeout(1));
-    NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
-    NamedCommands.registerCommand("L3Position", elevator.executePreset(ElevatorState.CoralL3));
+        "DefaultPosition", elevator.executePreset(ElevatorState.Default).withTimeout(0.75));
+    NamedCommands.registerCommand(
+        "L2Position", 
+            elevator.executePreset(ElevatorState.CoralL2)
+            .unless(coralFound));
+    NamedCommands.registerCommand(
+        "L3Position", 
+            elevator.executePreset(ElevatorState.CoralL3)
+            .withTimeout(0.4)
+            .unless(coralFound));
     NamedCommands.registerCommand(
         "L4Position",
-        elevator.executePreset(ElevatorState.CoralL4).withTimeout(1.1).unless(coralFound));
+            elevator.executePreset(ElevatorState.CoralL4)
+            .withTimeout(1.1)
+            .unless(coralFound));
+    NamedCommands.registerCommand(
+        "L4PositionL2",
+            elevator.executePreset(ElevatorState.CoralL4)
+            .withTimeout(0.7)
+            .unless(coralFound));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
