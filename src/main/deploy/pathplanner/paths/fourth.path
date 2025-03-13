@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2257468447658653,
-        "y": 6.5332552282206295
+        "x": 2.0958549976332543,
+        "y": 6.495098874143733
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.817,
-        "y": 5.263
+        "x": 3.5667091836734697,
+        "y": 5.133067602040816
       },
       "prevControl": {
-        "x": 1.966489795918367,
-        "y": 6.785193877551022
+        "x": 3.2981286367772737,
+        "y": 5.379314971890435
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "L2",
-      "waypointRelativePos": 0.6912751677852359,
+      "waypointRelativePos": 0.35234899328859076,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -53,7 +53,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
+    "velocity": 0,
     "rotation": -59.99999999999999
   },
   "reversed": false,

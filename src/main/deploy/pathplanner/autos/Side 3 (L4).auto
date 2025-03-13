@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "L4Position"
+            "name": "L4PositionL2"
           }
         },
         {
@@ -49,7 +49,7 @@
         {
           "type": "named",
           "data": {
-            "name": "L4Position"
+            "name": "L4PositionL2"
           }
         },
         {
@@ -74,6 +74,60 @@
           "type": "named",
           "data": {
             "name": "IntakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "third"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3Position"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DefaultPosition"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "To Source 3 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "fourth"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3Position"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
           }
         }
       ]
