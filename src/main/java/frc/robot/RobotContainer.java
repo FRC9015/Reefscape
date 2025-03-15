@@ -293,7 +293,9 @@ public class RobotContainer {
     // Button Box
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AL, 0.0));
+        .onTrue(
+            drive.pathfindToPose(
+                OffsetAlign.getPose2dReef(true, OffsetAlign.reefLocations[0]), 0.0));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
         .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BL, 0.0));
@@ -311,7 +313,9 @@ public class RobotContainer {
         .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FL, 0.0));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AR, 0.0));
+        .onTrue(
+            drive.pathfindToPose(
+                OffsetAlign.getPose2dReef(false, OffsetAlign.reefLocations[0]), 0.0));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
         .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0.0));
