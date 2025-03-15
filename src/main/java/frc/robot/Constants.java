@@ -75,6 +75,7 @@ public final class Constants {
   }
 
   public static class FieldConstants {
+
     public static final Pose2d reef_AL1 =
         new Pose2d(new Translation2d(3.25, 3.8), new Rotation2d());
     public static final Pose2d bargeFar = new Pose2d(new Translation2d(7.6, 6.6), new Rotation2d());
@@ -113,6 +114,10 @@ public final class Constants {
     public static final Pose2d REEF_FR =
         new Pose2d(new Translation2d(3.608, 2.842), new Rotation2d(Math.PI / 3));
     public static final Pose2d REEF_FL =
+        new Pose2d(new Translation2d(3.887, 2.668), new Rotation2d(Math.PI / 3));
+
+    // POSE NEEDS TO BE CHANGED
+    public static final Pose2d REEF_F_AprilTag =
         new Pose2d(new Translation2d(3.887, 2.668), new Rotation2d(Math.PI / 3));
   }
 

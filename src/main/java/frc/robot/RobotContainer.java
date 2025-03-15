@@ -257,7 +257,9 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    driverController.y().onTrue(drive.pathfindToPose(Constants.FieldConstants.SourceL, 0.0));
+    driverController
+        .y()
+        .onTrue(drive.pathfindToPose(OffsetAlign.flipPose(OffsetAlign.reefLocations[5]), 0.0));
     driverController.a().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0));
     // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
     // 0.0));
