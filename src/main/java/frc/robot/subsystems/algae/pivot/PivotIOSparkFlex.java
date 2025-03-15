@@ -11,6 +11,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
+@SuppressWarnings("all")
 public class PivotIOSparkFlex implements PivotIO {
 
   public final SparkFlex pivotMotor;

@@ -2,6 +2,7 @@ package frc.robot.subsystems.algae.pivot;
 
 import org.littletonrobotics.junction.AutoLog;
 
+@SuppressWarnings("all")
 public interface PivotIO {
 
   @AutoLog

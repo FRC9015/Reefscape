@@ -16,6 +16,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 
+@SuppressWarnings("all")
 public class AlgaeIOTalonFX implements AlgaeIO {
   private final TalonFX motor;
   private final NeutralOut neutralOut = new NeutralOut();

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.algae.pivot.PivotIO.PivotIOInputs;
 import org.littletonrobotics.junction.Logger;
 
+@SuppressWarnings("all")
 public class Pivot extends SubsystemBase {
   private final PivotIO io;
   private final PivotIOInputsAutoLogged inputs = new PivotIOInputsAutoLogged();
