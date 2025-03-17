@@ -31,7 +31,19 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "DefaultPosition",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": 0.235576923076923,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "DefaultPosition"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.25,
     "maxAcceleration": 4.0,
@@ -50,5 +62,5 @@
     "velocity": 0,
     "rotation": -119.99999999999999
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
