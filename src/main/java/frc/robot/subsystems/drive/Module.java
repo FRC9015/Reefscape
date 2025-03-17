@@ -16,6 +16,7 @@ package frc.robot.subsystems.drive;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -37,6 +38,8 @@ public class Module {
   private final Alert turnEncoderDisconnectedAlert;
   private SwerveModulePosition[] odometryPositions = new SwerveModulePosition[] {};
 
+  private SimpleMotorFeedforward motorFF;
+
   public Module(
       ModuleIO io,
       int index,
@@ -56,6 +59,8 @@ public class Module {
         new Alert(
             "Disconnected turn encoder on module " + Integer.toString(index) + ".",
             AlertType.kError);
+    motorFF =
+        new SimpleMotorFeedforward(constants.DriveMotorGains.kS, constants.DriveMotorGains.kV);
   }
 
   public void periodic() {
@@ -84,7 +89,9 @@ public class Module {
     state.cosineScale(inputs.turnPosition);
 
     // Apply setpoints
-    io.setDriveVelocity(state.speedMetersPerSecond / constants.WheelRadius);
+    io.setDriveVelocity(
+        state.speedMetersPerSecond / constants.WheelRadius,
+        motorFF.calculate(state.speedMetersPerSecond / constants.WheelRadius));
     io.setTurnPosition(state.angle);
   }
 
