@@ -284,10 +284,10 @@ public class RobotContainer {
 
     elevatorAtTippingPoint.whileTrue(
         DriveCommands.joystickDrive(
-        drive,
-        () -> -driverController.getLeftY() * Constants.ANTI_TIP_CONSTANT,
-        () -> -driverController.getLeftX() * Constants.ANTI_TIP_CONSTANT,
-        () -> -driverController.getRightX() * Constants.ANTI_TIP_CONSTANT));
+            drive,
+            () -> -driverController.getLeftY() * Constants.ANTI_TIP_CONSTANT,
+            () -> -driverController.getLeftX() * Constants.ANTI_TIP_CONSTANT,
+            () -> -driverController.getRightX() * Constants.ANTI_TIP_CONSTANT));
 
     // operatorController
     // .leftBumper()

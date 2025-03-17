@@ -125,7 +125,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public Boolean atTippingPoint() {
-    return inputs.elevatorState == ElevatorState.CoralL3 
-    || inputs.elevatorState == ElevatorState.CoralL4;
+    return inputs.elevatorState == ElevatorState.CoralL3
+        || inputs.elevatorState == ElevatorState.CoralL4;
   }
 }

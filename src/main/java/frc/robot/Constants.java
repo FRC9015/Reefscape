@@ -41,7 +41,7 @@ public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
   public static final double SLOW_MODE_CONSTANT = 0.55;
-  public static final double ANTI_TIP_CONSTANT = 0.45;
+  public static final double ANTI_TIP_CONSTANT = 0.5;
 
   // public static final Transform3d CAMERA_1_TO_ROBOT = new Transform3d();
 
