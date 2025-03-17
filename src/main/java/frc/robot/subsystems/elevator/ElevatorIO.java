@@ -30,7 +30,7 @@ public interface ElevatorIO {
       CoralL1(0.5),
       CoralL2(1.7),
       DealgifyL2(1.5),
-      CoralL3(4.0),
+      CoralL3(4.25),
       DealgifyL3(2.5),
       CoralL4(7.75);
 

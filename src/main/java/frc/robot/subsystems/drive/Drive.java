@@ -91,11 +91,11 @@ public class Drive extends SubsystemBase {
               TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
               WHEEL_COF,
               DCMotor.getKrakenX60(1).withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
-              60,
+              TunerConstants.FrontLeft.SlipCurrent,
               1),
           getModuleTranslations());
   private static final PathConstraints PP_CONSTRAINTS =
-      new PathConstraints(4.5, 11.0, Units.degreesToRadians(1040), Units.degreesToRadians(1440));
+      new PathConstraints(4.0, 10.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
@@ -160,6 +160,7 @@ public class Drive extends SubsystemBase {
         this::runVelocity,
         new PPHolonomicDriveController(new PIDConstants(2, 0.0, 0), new PIDConstants(5.0, 0.0, 0)),
         //     new PIDConstants(4.5, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.02)),
+        // new PIDConstants(2, 0.0, 0.12), new PIDConstants(5.0, 0.0, 0.02)),
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -173,7 +174,9 @@ public class Drive extends SubsystemBase {
         (targetPose) -> {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
-
+    setpointGenerator = new SwerveSetpointGenerator(PP_CONFIG, Units.degreesToRadians(720));
+    prevSetpoint =
+        new SwerveSetpoint(getChassisSpeeds(), getModuleStates(), DriveFeedforwards.zeros(4));
     // Configure SysId
     sysId =
         new SysIdRoutine(
@@ -279,6 +282,26 @@ public class Drive extends SubsystemBase {
 
     // Log optimized setpoints (runSetpoint mutates each state)
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
+  }
+
+  public void runVelocityAuto(ChassisSpeeds speeds) {
+    // Calculate module setpoints
+    ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+    SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, TunerConstants.kSpeedAt12Volts);
+    prevSetpoint =
+        setpointGenerator.generateSetpoint(prevSetpoint, speeds, PP_CONSTRAINTS, 0.02, 12.0);
+    // Log unoptimized setpoints and setpoint speeds
+    Logger.recordOutput("AutoDrive/Setpoints", setpointStates);
+    Logger.recordOutput("AutoDrive/Setpoints", discreteSpeeds);
+
+    // Send setpoints to modules
+    for (int i = 0; i < 4; i++) {
+      modules[i].runSetpoint(prevSetpoint.moduleStates()[i]);
+    }
+
+    // Log optimized setpoints (runSetpoint mutates each state)
+    Logger.recordOutput("AutoDrive/SetpointsOptimized", setpointStates);
   }
 
   /** Runs the drive in a straight line with the specified drive output. */

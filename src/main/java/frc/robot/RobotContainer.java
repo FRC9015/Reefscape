@@ -15,7 +15,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -28,14 +27,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CameraConstants;
 import frc.robot.Constants.MotorIDConstants;
+import frc.robot.commands.AutoDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.algae.Algae;
-import frc.robot.subsystems.algae.AlgaeIOSim;
-import frc.robot.subsystems.algae.AlgaeIOTalonFX;
-import frc.robot.subsystems.algae.pivot.Pivot;
-import frc.robot.subsystems.algae.pivot.PivotIOSim;
-import frc.robot.subsystems.algae.pivot.PivotIOTalonFX;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -58,7 +55,6 @@ import frc.robot.subsystems.photon.VisionIOPhotonVisionSim;
 import frc.robot.subsystems.photon.VisionProcessor;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.photonvision.*;
-import org.photonvision.targeting.PhotonPipelineResult;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -72,11 +68,9 @@ public class RobotContainer {
   private final Intake intake;
   private final EndEffector endEffector;
   private final Elevator elevator;
-  private final Pivot pivot;
-  private final Algae algae;
   private final Vision photon;
-  private final VisionProcessor visionProcessor;
-  private final PhotonCamera topCamera = new PhotonCamera("Top");
+  // private final VisionProcessor visionProcessor;
+  private final Climber climb;
 
   // Driver Controller
   //   private final UsbCamera elavatorCamera;
@@ -120,9 +114,8 @@ public class RobotContainer {
                     MotorIDConstants.ELEVATOR_MOTOR_ID2,
                     MotorIDConstants.ELEVATOR_ENCODER_ID,
                     4));
-        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-        algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
+        climb = new Climber(new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID));
         // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
@@ -138,14 +131,13 @@ public class RobotContainer {
         photon =
             new Vision(
                 drive::addVisionMeasurement,
-                // new VisionIOPhotonVisionSim("Starboard", CameraConstants.starboardPose),
+                /// new VisionIOPhotonVisionSim("Starboard", CameraConstants.starboardPose),
                 new VisionIOPhotonVisionSim("Bow", CameraConstants.bowPose));
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
-        algae = new Algae(new AlgaeIOSim());
-        pivot = new Pivot(new PivotIOSim());
+        climb = new Climber(new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
         // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
@@ -175,44 +167,36 @@ public class RobotContainer {
                     MotorIDConstants.ELEVATOR_MOTOR_ID2,
                     MotorIDConstants.ELEVATOR_ENCODER_ID,
                     4));
-        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-        algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
+        climb = new Climber(new ClimberIO() {});
         // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
     }
 
-    visionProcessor = new VisionProcessor(this::onCoralFound);
+    // visionProcessor = new VisionProcessor(this::onCoralFound);
 
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
         "IntakeCoral",
         endEffector.runEffectorAuto(2).until(intake::isCoralSet).andThen(endEffector::stop));
-    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(6).withTimeout(0.4));
+    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(5).withTimeout(0.4));
     NamedCommands.registerCommand(
         "TestCommand", Commands.run(() -> System.out.println("TestCommand Works")));
-    //new EventTrigger("coral?").and(coralFound).whileTrue(endEffector.runEffectorReverse(6));
+    // new EventTrigger("coral?").and(coralFound).whileTrue(endEffector.runEffectorReverse(6));
     NamedCommands.registerCommand(
         "DefaultPosition", elevator.executePreset(ElevatorState.Default).withTimeout(0.75));
     NamedCommands.registerCommand(
-        "L2Position", 
-            elevator.executePreset(ElevatorState.CoralL2)
-            .unless(coralFound));
+        "L2Position",
+        elevator.executePreset(ElevatorState.CoralL2).withTimeout(0.5).unless(coralFound));
     NamedCommands.registerCommand(
-        "L3Position", 
-            elevator.executePreset(ElevatorState.CoralL3)
-            .withTimeout(0.4)
-            .unless(coralFound));
+        "L3Position",
+        elevator.executePreset(ElevatorState.CoralL3).withTimeout(0.7).unless(coralFound));
     NamedCommands.registerCommand(
         "L4Position",
-            elevator.executePreset(ElevatorState.CoralL4)
-            .withTimeout(1.1)
-            .unless(coralFound));
+        elevator.executePreset(ElevatorState.CoralL4).withTimeout(1.1).unless(coralFound));
     NamedCommands.registerCommand(
         "L4PositionL2",
-            elevator.executePreset(ElevatorState.CoralL4)
-            .withTimeout(0.7)
-            .unless(coralFound));
+        elevator.executePreset(ElevatorState.CoralL4).withTimeout(0.7).unless(coralFound));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -303,49 +287,47 @@ public class RobotContainer {
     // .leftBumper()
     // .whileTrue(endEffector.runEffector(0.15).until(coralFound));
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
-    operatorController.a().whileTrue(algae.setSpeed(5)).whileFalse(algae.setSpeed(0));
-    operatorController.b().whileTrue(algae.setSpeed(-5)).whileFalse(algae.setSpeed(0));
+    operatorController.a().whileTrue(climb.setSpeed(10)).whileFalse(climb.setSpeed(0));
+    operatorController.b().whileTrue(climb.setSpeed(-10)).whileFalse(climb.setSpeed(0));
     operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
-    operatorController.x().whileTrue(pivot.pivotUp(1)).whileFalse(pivot.pivotUp(0));
-    operatorController.y().whileTrue(pivot.pivotUp(-1)).whileFalse(pivot.pivotUp(0));
 
     // Button Box
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AL, 0.0));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BL, 0.0));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CL, 0.0));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DL, 0.0));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_EL, 0.0));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_EL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FL, 0.0));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AR, 0.0));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0.0));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CR, 0.0));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DR, 0.0));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_ER, 0.0));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_ER, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FR, 0.0));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L1.getButtonID())
         .onTrue(elevator.executePreset(ElevatorState.CoralL1));
@@ -374,7 +356,7 @@ public class RobotContainer {
         .onTrue(
             elevator
                 .executePreset(ElevatorState.CoralL4)
-                .withTimeout(1.1)
+                .withTimeout(0.75)
                 .andThen(endEffector.runEffectorAutoCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
                 .unless(() -> intake.isCoralIn()));
@@ -384,8 +366,8 @@ public class RobotContainer {
             Commands.run(() -> endEffector.stop(), endEffector)
                 .andThen(() -> intake.stop(), intake)
                 .andThen(() -> elevator.getCurrentCommand().cancel(), elevator)
-                .andThen(() -> pivot.getCurrentCommand().cancel(), pivot)
-                .andThen(() -> algae.getCurrentCommand().cancel(), algae)
+                // .andThen(() -> pivot.getCurrentCommand().cancel(), pivot)
+                // .andThen(() -> algae.getCurrentCommand().cancel(), algae)
                 .andThen(() -> drive.getCurrentCommand().cancel(), drive));
 
     coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2));
@@ -397,43 +379,46 @@ public class RobotContainer {
      *
      * @return the command to run in autonomous
      */
-    driverController
-        .b()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  visionProcessor.processVision();
-                  PhotonPipelineResult topResult = topCamera.getLatestResult();
-                  if (topResult.hasTargets()) {
-                    switch (elevator.getElevatorState()) {
-                      case CoralL4:
-                        if (visionProcessor.isCoralDetected() == VisionProcessor.TargetType.CORAL) {
-                          endEffector.runEffector(6).withTimeout(1).schedule();
-                        } else {
-                          elevator.executePreset(ElevatorState.CoralL3).schedule();
-                        }
-                        break;
-                      case CoralL3:
-                        if (visionProcessor.isCoralDetected() == VisionProcessor.TargetType.CORAL) {
-                          endEffector.runEffector(6).withTimeout(1).schedule();
-                        } else {
-                          elevator.executePreset(ElevatorState.CoralL2).schedule();
-                        }
-                        break;
-                      case CoralL2:
-                        if (visionProcessor.isCoralDetected() == VisionProcessor.TargetType.CORAL) {
-                          endEffector.runEffector(6).withTimeout(1).schedule();
-                        }
-                        break;
-                      default:
-                        elevator.executePreset(ElevatorState.CoralL4).schedule();
-                        break;
-                    }
-                  } else {
-                    endEffector.stop();
-                  }
-                },
-                endEffector));
+    // driverController
+    //     .b()
+    //     .whileTrue(
+    //         Commands.run(
+    //             () -> {
+    //               visionProcessor.processVision();
+    //               PhotonPipelineResult topResult = topCamera.getLatestResult();
+    //               if (topResult.hasTargets()) {
+    //                 switch (elevator.getElevatorState()) {
+    //                   case CoralL4:
+    //                     if (visionProcessor.isCoralDetected() ==
+    // VisionProcessor.TargetType.CORAL) {
+    //                       endEffector.runEffector(6).withTimeout(1).schedule();
+    //                     } else {
+    //                       elevator.executePreset(ElevatorState.CoralL3).schedule();
+    //                     }
+    //                     break;
+    //                   case CoralL3:
+    //                     if (visionProcessor.isCoralDetected() ==
+    // VisionProcessor.TargetType.CORAL) {
+    //                       endEffector.runEffector(6).withTimeout(1).schedule();
+    //                     } else {
+    //                       elevator.executePreset(ElevatorState.CoralL2).schedule();
+    //                     }
+    //                     break;
+    //                   case CoralL2:
+    //                     if (visionProcessor.isCoralDetected() ==
+    // VisionProcessor.TargetType.CORAL) {
+    //                       endEffector.runEffector(6).withTimeout(1).schedule();
+    //                     }
+    //                     break;
+    //                   default:
+    //                     elevator.executePreset(ElevatorState.CoralL4).schedule();
+    //                     break;
+    //                 }
+    //               } else {
+    //                 endEffector.stop();
+    //               }
+    //             },
+    //             endEffector));
   }
 
   private void onCoralFound(VisionProcessor.TargetType targetType) {
@@ -448,10 +433,10 @@ public class RobotContainer {
     @Override
     public void initialize() {}
 
-    @Override
-    public void execute() {
-      visionProcessor.processVision();
-    }
+    // @Override
+    // public void execute() {
+    //   visionProcessor.processVision();
+    // }
 
     @Override
     public boolean isFinished() {

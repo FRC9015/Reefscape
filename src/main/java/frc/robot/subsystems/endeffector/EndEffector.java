@@ -129,7 +129,7 @@ public class EndEffector extends SubsystemBase {
   public Command runEffectorAutoCommand() {
     return new SequentialCommandGroup(
         new InstantCommand(this::autoEffectorVoltage),
-        new WaitCommand(0.4),
+        new WaitCommand(0.25),
         new InstantCommand(this::stop));
   }
 
