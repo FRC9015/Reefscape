@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "L4PositionL2"
+            "name": "L4Position"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "named",
           "data": {
-            "name": "L4PositionL2"
+            "name": "L4Position"
           }
         },
         {

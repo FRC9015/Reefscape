@@ -95,7 +95,7 @@ public class Drive extends SubsystemBase {
               1),
           getModuleTranslations());
   private static final PathConstraints PP_CONSTRAINTS =
-      new PathConstraints(3.0, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+      new PathConstraints(4.0, 10.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
