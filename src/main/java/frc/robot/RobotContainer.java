@@ -21,6 +21,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
@@ -476,6 +478,18 @@ public class RobotContainer {
     .alongWith(led.setColor(Color.RED)));
     coralIn.and(() -> DriverStation.isTeleopEnabled()).whileTrue(led.setColor(Color.GREEN));
     atSetpoint.and(() -> DriverStation.isTeleopEnabled()).whileTrue(led.setColor(Color.PINK));
+
+//     public void displayMatchData() {
+//         Shuffleboard.getTab("MatchData")
+//             .add("Sensor Indicator", coralFound.getAsBoolean()).withWidget(BuiltInWidgets.kBooleanBox);
+//         Shuffleboard.getTab("MatchData")
+//             .add("Match Timer", DriverStation.getMatchTime()).withWidget(BuiltInWidgets.kTextView);
+//         Shuffleboard.getTab("MatchData")
+//             .add(elavatorCamera).withSize(4, 4);
+//         Shuffleboard.getTab("MatchData")
+//             .addCamera("Bow Camera", "Bow", null);
+    
+// }
     
   }
 
