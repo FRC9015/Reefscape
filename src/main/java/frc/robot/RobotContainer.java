@@ -30,6 +30,8 @@ import frc.robot.Constants.MotorIDConstants;
 import frc.robot.commands.AutoDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.algae.pivot.Pivot;
+import frc.robot.subsystems.algae.pivot.PivotIOTalonFX;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOTalonFX;
@@ -71,6 +73,7 @@ public class RobotContainer {
   private final Vision photon;
   // private final VisionProcessor visionProcessor;
   private final Climber climb;
+  private final Pivot pivot;
 
   // Driver Controller
   //   private final UsbCamera elavatorCamera;
@@ -117,6 +120,7 @@ public class RobotContainer {
                     4));
         coralFound = new Trigger(() -> intake.isCoralIn());
         climb = new Climber(new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID));
+        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
@@ -140,6 +144,8 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         climb = new Climber(new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
+        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
+
         // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
@@ -170,6 +176,8 @@ public class RobotContainer {
                     4));
         coralFound = new Trigger(() -> intake.isCoralIn());
         climb = new Climber(new ClimberIO() {});
+        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
+
         // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
     }
@@ -267,8 +275,8 @@ public class RobotContainer {
     driverController.a().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0));
     // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
     // 0.0));
-    // driverController.leftBumper().whileTrue(pivot.pivotDown(0.25));
-    // driverController.rightBumper().whileTrue(pivot.pivotUp(0.25));
+    driverController.leftBumper().whileTrue(pivot.pivotDown(0.25));
+    driverController.rightBumper().whileTrue(pivot.pivotUp(0.25));
     // Slow mode
     driverController
         .leftTrigger()

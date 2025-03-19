@@ -144,6 +144,7 @@ public final class Constants {
     public static final int INTAKE_MOTOR_ID = 1;
     public static final int CLIMBER_MOTOR_ID = 3;
     public static final int ALGAE_MOTOR_ID = 4;
+    public static final int PIVOT_MOTOR_ID = 5;
 
     public static final int ELEVATOR_MOTOR_ID1 = 9;
     public static final int ELEVATOR_MOTOR_ID2 = 10;
