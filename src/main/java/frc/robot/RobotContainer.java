@@ -472,27 +472,30 @@ public class RobotContainer {
                 // .andThen(() -> algae.getCurrentCommand().cancel(), algae)
                 .andThen(() -> drive.getCurrentCommand().cancel(), drive));
 
+    coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2));
 
-    // Trigger Commands
-    coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2)
-    .alongWith(led.setColor(Color.RED)));
-    coralIn.and(() -> DriverStation.isTeleopEnabled()).whileTrue(led.setColor(Color.GREEN));
-    atSetpoint.and(() -> DriverStation.isTeleopEnabled()).whileTrue(led.setColor(Color.PINK));
+    // Pathfind to source
 
-//     public void displayMatchData() {
-//         Shuffleboard.getTab("MatchData")
-//             .add("Sensor Indicator", coralFound.getAsBoolean()).withWidget(BuiltInWidgets.kBooleanBox);
-//         Shuffleboard.getTab("MatchData")
-//             .add("Match Timer", DriverStation.getMatchTime()).withWidget(BuiltInWidgets.kTextView);
-//         Shuffleboard.getTab("MatchData")
-//             .add(elavatorCamera).withSize(4, 4);
-//         Shuffleboard.getTab("MatchData")
-//             .addCamera("Bow Camera", "Bow", null);
-    
-// }
-    
   }
 
+  public void displayMatchData() {
+
+    // TODO: update values using SmartDashboard in Robot.java
+    Shuffleboard.getTab("MatchData")
+        .add("Sensor Indicator", coralFound.getAsBoolean())
+        .withWidget(BuiltInWidgets.kBooleanBox);
+    Shuffleboard.getTab("MatchData")
+        .add("Match Timer", DriverStation.getMatchTime())
+        .withWidget(BuiltInWidgets.kTextView);
+    Shuffleboard.getTab("MatchData").add(elavatorCamera).withSize(4, 4);
+    Shuffleboard.getTab("MatchData").addCamera("Bow Camera", "Bow", null);
+  }
+
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
