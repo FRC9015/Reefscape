@@ -376,15 +376,16 @@ public class RobotContainer {
   }
 
   public void displayMatchData() {
-    Shuffleboard.getTab("MatchData")
-        .add("Sensor Indicator", coralFound.getAsBoolean()).withWidget(BuiltInWidgets.kBooleanBox);
-    Shuffleboard.getTab("MatchData")
-        .add("Match Timer", DriverStation.getMatchTime()).withWidget(BuiltInWidgets.kTextView);
-    Shuffleboard.getTab("MatchData")
-        .add(elavatorCamera).withSize(4, 4);
-    Shuffleboard.getTab("MatchData")
-        .addCamera("Bow Camera", "Bow", null);
 
+    // TODO: update values using SmartDashboard in Robot.java
+    Shuffleboard.getTab("MatchData")
+        .add("Sensor Indicator", coralFound.getAsBoolean())
+        .withWidget(BuiltInWidgets.kBooleanBox);
+    Shuffleboard.getTab("MatchData")
+        .add("Match Timer", DriverStation.getMatchTime())
+        .withWidget(BuiltInWidgets.kTextView);
+    Shuffleboard.getTab("MatchData").add(elavatorCamera).withSize(4, 4);
+    Shuffleboard.getTab("MatchData").addCamera("Bow Camera", "Bow", null);
   }
 
   /**
