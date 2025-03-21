@@ -95,7 +95,7 @@ public class Drive extends SubsystemBase {
               1),
           getModuleTranslations());
   private static final PathConstraints PP_CONSTRAINTS =
-      new PathConstraints(4.0, 10.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
+      new PathConstraints(3.0, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
@@ -159,8 +159,8 @@ public class Drive extends SubsystemBase {
         this::getChassisSpeeds,
         this::runVelocityAuto,
         new PPHolonomicDriveController(
-            new PIDConstants(3.2, 0.0, 0.06), new PIDConstants(5.0, 0.0, 0.04)),
-        // new PIDConstants(2, 0.0, 0.12), new PIDConstants(5.0, 0.0, 0.02)),
+            // new PIDConstants(3.2, 0.0, 0.06), new PIDConstants(5.0, 0.0, 0.04)),
+            new PIDConstants(2, 0.0, 0.12), new PIDConstants(5.0, 0.0, 0.02)),
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);

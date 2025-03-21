@@ -1,7 +1,6 @@
 package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -24,8 +23,8 @@ import org.littletonrobotics.junction.Logger;
 public class ClimberIOTalonFX implements ClimberIO {
 
   public final TalonFX motor;
+
   // private final NeutralOut neutralOut = new NeutralOut();
-  private final VoltageOut voltageOut = new VoltageOut(0.0);
 
   /**
    * Constructs an IntakeIOTalonFX.

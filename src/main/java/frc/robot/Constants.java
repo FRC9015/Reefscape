@@ -70,6 +70,12 @@ public final class Constants {
                 Units.inchesToMeters(0), -Units.inchesToMeters(13.5), Units.inchesToMeters(7)),
             new Rotation3d(0, -Units.degreesToRadians(15), Units.degreesToRadians(270)));
 
+    public static final Transform3d sternPose =
+        new Transform3d(
+            new Translation3d(
+                -Units.inchesToMeters(13.5), Units.inchesToMeters(6.5), Units.inchesToMeters(7)),
+            new Rotation3d(0, -Units.degreesToRadians(15), Units.degreesToRadians(180)));
+
     // Unsure if truly needed
     //    public static final Transform3d topPose =
     // new Transform3d(
@@ -98,7 +104,7 @@ public final class Constants {
         new Pose2d(new Translation2d(3.097, 4.200), new Rotation2d());
 
     public static final Pose2d REEF_BR =
-        new Pose2d(new Translation2d(3.664, 5.126), new Rotation2d(5 * Math.PI / 3));
+        new Pose2d(new Translation2d(3.634, 5.185), new Rotation2d(5 * Math.PI / 3));
     public static final Pose2d REEF_BL =
         new Pose2d(new Translation2d(3.940, 5.282), new Rotation2d(5 * Math.PI / 3));
 
