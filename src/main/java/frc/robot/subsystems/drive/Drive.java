@@ -77,7 +77,7 @@ public class Drive extends SubsystemBase {
           Math.max(
               Math.hypot(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
-
+  private static final double slipRatio = 5.0;
   // PathPlanner config constants
   private static final double ROBOT_MASS_KG = 59.90;
   private static final double ROBOT_MOI = 6.554;
@@ -221,7 +221,11 @@ public class Drive extends SubsystemBase {
       SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
       for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
-        modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
+        if (isSlipping()) {
+          modulePositions[moduleIndex] = lastModulePositions[moduleIndex];
+        } else {
+          modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
+        }
         moduleDeltas[moduleIndex] =
             new SwerveModulePosition(
                 modulePositions[moduleIndex].distanceMeters
@@ -246,6 +250,8 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    Logger.recordOutput("SwerveStates/SlipRatio", getSkiddingRatio(getModuleStates(), kinematics));
   }
 
   /**
@@ -268,7 +274,7 @@ public class Drive extends SubsystemBase {
 
     // Send setpoints to modules
     for (int i = 0; i < 4; i++) {
-      modules[i].runSetpoint(prevSetpoint.moduleStates()[i]);
+      modules[i].runSetpoint(setpointStates[i]);
     }
 
     // Log optimized setpoints (runSetpoint mutates each state)
@@ -426,5 +432,44 @@ public class Drive extends SubsystemBase {
   public Command pathfindToPoseFlipped(Pose2d targetPose, double endVelocity) {
     Pose2d tp = FlippingUtil.flipFieldPose(targetPose);
     return AutoBuilder.pathfindToPose(tp, PP_CONSTRAINTS, endVelocity);
+  }
+
+  public static double getSkiddingRatio(
+      SwerveModuleState[] swerveStatesMeasured, SwerveDriveKinematics swerveDriveKinematics) {
+    final double rotationalVelocityMeasured =
+        swerveDriveKinematics.toChassisSpeeds(swerveStatesMeasured).omegaRadiansPerSecond;
+    final SwerveModuleState[] swerveStatesRotational =
+        swerveDriveKinematics.toSwerveModuleStates(
+            new ChassisSpeeds(0, 0, rotationalVelocityMeasured));
+    final double[] swerveStatesTranslationalPartMagnitudes =
+        new double[swerveStatesMeasured.length];
+
+    for (int i = 0; i < swerveStatesMeasured.length; i++) {
+      final Translation2d swerveStateVector =
+          convertSwerveStateToVelocityVector(swerveStatesMeasured[i]);
+      final Translation2d swerveStatesRotationalPartAsVector =
+          convertSwerveStateToVelocityVector(swerveStatesRotational[i]);
+      final Translation2d swerveStatesTranslationalPartAsVector =
+          swerveStateVector.minus(swerveStatesRotationalPartAsVector);
+      swerveStatesTranslationalPartMagnitudes[i] = swerveStatesTranslationalPartAsVector.getNorm();
+    }
+
+    double maximumTranslationalSpeed = 0;
+    double minimumTranslationalSpeed = Double.POSITIVE_INFINITY;
+    for (double translationalSpeed : swerveStatesTranslationalPartMagnitudes) {
+      maximumTranslationalSpeed = Math.max(maximumTranslationalSpeed, translationalSpeed);
+      minimumTranslationalSpeed = Math.min(minimumTranslationalSpeed, translationalSpeed);
+    }
+
+    return maximumTranslationalSpeed / minimumTranslationalSpeed;
+  }
+
+  private static Translation2d convertSwerveStateToVelocityVector(
+      SwerveModuleState swerveModuleState) {
+    return new Translation2d(swerveModuleState.speedMetersPerSecond, swerveModuleState.angle);
+  }
+
+  private boolean isSlipping() {
+    return getSkiddingRatio(this.getModuleStates(), kinematics) > slipRatio;
   }
 }
