@@ -27,7 +27,7 @@ public class AutoDrive extends Command {
   @Override
   public void initialize() {
 
-    rotationController.enableContinuousInput(0, 2 * Math.PI);
+    rotationController.enableContinuousInput(-Math.PI, Math.PI);
     rotationController.setTolerance(Units.degreesToRadians(1));
     yController.setTolerance(Units.inchesToMeters(0.4));
     xController.setTolerance(Units.inchesToMeters(0.4));
@@ -46,13 +46,15 @@ public class AutoDrive extends Command {
     ChassisSpeeds robotRelativeSpeeds = new ChassisSpeeds();
 
     robotRelativeSpeeds.vxMetersPerSecond = xVelocity;
-    robotRelativeSpeeds.vyMetersPerSecond = yVelocity;
+    robotRelativeSpeeds.vyMetersPerSecond = -yVelocity;
     robotRelativeSpeeds.omegaRadiansPerSecond = rotationalVelocity;
 
-    drive.runVelocity(robotRelativeSpeeds);
+    ChassisSpeeds field =
+        new ChassisSpeeds().fromFieldRelativeSpeeds(robotRelativeSpeeds, targetPose.getRotation());
+    drive.runVelocity(field);
 
     Logger.recordOutput("AutoDrive/targetPose", targetPose);
-    Logger.recordOutput("AutoDrive/robotrelativespeeds", robotRelativeSpeeds);
+    Logger.recordOutput("AutoDrive/robotrelativespeeds", field);
     Logger.recordOutput("AutoDrive/flippedPose", flippedPose);
   }
 

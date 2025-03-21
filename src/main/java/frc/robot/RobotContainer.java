@@ -103,7 +103,8 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
-                new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
+                new VisionIOPhotonVision("Bow", CameraConstants.bowPose),
+                new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
         intake = new Intake(new IntakeIOTalonFX(1, 0));
@@ -131,8 +132,8 @@ public class RobotContainer {
         photon =
             new Vision(
                 drive::addVisionMeasurement,
-                /// new VisionIOPhotonVisionSim("Starboard", CameraConstants.starboardPose),
-                new VisionIOPhotonVisionSim("Bow", CameraConstants.bowPose));
+                new VisionIOPhotonVisionSim("Bow", CameraConstants.starboardPose));
+        // new VisionIOPhotonVisionSim("Bow", CameraConstants.bowPose));
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
@@ -154,8 +155,8 @@ public class RobotContainer {
         photon =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
-                new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
+                new VisionIOPhotonVision("Bow", CameraConstants.starboardPose));
+        //    new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
         // climber = new Climber(1);
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
@@ -297,7 +298,7 @@ public class RobotContainer {
         .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BL, drive));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BL, 0));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
         .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive));
@@ -315,7 +316,7 @@ public class RobotContainer {
         .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BR, drive));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
         .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive));
