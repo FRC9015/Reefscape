@@ -18,6 +18,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -27,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CameraConstants;
 import frc.robot.Constants.MotorIDConstants;
-import frc.robot.commands.AutoDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.algae.pivot.Pivot;
@@ -54,9 +55,7 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.photon.Vision;
 import frc.robot.subsystems.photon.VisionIOPhotonVision;
 import frc.robot.subsystems.photon.VisionIOPhotonVisionSim;
-import frc.robot.subsystems.photon.VisionProcessor;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.photonvision.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -75,6 +74,8 @@ public class RobotContainer {
   private final Climber climb;
   private final Pivot pivot;
 
+  double pos = 0.0; // REMOVE
+
   // Driver Controller
   //   private final UsbCamera elavatorCamera;
 
@@ -89,6 +90,8 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  private final LoggedDashboardChooser<DriverStation.Alliance> alliance;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -182,6 +185,10 @@ public class RobotContainer {
         break;
     }
 
+    alliance = new LoggedDashboardChooser<>("Alliance", new SendableChooser<>());
+    alliance.addOption("Red", DriverStation.Alliance.Red);
+    alliance.addOption("Blue", DriverStation.Alliance.Blue);
+
     // visionProcessor = new VisionProcessor(this::onCoralFound);
 
     // Named commands for pathplanner autos
@@ -237,9 +244,6 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
-
-    // Schedule the vision processing command to run periodically
-    CommandScheduler.getInstance().schedule(new VisionProcessingCommand());
   }
 
   private void configureButtonBindings() {
@@ -271,8 +275,9 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    driverController.y().onTrue(drive.pathfindToPose(Constants.FieldConstants.SourceL, 0.0));
-    driverController.a().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0));
+    driverController.y().onTrue(drive.pathfindToPose(Constants.FieldConstants.SourceL, 0.0, alliance.get()));
+    driverController.a().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
+
     // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
     // 0.0));
     driverController.leftBumper().whileTrue(pivot.pivotDown(0.25));
@@ -303,43 +308,48 @@ public class RobotContainer {
     // Button Box
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AL, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BL, 0));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BL, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CL, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DL, drive));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DL, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_EL, drive));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_EL, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FL, drive));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FL, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AR, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CR, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DR, drive));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DR, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_ER, drive));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_ER, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FR, drive));
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FR, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L1.getButtonID())
-        .onTrue(elevator.executePreset(ElevatorState.CoralL1));
+        .onTrue(
+            elevator
+                .executePreset(ElevatorState.CoralL1)
+                .withTimeout(0.2)
+                .andThen(endEffector.runEffectorAutoCommand())
+                .andThen(elevator.executePreset(ElevatorState.Default)));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L2.getButtonID())
         .onTrue(
@@ -381,79 +391,6 @@ public class RobotContainer {
 
     coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2));
 
-    // Pathfind to source
-
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    // driverController
-    //     .b()
-    //     .whileTrue(
-    //         Commands.run(
-    //             () -> {
-    //               visionProcessor.processVision();
-    //               PhotonPipelineResult topResult = topCamera.getLatestResult();
-    //               if (topResult.hasTargets()) {
-    //                 switch (elevator.getElevatorState()) {
-    //                   case CoralL4:
-    //                     if (visionProcessor.isCoralDetected() ==
-    // VisionProcessor.TargetType.CORAL) {
-    //                       endEffector.runEffector(6).withTimeout(1).schedule();
-    //                     } else {
-    //                       elevator.executePreset(ElevatorState.CoralL3).schedule();
-    //                     }
-    //                     break;
-    //                   case CoralL3:
-    //                     if (visionProcessor.isCoralDetected() ==
-    // VisionProcessor.TargetType.CORAL) {
-    //                       endEffector.runEffector(6).withTimeout(1).schedule();
-    //                     } else {
-    //                       elevator.executePreset(ElevatorState.CoralL2).schedule();
-    //                     }
-    //                     break;
-    //                   case CoralL2:
-    //                     if (visionProcessor.isCoralDetected() ==
-    // VisionProcessor.TargetType.CORAL) {
-    //                       endEffector.runEffector(6).withTimeout(1).schedule();
-    //                     }
-    //                     break;
-    //                   default:
-    //                     elevator.executePreset(ElevatorState.CoralL4).schedule();
-    //                     break;
-    //                 }
-    //               } else {
-    //                 endEffector.stop();
-    //               }
-    //             },
-    //             endEffector));
-  }
-
-  private void onCoralFound(VisionProcessor.TargetType targetType) {
-    if (targetType == VisionProcessor.TargetType.CORAL) {
-      System.out.println("Coral detected!");
-    } else {
-      System.out.println("No coral detected.");
-    }
-  }
-
-  private class VisionProcessingCommand extends Command {
-    @Override
-    public void initialize() {}
-
-    // @Override
-    // public void execute() {
-    //   visionProcessor.processVision();
-    // }
-
-    @Override
-    public boolean isFinished() {
-      return false;
-    }
-
-    @Override
-    public void end(boolean interrupted) {}
   }
 
   public Command getAutonomousCommand() {
