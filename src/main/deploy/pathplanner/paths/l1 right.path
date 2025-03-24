@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.97,
-        "y": 5.372
+        "x": 7.1,
+        "y": 1.894674744897958
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.741701046706253,
-        "y": 5.741769712646909
+        "x": 6.6746811224489795,
+        "y": 2.0812181122448976
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.351,
-        "y": 7.17
+        "x": 5.3575255102040815,
+        "y": 2.8945471938775507
       },
       "prevControl": {
-        "x": 0.8440255102040817,
-        "y": 7.348889030612244
+        "x": 6.066390306122449,
+        "y": 2.4095344387755095
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "DefaultPosition",
+      "name": "IntakeCoral",
       "waypointRelativePos": 0,
-      "endWaypointRelativePos": 0.235576923076923,
+      "endWaypointRelativePos": 0.6506410256410257,
       "command": {
         "type": "named",
         "data": {
-          "name": "DefaultPosition"
+          "name": "IntakeCoral"
         }
       }
     }
@@ -54,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -55.0
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "three note",
+  "folder": "Two Note",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
