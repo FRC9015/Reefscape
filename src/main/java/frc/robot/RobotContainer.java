@@ -15,13 +15,13 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -32,6 +32,7 @@ import frc.robot.Constants.MotorIDConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.algae.pivot.Pivot;
+import frc.robot.subsystems.algae.pivot.PivotIO.PivotIOInputs.PivotPosition;
 import frc.robot.subsystems.algae.pivot.PivotIOTalonFX;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -77,7 +78,7 @@ public class RobotContainer {
   double pos = 0.0; // REMOVE
 
   // Driver Controller
-  //   private final UsbCamera elavatorCamera;
+  private final UsbCamera elavatorCamera;
 
   private final CommandXboxController driverController = new CommandXboxController(0);
   // Operator Controller
@@ -92,6 +93,7 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser;
 
   private final LoggedDashboardChooser<DriverStation.Alliance> alliance;
+  private final SendableChooser<DriverStation.Alliance> allianceChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -113,7 +115,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
-        intake = new Intake(new IntakeIOTalonFX(1, 0));
+        intake = new Intake(new IntakeIOTalonFX(0, 1));
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
@@ -122,9 +124,12 @@ public class RobotContainer {
                     MotorIDConstants.ELEVATOR_ENCODER_ID,
                     4));
         coralFound = new Trigger(() -> intake.isCoralIn());
-        climb = new Climber(new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID));
+        climb =
+            new Climber(
+                new ClimberIOTalonFX(
+                    MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-        // elavatorCamera = CameraServer.startAutomaticCapture();
+        elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
       case SIM:
@@ -145,11 +150,14 @@ public class RobotContainer {
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
-        climb = new Climber(new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID));
+        climb =
+            new Climber(
+                new ClimberIOTalonFX(
+                    MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
         coralFound = new Trigger(() -> intake.isCoralIn());
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
 
-        // elavatorCamera = CameraServer.startAutomaticCapture();
+        elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
       default:
@@ -181,26 +189,29 @@ public class RobotContainer {
         climb = new Climber(new ClimberIO() {});
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
 
-        // elavatorCamera = CameraServer.startAutomaticCapture();
+        elavatorCamera = CameraServer.startAutomaticCapture();
         break;
     }
+    allianceChooser = new SendableChooser<DriverStation.Alliance>();
+    allianceChooser.addOption("Red", DriverStation.Alliance.Red);
+    allianceChooser.addOption("Blue", DriverStation.Alliance.Blue);
 
-    alliance = new LoggedDashboardChooser<>("Alliance", new SendableChooser<>());
-    alliance.addOption("Red", DriverStation.Alliance.Red);
-    alliance.addOption("Blue", DriverStation.Alliance.Blue);
+    // allianceChooser.setDefaultOption("Blue", DriverStation.Alliance.Blue);
 
-    // visionProcessor = new VisionProcessor(this::onCoralFound);
+    alliance = new LoggedDashboardChooser<>("Alliance", allianceChooser);
 
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
         "IntakeCoral",
-        endEffector.runEffectorAuto(2).until(intake::isCoralSet).andThen(endEffector::stop));
+        endEffector
+            .runEffectorAuto(2)
+            .alongWith(elevator.executePreset(ElevatorState.Default))
+            .until(intake::isCoralSet)
+            .andThen(endEffector::stop));
     NamedCommands.registerCommand("shootCoral", endEffector.runEffector(5).withTimeout(0.4));
     NamedCommands.registerCommand(
         "TestCommand", Commands.run(() -> System.out.println("TestCommand Works")));
-    // new EventTrigger("coral?").and(coralFound).whileTrue(endEffector.runEffectorReverse(6));
-    NamedCommands.registerCommand(
-        "DefaultPosition", elevator.executePreset(ElevatorState.Default).withTimeout(0.75));
+    NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));
     NamedCommands.registerCommand(
         "L2Position",
         elevator.executePreset(ElevatorState.CoralL2).withTimeout(0.5).unless(coralFound));
@@ -233,11 +244,12 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // elavatorCamera.setResolution(640, 480);
-    // elavatorCamera.setFPS(24);
+    elavatorCamera.setResolution(640, 480);
+    elavatorCamera.setFPS(24);
 
     // Configure the button bindings
     configureButtonBindings();
+
     /**
      * Use this method to define your button->command mappings. Buttons can be created by
      * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -275,13 +287,21 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    driverController.y().onTrue(drive.pathfindToPose(Constants.FieldConstants.SourceL, 0.0, alliance.get()));
-    driverController.a().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
+    driverController
+        .y()
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.SourceL, 0.0, alliance.get()));
+    driverController
+        .a()
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
 
     // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
     // 0.0));
-    driverController.leftBumper().whileTrue(pivot.pivotDown(0.25));
-    driverController.rightBumper().whileTrue(pivot.pivotUp(0.25));
+    driverController.leftBumper().onTrue(pivot.executePreset(PivotPosition.Dealgify));
+    driverController.rightBumper().onTrue(pivot.executePreset(PivotPosition.Default));
+    driverController.rightTrigger().onTrue(pivot.executePreset(PivotPosition.Dealgify2));
+
+    driverController.povUp().whileTrue(climb.setSpeed(10)).whileFalse(climb.setSpeed(0));
+    driverController.povDown().whileTrue(climb.setSpeed(-10)).whileFalse(climb.setSpeed(0));
     // Slow mode
     driverController
         .leftTrigger()
@@ -301,8 +321,6 @@ public class RobotContainer {
     // .leftBumper()
     // .whileTrue(endEffector.runEffector(0.15).until(coralFound));
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
-    operatorController.a().whileTrue(climb.setSpeed(10)).whileFalse(climb.setSpeed(0));
-    operatorController.b().whileTrue(climb.setSpeed(-10)).whileFalse(climb.setSpeed(0));
     operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
 
     // Button Box
@@ -390,10 +408,17 @@ public class RobotContainer {
                 .andThen(() -> drive.getCurrentCommand().cancel(), drive));
 
     coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2));
-
   }
 
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void onDisabled() {
+    drive.setModulesCoast();
+  }
+
+  public void onEnabled() {
+    drive.setModulesBrake();
   }
 }

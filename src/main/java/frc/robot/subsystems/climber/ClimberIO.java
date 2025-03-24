@@ -15,7 +15,10 @@ package frc.robot.subsystems.climber;
 
 import org.littletonrobotics.junction.AutoLog;
 
+/** the. */
 public interface ClimberIO {
+
+  /** the. */
   @AutoLog
   public static class ClimberIOInputs {
 
@@ -29,13 +32,12 @@ public interface ClimberIO {
   /** Updates the set of loggable inputs. */
   public default void updateInputs(ClimberIOInputs inputs) {}
 
-  /** Stop intake`from running */
+  /** Stop intake`from running. */
   default void stop() {}
 
   /** Enable or disable brake mode on the intake motor. */
   default void setBrakeMode(boolean enable) {}
 
+  /** the. */
   default void setRPM(double rpm) {}
-
-  default void getPosition() {}
 }

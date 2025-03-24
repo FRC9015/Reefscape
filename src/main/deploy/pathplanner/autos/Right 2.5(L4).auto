@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Side L1 3"
+            "pathName": "l1 right"
           }
         },
         {
@@ -25,7 +25,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "To Source 3"
+            "pathName": "source right"
           }
         },
         {
@@ -37,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "L1 Coral Path 3"
+            "pathName": "l2 right"
           }
         },
         {
@@ -55,31 +55,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "To Source 3 2"
+            "pathName": "source 2"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "IntakeCoral"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "fourth"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4Position"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shootCoral"
           }
         }
       ]

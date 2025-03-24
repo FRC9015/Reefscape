@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.5595025510204084,
-        "y": 7.2596619897959185
+        "x": 1.56,
+        "y": 7.26
       },
       "prevControl": {
-        "x": 2.3120718735365955,
-        "y": 6.630168305255715
+        "x": 2.312569322516187,
+        "y": 6.6305063154597965
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,8 +35,13 @@
     {
       "name": "DefaultPosition",
       "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": 0.12980769230769237,
-      "command": null
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "DefaultPosition"
+        }
+      }
     }
   ],
   "globalConstraints": {
@@ -57,5 +62,5 @@
     "velocity": 0,
     "rotation": -59.99999999999999
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

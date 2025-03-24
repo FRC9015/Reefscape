@@ -502,4 +502,16 @@ public class Drive extends SubsystemBase {
   private boolean isSlipping() {
     return getSkiddingRatio(this.getModuleStates(), kinematics) > slipRatio;
   }
+
+  public void setModulesBrake() {
+    for (Module module : modules) {
+      module.setBrakeMode();
+    }
+  }
+
+  public void setModulesCoast() {
+    for (Module module : modules) {
+      module.setCoastMode();
+    }
+  }
 }

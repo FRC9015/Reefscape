@@ -36,9 +36,9 @@ public class Elevator extends SubsystemBase {
   private ElevatorFeedforward feedforward;
 
   // Elevator PID constants - Initial values
-  private double kP = 4;
+  private double kP = 5;
   private double kI = 0.0;
-  private double kD = 0.2;
+  private double kD = 0.0;
   private double kS = 0;
   private double kG = 1;
   private double kV = 0;
@@ -75,6 +75,8 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
+   * the.
+   *
    * @param state The desired preset state.
    */
   public void setPreset(ElevatorIOInputs.ElevatorState state) {
