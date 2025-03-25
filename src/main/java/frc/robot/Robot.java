@@ -16,6 +16,9 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
+
+import edu.wpi.first.net.WebServer;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -120,7 +123,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+  }
 
   /** This function is called periodically when disabled. */
   @Override
@@ -135,6 +140,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
   }
 
   /** This function is called periodically during autonomous. */
@@ -151,6 +157,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
   }
 
   /** This function is called periodically during operator control. */
@@ -162,6 +169,7 @@ public class Robot extends LoggedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
   }
 
   /** This function is called periodically during test mode. */
@@ -170,7 +178,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override
