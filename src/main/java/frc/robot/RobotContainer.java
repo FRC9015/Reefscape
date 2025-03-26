@@ -343,40 +343,79 @@ public class RobotContainer {
     // Button Box
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AL, 0, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BL, 0, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CL, 0, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DL, 0, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_EL, 0, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_EL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FL, 0, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AR, 0, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CR, 0, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DR, 0, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_ER, 0, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_ER, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FR, 0, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FR, drive));
+
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AL, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
+    //     .onTrue(
+    //         drive.pathfindToPose(Constants.FieldConstants.REEF_BL, 0,
+    // DriverStation.Alliance.Red));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CL, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DL, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_EL, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FL, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AR, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CR, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DR, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_ER, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FR, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L1.getButtonID())
         .onTrue(
