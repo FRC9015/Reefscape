@@ -338,6 +338,16 @@ public class RobotContainer {
                 () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
 
+    driverController
+                .rightTrigger().and(driverController.leftTrigger())
+                .whileTrue(
+                    DriveCommands.joystickDrive(
+                        drive,
+                        () -> -driverController.getLeftY() * Constants.MANUAL_ALIGN_CONSTANT,
+                        () -> -driverController.getLeftX() * Constants.MANUAL_ALIGN_CONSTANT,
+                        () -> -driverController.getRightX() * Constants.MANUAL_ALIGN_CONSTANT));
+    
+
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
     operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
