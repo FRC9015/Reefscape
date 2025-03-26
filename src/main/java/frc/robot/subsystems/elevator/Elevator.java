@@ -85,7 +85,7 @@ public class Elevator extends SubsystemBase {
     if (Math.abs(targetPosition - inputs.elevatorPosition + offset) <= 0.03) {
       inputs.elevatorAtSetpoint = true;
     }
-    io.setElevatorPosition(output);
+    io.setElevatorPosition(state.getEncoderPosition());
     io.updateInputs(inputs);
     Logger.recordOutput("Elevator/Setpoint", targetPosition);
   }
@@ -100,6 +100,14 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("Elevator/State", state);
     Logger.recordOutput("Elevator/CurrentPosition", inputs.elevatorPosition + offset);
     return run(() -> this.setPreset(state));
+  }
+
+  public void setBrakeMode() {
+    io.setBrakeMode();
+  }
+
+  public void setCoastMode() {
+    io.setCoastMode();
   }
 
   /**
