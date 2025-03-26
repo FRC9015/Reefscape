@@ -448,11 +448,11 @@ public class Drive extends SubsystemBase {
   public Command pathfindToPose(
       Pose2d targetpose, double endVelocity, DriverStation.Alliance alliance) {
     Logger.recordOutput("isRed?", PhoenixUtil.isRed());
-    if (alliance == DriverStation.Alliance.Red) {
-      return this.pathfindToPoseFlipped(targetpose, endVelocity);
-    } else {
-      return this.pfToPose(targetpose, endVelocity);
-    }
+    // if (alliance == DriverStation.Alliance.Red) {
+    return this.pathfindToPoseFlipped(targetpose, endVelocity);
+    // } else {
+    //   return this.pfToPose(targetpose, endVelocity);
+    // }
   }
 
   public Command pfToPose(Pose2d targetpose, double endVelocity) {

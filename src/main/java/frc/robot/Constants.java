@@ -118,7 +118,7 @@ public final class Constants {
             new Translation2d(3.940 - 0.052, 5.327 - 0.007), new Rotation2d(5 * Math.PI / 3));
 
     public static final Pose2d REEF_CR =
-        new Pose2d(new Translation2d(4.962, 5.335), new Rotation2d(4 * Math.PI / 3));
+        new Pose2d(new Translation2d(4.992, 5.282), new Rotation2d(4 * Math.PI / 3));
     public static final Pose2d REEF_CL =
         new Pose2d(new Translation2d(5.290, 5.215), new Rotation2d(4 * Math.PI / 3));
 

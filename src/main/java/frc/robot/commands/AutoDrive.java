@@ -13,8 +13,8 @@ import org.littletonrobotics.junction.Logger;
 public class AutoDrive extends Command {
 
   private PIDController rotationController = new PIDController(4, 0, 0.02); // 4 0.02
-  private PIDController yController = new PIDController(4, 0.0, 0.04); // 4 0.04
-  private PIDController xController = new PIDController(2.5, 0.0, 0.04); // 2.5 0.04
+  private PIDController yController = new PIDController(1.5, 0.0, 0.02); // 4 0.04
+  private PIDController xController = new PIDController(1.5, 0.0, 0.02); // 2.5 0.04
   private Pose2d targetPose, flippedPose;
   private Drive drive;
 
@@ -46,11 +46,11 @@ public class AutoDrive extends Command {
     ChassisSpeeds robotRelativeSpeeds = new ChassisSpeeds();
 
     robotRelativeSpeeds.vxMetersPerSecond = xVelocity;
-    robotRelativeSpeeds.vyMetersPerSecond = -yVelocity;
+    robotRelativeSpeeds.vyMetersPerSecond = yVelocity;
     robotRelativeSpeeds.omegaRadiansPerSecond = rotationalVelocity;
 
     ChassisSpeeds field =
-        new ChassisSpeeds().fromFieldRelativeSpeeds(robotRelativeSpeeds, targetPose.getRotation());
+        new ChassisSpeeds().fromFieldRelativeSpeeds(robotRelativeSpeeds, currentPose.getRotation());
     drive.runVelocity(field);
 
     Logger.recordOutput("AutoDrive/targetPose", targetPose);
