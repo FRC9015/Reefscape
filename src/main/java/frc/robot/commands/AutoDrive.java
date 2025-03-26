@@ -21,6 +21,7 @@ public class AutoDrive extends Command {
   private EndEffector endEffector;
   private Pose2d targetPose, flippedPose;
   private Drive drive;
+  public static boolean atSetpoint = false;
 
   public AutoDrive(Pose2d desiredPose, Drive drive, EndEffector endEffector) {
     this.drive = drive;
@@ -73,6 +74,7 @@ public class AutoDrive extends Command {
 
   @Override
   public boolean isFinished() {
+    atSetpoint = true;
     return rotationController.atSetpoint() && yController.atSetpoint() && xController.atSetpoint();
   }
 }

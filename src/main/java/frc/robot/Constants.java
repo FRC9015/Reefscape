@@ -153,6 +153,10 @@ public final class Constants {
     public static final double ELEVATOR_MAGNET_OFFSET = 0.478;
   }
 
+  public static class LEDConstants{
+    public static final int candleId = 0;
+  }
+
   /** the. */
   public static enum ButtonBoxIds {
     REEF_AL(10),

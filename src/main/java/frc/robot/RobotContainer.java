@@ -54,9 +54,13 @@ import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.led.Led;
 import frc.robot.subsystems.photon.Vision;
 import frc.robot.subsystems.photon.VisionIOPhotonVision;
 import frc.robot.subsystems.photon.VisionIOPhotonVisionSim;
+
+import java.awt.Color;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -75,6 +79,7 @@ public class RobotContainer {
   // private final VisionProcessor visionProcessor;
   private final Climber climb;
   private final Pivot pivot;
+  private final Led led;
 
   double pos = 0.0; // REMOVE
 
@@ -89,6 +94,8 @@ public class RobotContainer {
 
   // Triggers
   private final Trigger coralFound;
+  private final Trigger coralIn;
+  private final Trigger atSetpoint;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -117,6 +124,7 @@ public class RobotContainer {
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
         intake = new Intake(new IntakeIOTalonFX(0, 1));
+        led = new Led();
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
@@ -125,6 +133,8 @@ public class RobotContainer {
                     MotorIDConstants.ELEVATOR_ENCODER_ID,
                     4));
         coralFound = new Trigger(() -> intake.isCoralIn());
+        coralIn = new Trigger(() -> intake.isCoralSet());
+        atSetpoint = new Trigger(() -> AutoDrive.atSetpoint == true);
         climb =
             new Climber(
                 new ClimberIOTalonFX(
@@ -150,12 +160,15 @@ public class RobotContainer {
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
+        led = new Led();
         elevator = new Elevator(new ElevatorIOSim());
         climb =
             new Climber(
                 new ClimberIOTalonFX(
                     MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
         coralFound = new Trigger(() -> intake.isCoralIn());
+        coralIn = new Trigger(() -> intake.isCoralSet());
+        atSetpoint = new Trigger(() -> AutoDrive.atSetpoint == true);
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
 
         elavatorCamera = CameraServer.startAutomaticCapture();
@@ -179,6 +192,7 @@ public class RobotContainer {
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
         intake = new Intake(new IntakeIOTalonFX(1, 0));
+        led = new Led();
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
@@ -187,6 +201,8 @@ public class RobotContainer {
                     MotorIDConstants.ELEVATOR_ENCODER_ID,
                     4));
         coralFound = new Trigger(() -> intake.isCoralIn());
+        coralIn = new Trigger(() -> intake.isCoralSet());
+        atSetpoint = new Trigger(() -> AutoDrive.atSetpoint == true);
         climb = new Climber(new ClimberIO() {});
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
 
@@ -447,7 +463,13 @@ public class RobotContainer {
                 // .andThen(() -> algae.getCurrentCommand().cancel(), algae)
                 .andThen(() -> drive.getCurrentCommand().cancel(), drive));
 
-    coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2));
+
+    // Trigger Commands
+    coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2)
+    .alongWith(led.setColor(Color.RED)));
+    coralIn.and(() -> DriverStation.isTeleopEnabled()).whileTrue(led.setColor(Color.GREEN));
+    atSetpoint.and(() -> DriverStation.isTeleopEnabled()).whileTrue(led.setColor(Color.PINK));
+    
   }
 
   public Command getAutonomousCommand() {
