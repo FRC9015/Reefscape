@@ -11,15 +11,35 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "L4Position"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shootCoral"
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "L4Position"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "shootCoral"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "DefaultPivot"
+                }
+              }
+            ]
           }
         },
         {
@@ -41,15 +61,35 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "L4Position"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shootCoral"
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "L4Position"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "shootCoral"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "DefaultPivot"
+                }
+              }
+            ]
           }
         },
         {

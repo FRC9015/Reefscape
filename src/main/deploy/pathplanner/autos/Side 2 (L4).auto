@@ -30,9 +30,29 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "DefaultPosition"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DefaultPosition"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "DefaultPivot"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {
@@ -67,6 +87,12 @@
                 "type": "named",
                 "data": {
                   "name": "shootCoral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "DefaultPosition"
                 }
               }
             ]

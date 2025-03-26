@@ -20,7 +20,7 @@
         "y": 2.715465561224489
       },
       "prevControl": {
-        "x": 3.0285663265306124,
+        "x": 3.028566326530612,
         "y": 1.7155931122448975
       },
       "nextControl": null,
@@ -37,6 +37,17 @@
       "waypointRelativePos": 0.0,
       "endWaypointRelativePos": 0.5608974358974357,
       "command": null
+    },
+    {
+      "name": "DeAlgify",
+      "waypointRelativePos": 0.8266856600189929,
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "DealgifyL3"
+        }
+      }
     }
   ],
   "globalConstraints": {

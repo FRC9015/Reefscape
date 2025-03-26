@@ -42,6 +42,17 @@
           "name": "IntakeCoral"
         }
       }
+    },
+    {
+      "name": "DeAlgify",
+      "waypointRelativePos": 0.9064577397910722,
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "DealgifyL3"
+        }
+      }
     }
   ],
   "globalConstraints": {

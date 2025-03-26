@@ -11,19 +11,32 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "L4Position"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "L4Position"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "shootCoral"
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "shootCoral"
+                  "name": "DefaultPivot"
                 }
               }
             ]
@@ -61,19 +74,32 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "L4Position"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "L4Position"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "shootCoral"
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "shootCoral"
+                  "name": "DefaultPivot"
                 }
               }
             ]

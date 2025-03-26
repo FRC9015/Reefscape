@@ -241,6 +241,13 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "L4PositionL2",
         elevator.executePreset(ElevatorState.CoralL4).withTimeout(0.7).unless(coralFound));
+    NamedCommands.registerCommand(
+        "DealgifyL3", pivot.executePreset(PivotPosition.Dealgify).withTimeout(0.5));
+    NamedCommands.registerCommand(
+            "DealgifyL2", pivot.executePreset(PivotPosition.Dealgify2).withTimeout(0.5));
+    NamedCommands.registerCommand(
+        "DefaultPivot", pivot.executePreset(PivotPosition.Default).withTimeout(0.5));
+
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
