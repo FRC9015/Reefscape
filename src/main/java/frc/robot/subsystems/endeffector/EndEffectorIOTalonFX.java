@@ -33,7 +33,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
 
   private final TalonFX motor1;
   // private final CANrange sideRange1;
-  // private final CANrange middleRange;
+  private final CANrange middleRange;
   // private final CANrange sideRange2;
 
 
@@ -48,10 +48,10 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
    *
    * @param motorId1 The ID of the motor.
    */
-  public EndEffectorIOTalonFX(int motorId1) {//, int canRangeID1, int canRangeID2, int canRangeID3
+  public EndEffectorIOTalonFX(int motorId1, int canRangeID2) {//, int canRangeID1, int canRangeID2, int canRangeID3
     motor1 = new TalonFX(motorId1);
     // sideRange1 = new CANrange(canRangeID1);
-    // middleRange = new CANrange(canRangeID2);
+    middleRange = new CANrange(canRangeID2);
     // sideRange2 = new CANrange(canRangeID3);
 
     // Configure motor
@@ -67,7 +67,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
 
     // sideRange1.getConfigurator().apply(rangeConfig);
     // sideRange2.getConfigurator().apply(rangeConfig);
-    // middleRange.getConfigurator().apply(rangeConfig);
+    middleRange.getConfigurator().apply(rangeConfig);
 
     // Use the built-in relative encoder of the TalonFX
     rpmSignal = motor1.getVelocity();
@@ -85,9 +85,8 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
     inputs.endEffectorRPM = rpmSignal.getValueAsDouble();
     inputs.endEffectorAppliedVolts = appliedVoltsSignal.getValueAsDouble();
     inputs.endEffectorCurrentAmps = currentSignal.getValueAsDouble();
-    // inputs.canRange1 = sideRange1.getIsDetected().getValue();
-    // inputs.canRange2 = sideRange2.getIsDetected().getValue();
-    // inputs.canRange3 = middleRange.getIsDetected().getValue();
+    inputs.canRangeSTDdevs = middleRange.getDistanceStdDev().getValueAsDouble();
+    inputs.canRangeDistance = middleRange.getDistance().getValueAsDouble();
 
   }
 
