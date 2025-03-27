@@ -115,8 +115,8 @@ public class RobotContainer {
                 new VisionIOPhotonVision("Bow", CameraConstants.bowPose),
                 new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
         endEffector =
-            new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID,44));
-        intake = new Intake(new IntakeIOTalonFX(0, 1));
+            new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
+        intake = new Intake(new IntakeIOTalonFX(0, 1, 44));
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
@@ -177,8 +177,8 @@ public class RobotContainer {
         //    new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
         // climber = new Climber(1);
         endEffector =
-            new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID,44));
-        intake = new Intake(new IntakeIOTalonFX(1, 0));
+            new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
+        intake = new Intake(new IntakeIOTalonFX(1, 0, 44));
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
