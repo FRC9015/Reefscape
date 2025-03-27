@@ -63,11 +63,6 @@ public class IntakeIOSim implements IntakeIO {
     double avgRPM = (motorSim1.getAngularVelocityRPM() - motorSim2.getAngularVelocityRPM()) / 2.0;
 
     // Update inputs
-    inputs.intakeAppliedVolts = appliedVolts;
-    inputs.intakeCurrentAmps =
-        (motorSim1.getCurrentDrawAmps() + motorSim2.getCurrentDrawAmps()) / 2.0;
-    inputs.intakeEncoderConnected = true;
-    inputs.intakeRPM = avgRPM;
     inputs.coralIn = false; // Simulate coral detection if needed
     inputs.coralSet = false;
   }

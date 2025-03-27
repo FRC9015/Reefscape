@@ -20,12 +20,10 @@ public interface IntakeIO {
   public static class IntakeIOInputs {
 
     // Fields representing the intake state and inputs
-    public double intakeAppliedVolts = 0.0;
-    public double intakeCurrentAmps = 0.0;
-    public boolean intakeEncoderConnected = false;
-    public double intakeRPM = 0.0;
     public boolean coralIn = false;
     public boolean coralSet = false;
+    public double canRangeSTDdevs = 0.0;
+    public double canRangeDistance = 0.0;
   }
 
   /** Updates the set of loggable inputs. */
