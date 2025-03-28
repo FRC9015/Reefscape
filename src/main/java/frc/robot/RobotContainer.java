@@ -54,6 +54,7 @@ import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.led.Led;
 import frc.robot.subsystems.photon.Vision;
 import frc.robot.subsystems.photon.VisionIOPhotonVision;
 import frc.robot.subsystems.photon.VisionIOPhotonVisionSim;
@@ -75,6 +76,7 @@ public class RobotContainer {
   // private final VisionProcessor visionProcessor;
   private final Climber climb;
   private final Pivot pivot;
+  private final Led led;
 
   double pos = 0.0; // REMOVE
 
@@ -131,6 +133,7 @@ public class RobotContainer {
                     MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         elavatorCamera = CameraServer.startAutomaticCapture();
+        led = new Led(Constants.LEDConstants.CANDLE_ID);
         break;
 
       case SIM:
@@ -159,6 +162,7 @@ public class RobotContainer {
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
 
         elavatorCamera = CameraServer.startAutomaticCapture();
+        led = new Led(Constants.LEDConstants.CANDLE_ID);
         break;
 
       default:
@@ -191,6 +195,7 @@ public class RobotContainer {
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
 
         elavatorCamera = CameraServer.startAutomaticCapture();
+        led = new Led(Constants.LEDConstants.CANDLE_ID);
         break;
     }
     allianceChooser = new SendableChooser<DriverStation.Alliance>();

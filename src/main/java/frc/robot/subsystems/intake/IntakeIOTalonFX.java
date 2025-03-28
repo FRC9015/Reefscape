@@ -52,7 +52,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     middleRange = new CANrange(canRangeID1, "*");
 
     CANrangeConfiguration rangeConfig = new CANrangeConfiguration();
-    //rangeConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 0.0;
+    // rangeConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 0.0;
 
     middleRange.getConfigurator().apply(rangeConfig);
 
