@@ -49,7 +49,7 @@ public final class Constants {
 
   // public static final Transform3d CAMERA_1_TO_ROBOT = new Transform3d();
 
-  /** the. */
+
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
@@ -61,7 +61,6 @@ public final class Constants {
     REPLAY
   }
 
-  /** the. */
   public static class CameraConstants {
     public static AprilTagFieldLayout aprilTagLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
@@ -94,7 +93,6 @@ public final class Constants {
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
   }
 
-  /** the. */
   public static class FieldConstants {
     public static final Pose2d reef_AL1 =
         new Pose2d(new Translation2d(3.25, 3.8), new Rotation2d());
@@ -138,13 +136,12 @@ public final class Constants {
         new Pose2d(new Translation2d(3.649, 2.857), new Rotation2d(Math.PI / 3));
   }
 
-  /** the. */
+
   public static class AutoConstants {
     public static final PathConstraints PP_CONSTRAINTS =
         new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
   }
 
-  /** the. */
   public static class MotorIDConstants {
     public static final int END_EFFECTOR_MOTOR_ID = 2;
     public static final int INTAKE_MOTOR_ID = 1;
@@ -180,7 +177,10 @@ public final class Constants {
     public static final double minHeight = -0.04;
   }
 
-  /** the. */
+  public static class LEDConstants{
+    public static final int CANDLE_ID = 45;
+  }
+
   public static enum ButtonBoxIds {
     REEF_AL(10),
     REEF_AR(12),
