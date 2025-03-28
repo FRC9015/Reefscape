@@ -47,7 +47,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
    * @param motorId1 The ID of the motor.
    */
   public EndEffectorIOTalonFX(int motorId1) { // , int canRangeID1, int canRangeID2, int canRangeID3
-    motor1 = new TalonFX(motorId1);
+    motor1 = new TalonFX(motorId1, "CANivore");
     // sideRange1 = new CANrange(canRangeID1);
     // middleRange = new CANrange(canRangeID2);
     // sideRange2 = new CANrange(canRangeID3);
