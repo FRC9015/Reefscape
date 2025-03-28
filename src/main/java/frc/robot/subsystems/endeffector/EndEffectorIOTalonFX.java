@@ -18,7 +18,6 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -36,7 +35,6 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
   // private final CANrange middleRange;
   // private final CANrange sideRange2;
 
-
   private final StatusSignal<AngularVelocity> rpmSignal;
   private final StatusSignal<Voltage> appliedVoltsSignal;
   private final StatusSignal<Current> currentSignal;
@@ -48,7 +46,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
    *
    * @param motorId1 The ID of the motor.
    */
-  public EndEffectorIOTalonFX(int motorId1) {//, int canRangeID1, int canRangeID2, int canRangeID3
+  public EndEffectorIOTalonFX(int motorId1) { // , int canRangeID1, int canRangeID2, int canRangeID3
     motor1 = new TalonFX(motorId1);
     // sideRange1 = new CANrange(canRangeID1);
     // middleRange = new CANrange(canRangeID2);

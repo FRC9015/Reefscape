@@ -54,7 +54,7 @@ public class AutoDrive extends Command {
     double currentRPM = endEffector.getRPM();
     double endEffectorAdjustment =
         endEffectorController.calculate(currentRPM, 2000); // Target RPM is 0 for alignment
-      endEffector.setVoltage(currentRPM + endEffectorAdjustment);
+    endEffector.setVoltage(currentRPM + endEffectorAdjustment);
 
     ChassisSpeeds robotRelativeSpeeds = new ChassisSpeeds();
 

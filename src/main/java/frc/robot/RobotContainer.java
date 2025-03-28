@@ -15,14 +15,12 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
@@ -60,9 +58,6 @@ import frc.robot.subsystems.led.Led;
 import frc.robot.subsystems.photon.Vision;
 import frc.robot.subsystems.photon.VisionIOPhotonVision;
 import frc.robot.subsystems.photon.VisionIOPhotonVisionSim;
-
-import java.awt.Color;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -86,7 +81,7 @@ public class RobotContainer {
   double pos = 0.0; // REMOVE
 
   // Driver Controller
-  private final UsbCamera elavatorCamera;
+  //   private final UsbCamera elavatorCamera;
 
   private final CommandXboxController driverController = new CommandXboxController(0);
   // Operator Controller
@@ -142,7 +137,8 @@ public class RobotContainer {
                 new ClimberIOTalonFX(
                     MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        // algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
+        // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
       case SIM:
@@ -173,7 +169,7 @@ public class RobotContainer {
         atSetpoint = new Trigger(() -> AutoDrive.atSetpoint == true);
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
 
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
       default:
@@ -207,8 +203,8 @@ public class RobotContainer {
         atSetpoint = new Trigger(() -> AutoDrive.atSetpoint == true);
         climb = new Climber(new ClimberIO() {});
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        // algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
+        // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
     }
     allianceChooser = new SendableChooser<DriverStation.Alliance>();
@@ -246,10 +242,9 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "DealgifyL3", pivot.executePreset(PivotPosition.Dealgify).withTimeout(0.5));
     NamedCommands.registerCommand(
-            "DealgifyL2", pivot.executePreset(PivotPosition.Dealgify2).withTimeout(0.5));
+        "DealgifyL2", pivot.executePreset(PivotPosition.Dealgify2).withTimeout(0.5));
     NamedCommands.registerCommand(
         "DefaultPivot", pivot.executePreset(PivotPosition.Default).withTimeout(0.5));
-
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -270,9 +265,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    elavatorCamera.setResolution(640, 480);
-    elavatorCamera.setFPS(24);
-
+    // elavatorCamera.setResolution(640, 480);
+    // elavatorCamera.setFPS(24);
     // Configure the button bindings
     configureButtonBindings();
 
@@ -337,16 +331,24 @@ public class RobotContainer {
                 () -> -driverController.getLeftY() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
+    driverController
+        .rightTrigger()
+        .whileTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -driverController.getLeftY() * Constants.CLIMB_ALIGN_CONSTANT,
+                () -> -driverController.getLeftX() * Constants.CLIMB_ALIGN_CONSTANT,
+                () -> -driverController.getRightX() * Constants.CLIMB_ALIGN_CONSTANT));
 
     driverController
-                .rightTrigger().and(driverController.leftTrigger())
-                .whileTrue(
-                    DriveCommands.joystickDrive(
-                        drive,
-                        () -> -driverController.getLeftY() * Constants.MANUAL_ALIGN_CONSTANT,
-                        () -> -driverController.getLeftX() * Constants.MANUAL_ALIGN_CONSTANT,
-                        () -> -driverController.getRightX() * Constants.MANUAL_ALIGN_CONSTANT));
-    
+        .rightTrigger()
+        .and(driverController.leftTrigger())
+        .whileTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -driverController.getLeftY() * Constants.MANUAL_ALIGN_CONSTANT,
+                () -> -driverController.getLeftX() * Constants.MANUAL_ALIGN_CONSTANT,
+                () -> -driverController.getRightX() * Constants.MANUAL_ALIGN_CONSTANT));
 
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
@@ -496,8 +498,8 @@ public class RobotContainer {
         .withWidget(BuiltInWidgets.kBooleanBox);
     Shuffleboard.getTab("MatchData")
         .add("Match Timer", DriverStation.getMatchTime())
-        .withWidget(BuiltInWidgets.kTextView);
-    Shuffleboard.getTab("MatchData").add(elavatorCamera).withSize(4, 4);
+        .withWidget(BuiltInWidgets.kNumberBar);
+    // Shuffleboard.getTab("MatchData").add(elavatorCamera).withSize(4, 4);
     Shuffleboard.getTab("MatchData").addCamera("Bow Camera", "Bow", null);
   }
 

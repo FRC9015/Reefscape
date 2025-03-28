@@ -11,14 +11,13 @@ import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import java.awt.Color;
 
 /**
- * Implementation of the LedIO interface using the CANdle LED controller.
- * This class configures and controls the LED strip connected to the CANdle.
+ * Implementation of the LedIO interface using the CANdle LED controller. This class configures and
+ * controls the LED strip connected to the CANdle.
  */
 public class Led {
   /** Number of LEDs in the strip. */
@@ -30,9 +29,7 @@ public class Led {
   /** Buffered animation for the LED strip. */
   private Animation bufferedAnimation = new RainbowAnimation(0.7, 0.2, ledCount);
 
-  /**
-   * Constructor to initialize and configure the CANdle LED controller.
-   */
+  /** Constructor to initialize and configure the CANdle LED controller. */
   public Led() {
     CANdleConfiguration candleConfiguration = new CANdleConfiguration();
     candleConfiguration.statusLedOffWhenActive = true;
@@ -51,23 +48,22 @@ public class Led {
    */
   public void strobeAnimation(Color color) {
     candle.clearAnimation(0);
-    bufferedAnimation = new StrobeAnimation(
-      color.getRed(), color.getGreen(), color.getBlue(), 0, 1, ledCount
-    );
+    bufferedAnimation =
+        new StrobeAnimation(color.getRed(), color.getGreen(), color.getBlue(), 0, 1, ledCount);
     candle.animate(bufferedAnimation);
   }
 
   public Command setColor(Color color) {
-   return new Command() {
-     @Override
-     public void initialize() {
-       strobeAnimation(color);
-     }
+    return new Command() {
+      @Override
+      public void initialize() {
+        strobeAnimation(color);
+      }
 
-     @Override
-     public void end(boolean interrupted) {
-       strobeAnimation(Color.BLACK);
-     }
-   };
+      @Override
+      public void end(boolean interrupted) {
+        strobeAnimation(Color.BLACK);
+      }
+    };
   }
 }
