@@ -7,7 +7,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionProcessor {
 
-  //For reference, in photon web it is called "reefscapeV5-640-480yolov8n.rknn"
+  // For reference, in photon web it is called "reefscapeV5-640-480yolov8n.rknn"
 
   // Create PhotonCamera instances using the same names as set in PhotonVision UI.
   private final PhotonCamera topCamera = new PhotonCamera("Top");

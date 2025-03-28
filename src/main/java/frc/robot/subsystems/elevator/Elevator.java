@@ -36,14 +36,16 @@ public class Elevator extends SubsystemBase {
   private ElevatorFeedforward feedforward;
 
   // Elevator PID constants - Initial values
-  private double kP = 4.5;
+  private double kP = 5;
   private double kI = 0.0;
-  private double kD = 0.05;
+  private double kD = 0.0;
   private double kS = 0;
   private double kG = 1;
   private double kV = 0;
   private double kA = 0.0;
   private double offset = 0.0;
+  double lastPosition = 0;
+  int stalledCount = 0;
 
   private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
 
@@ -73,21 +75,37 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
+   * the.
+   *
    * @param state The desired preset state.
    */
   public void setPreset(ElevatorIOInputs.ElevatorState state) {
+
     double targetPosition = state.getEncoderPosition();
+    // if (Math.abs(lastPosition - inputs.elevatorPosition) <= 0.03) {
+    //   stalledCount += 1;
+    // }
+
+    // if (stalledCount >= 20) {
+    //   targetPosition = inputs.elevatorPosition;
+    //   stalledCount = 0;
+    // }
+
     pidController.setSetpoint(targetPosition);
+
     double output =
-        pidController.calculate(inputs.elevatorPosition + offset)
-            + feedforward.calculate(inputs.elevatorPosition + offset);
+        pidController.calculate(inputs.elevatorPosition)
+            + feedforward.calculate(inputs.elevatorPosition);
     inputs.setpoint = targetPosition;
     if (Math.abs(targetPosition - inputs.elevatorPosition + offset) <= 0.03) {
       inputs.elevatorAtSetpoint = true;
     }
     io.setElevatorPosition(output);
     io.updateInputs(inputs);
+    lastPosition = inputs.elevatorPosition;
+
     Logger.recordOutput("Elevator/Setpoint", targetPosition);
+    Logger.recordOutput("Elevator/PID Output", output);
   }
 
   /**

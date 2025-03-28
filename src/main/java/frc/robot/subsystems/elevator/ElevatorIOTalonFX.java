@@ -32,8 +32,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.Constants.MotorIDConstants;
 
+/** the. */
 public class ElevatorIOTalonFX implements ElevatorIO {
 
   private final DigitalInput zeroSwitch;
@@ -75,7 +75,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     // Configure the encoder
     CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
     encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-    encoderConfig.MagnetSensor.MagnetOffset = MotorIDConstants.ELEVATOR_MAGNET_OFFSET;
+    // encoderConfig.MagnetSensor.MagnetOffset = MotorIDConstants.ELEVATOR_MAGNET_OFFSET;
     elevatorEncoder.getConfigurator().apply(encoderConfig);
 
     // Signals

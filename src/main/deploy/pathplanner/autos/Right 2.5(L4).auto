@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Side L1 3"
+            "pathName": "l1 right"
           }
         },
         {
@@ -23,15 +23,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "DefaultPosition"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "To Source 3"
+            "pathName": "source right"
           }
         },
         {
@@ -43,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "L1 Coral Path 3"
+            "pathName": "l2 right"
           }
         },
         {
@@ -59,15 +53,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "DefaultPosition"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "To Source 3 2"
+            "pathName": "source 2"
           }
         },
         {

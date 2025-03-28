@@ -44,6 +44,7 @@ public final class Constants {
 
   // public static final Transform3d CAMERA_1_TO_ROBOT = new Transform3d();
 
+  /** the. */
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
@@ -55,6 +56,7 @@ public final class Constants {
     REPLAY
   }
 
+  /** the. */
   public static class CameraConstants {
     public static AprilTagFieldLayout aprilTagLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
@@ -70,6 +72,12 @@ public final class Constants {
                 Units.inchesToMeters(0), -Units.inchesToMeters(13.5), Units.inchesToMeters(7)),
             new Rotation3d(0, -Units.degreesToRadians(15), Units.degreesToRadians(270)));
 
+    public static final Transform3d sternPose =
+        new Transform3d(
+            new Translation3d(
+                -Units.inchesToMeters(13.5), Units.inchesToMeters(6.5), Units.inchesToMeters(7)),
+            new Rotation3d(0, -Units.degreesToRadians(15), Units.degreesToRadians(180)));
+
     // Unsure if truly needed
     //    public static final Transform3d topPose =
     // new Transform3d(
@@ -81,6 +89,7 @@ public final class Constants {
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
   }
 
+  /** the. */
   public static class FieldConstants {
     public static final Pose2d reef_AL1 =
         new Pose2d(new Translation2d(3.25, 3.8), new Rotation2d());
@@ -93,53 +102,62 @@ public final class Constants {
             new Translation2d(1.403, 6.991), new Rotation2d(Radians.convertFrom(-55, Degrees)));
     // Reef poses/locations
     public static final Pose2d REEF_AR =
-        new Pose2d(new Translation2d(2.992, 3.819), new Rotation2d());
+        new Pose2d(new Translation2d(3.052, 3.83), new Rotation2d());
     public static final Pose2d REEF_AL =
-        new Pose2d(new Translation2d(2.992, 4.169), new Rotation2d());
+        new Pose2d(new Translation2d(3.052, 4.15), new Rotation2d());
 
     public static final Pose2d REEF_BR =
-        new Pose2d(new Translation2d(3.835, 5.297), new Rotation2d(5 * Math.PI / 3));
+        new Pose2d(new Translation2d(3.634 - 0.025, 5.185), new Rotation2d(5 * Math.PI / 3));
     public static final Pose2d REEF_BL =
-        new Pose2d(new Translation2d(3.910, 5.275), new Rotation2d(5 * Math.PI / 3));
+        new Pose2d(
+            new Translation2d(3.940 - 0.052, 5.327 - 0.007), new Rotation2d(5 * Math.PI / 3));
 
     public static final Pose2d REEF_CR =
-        new Pose2d(new Translation2d(5.023, 5.391), new Rotation2d(4 * Math.PI / 3));
+        new Pose2d(new Translation2d(4.992, 5.282), new Rotation2d(4 * Math.PI / 3));
     public static final Pose2d REEF_CL =
-        new Pose2d(new Translation2d(5.315, 5.228), new Rotation2d(4 * Math.PI / 3));
+        new Pose2d(new Translation2d(5.290, 5.215), new Rotation2d(4 * Math.PI / 3));
 
     public static final Pose2d REEF_DR =
-        new Pose2d(new Translation2d(5.972, 4.229), new Rotation2d(Math.PI));
+        new Pose2d(new Translation2d(5.9, 4.178), new Rotation2d(Math.PI));
     public static final Pose2d REEF_DL =
-        new Pose2d(new Translation2d(5.972, 3.889), new Rotation2d(Math.PI));
+        new Pose2d(new Translation2d(5.9, 3.902), new Rotation2d(Math.PI));
 
     public static final Pose2d REEF_ER =
-        new Pose2d(new Translation2d(5.427, 2.832), new Rotation2d(2 * Math.PI / 3));
+        new Pose2d(new Translation2d(5.305, 2.887), new Rotation2d(2 * Math.PI / 3));
     public static final Pose2d REEF_EL =
-        new Pose2d(new Translation2d(5.109, 2.688), new Rotation2d(2 * Math.PI / 3));
+        new Pose2d(new Translation2d(5.029, 2.715), new Rotation2d(2 * Math.PI / 3));
 
     public static final Pose2d REEF_FR =
-        new Pose2d(new Translation2d(3.608, 2.842), new Rotation2d(Math.PI / 3));
+        new Pose2d(new Translation2d(3.925, 2.738), new Rotation2d(Math.PI / 3));
     public static final Pose2d REEF_FL =
-        new Pose2d(new Translation2d(3.887, 2.668), new Rotation2d(Math.PI / 3));
+        new Pose2d(new Translation2d(3.649, 2.857), new Rotation2d(Math.PI / 3));
   }
 
+  /** the. */
   public static class AutoConstants {
     public static final PathConstraints PP_CONSTRAINTS =
         new PathConstraints(3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
   }
 
+  /** the. */
   public static class MotorIDConstants {
     public static final int END_EFFECTOR_MOTOR_ID = 2;
     public static final int INTAKE_MOTOR_ID = 1;
-    public static final int PIVOT_MOTOR_ID = 3;
-    public static final int ALGAE_MOTOR_ID = 4;
+    public static final int CLIMBER_MOTOR_ID1 = 3;
+    public static final int CLIMBER_MOTOR_ID2 = 4;
+    public static final int PIVOT_MOTOR_ID = 5;
 
     public static final int ELEVATOR_MOTOR_ID1 = 9;
     public static final int ELEVATOR_MOTOR_ID2 = 10;
     public static final int ELEVATOR_ENCODER_ID = 8;
-    public static final double ELEVATOR_MAGNET_OFFSET = 0.09;
+    public static final double ELEVATOR_MAGNET_OFFSET = 0.478;
   }
 
+  public static class LEDConstants {
+    public static final int candleId = 0;
+  }
+
+  /** the. */
   public static enum ButtonBoxIds {
     REEF_AL(10),
     REEF_AR(12),
