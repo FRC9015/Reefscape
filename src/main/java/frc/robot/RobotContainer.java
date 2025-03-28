@@ -80,7 +80,7 @@ public class RobotContainer {
   private final Climber climb;
   private final Pivot pivot;
   private final Led led;
-  private PIDController intakeController = new PIDController(0.1, 0.0, 0.1);
+  private PIDController intakeController = new PIDController(0.01, 0.0, 0.01);
 
   double pos = 0.0; // REMOVE
 
