@@ -121,7 +121,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
-        intake = new Intake(new IntakeIOTalonFX(0, 1));
+        intake = new Intake(new IntakeIOTalonFX(1, 0));
         led = new Led();
         elevator =
             new Elevator(
@@ -472,7 +472,7 @@ public class RobotContainer {
         .and(() -> DriverStation.isTeleopEnabled())
         .whileTrue(endEffector.runEffector(2).alongWith(led.setColor(Color.RED)));
     coralIn.and(() -> DriverStation.isTeleopEnabled()).whileTrue(led.setColor(Color.GREEN));
-    atSetpoint.and(() -> DriverStation.isTeleopEnabled()).whileTrue(led.setColor(Color.PINK));
+    atSetpoint.and(() -> DriverStation.isTeleopEnabled()).whileTrue(led.setColor(led.reefPurple));
   }
 
   public Command getAutonomousCommand() {

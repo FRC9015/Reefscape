@@ -23,6 +23,8 @@ public class Led {
   /** Number of LEDs in the strip. */
   private final int ledCount = 110;
 
+  public final Color reefPurple = new Color(197, 96, 140);
+
   /** CANdle LED controller instance. */
   private final CANdle candle = new CANdle(Constants.LEDConstants.candleId, "CANivore");
 
