@@ -18,6 +18,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
+/** the. */
 public class EndEffectorIOSim implements EndEffectorIO {
   private static final double MAX_RPM = 3000.0;
   private static final double GEAR_REDUCTION = 1.0; // Adjust if gearing is used

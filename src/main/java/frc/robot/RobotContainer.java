@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CameraConstants;
 import frc.robot.Constants.MotorIDConstants;
 import frc.robot.commands.AutoDrive;
+import frc.robot.commands.AutoDriveToSrc;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.algae.pivot.Pivot;
@@ -342,6 +343,8 @@ public class RobotContainer {
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
     operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
 
+    // Add the new functionality for the operator controller A button
+    operatorController.a().onTrue(new AutoDriveToSrc(drive));
     // Button Box
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
