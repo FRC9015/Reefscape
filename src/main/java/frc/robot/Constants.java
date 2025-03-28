@@ -19,6 +19,7 @@ import static edu.wpi.first.units.Units.Radians;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -139,13 +140,13 @@ public final class Constants {
   public static class ElevatorConstants {
     public static final double ELEVATOR_MAGNET_OFFSET = 0.09;
     public static final MotionMagicConfigs MOTION_MAGIC_CONFIGS =
-        new MotionMagicConfigs().withMotionMagicAcceleration(3).withMotionMagicCruiseVelocity(3);
+        new MotionMagicConfigs().withMotionMagicAcceleration(150).withMotionMagicCruiseVelocity(50);
     public static final Slot0Configs SLOT0_CONFIGS =
         new Slot0Configs()
             .withGravityType(GravityTypeValue.Elevator_Static)
-            .withKP(2)
+            .withKP(14)
             .withKI(0)
-            .withKD(0)
+            .withKD(0.6)
             .withKG(0.01)
             .withKA(0)
             .withKS(0)
@@ -153,10 +154,10 @@ public final class Constants {
     public static final FeedbackConfigs FEEDBACK_CONFIGS =
         new FeedbackConfigs()
             .withFeedbackRemoteSensorID(MotorIDConstants.ELEVATOR_ENCODER_ID)
-            .withSensorToMechanismRatio(5.6);
+            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder);
 
-    public static final double maxHeight = 8.3;
-    public static final double minHeight = -0.15;
+    public static final double maxHeight = 8.25;
+    public static final double minHeight = -0.04;
   }
 
   public static enum ButtonBoxIds {

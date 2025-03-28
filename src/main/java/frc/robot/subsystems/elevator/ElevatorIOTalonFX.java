@@ -17,6 +17,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -80,7 +81,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
             .withSoftwareLimitSwitch(softwareLimitSwitchConfigs)
             .withMotionMagic(ElevatorConstants.MOTION_MAGIC_CONFIGS)
             .withSlot0(ElevatorConstants.SLOT0_CONFIGS)
-            .withFeedback(ElevatorConstants.FEEDBACK_CONFIGS);
+            .withFeedback(ElevatorConstants.FEEDBACK_CONFIGS)
+            .withClosedLoopRamps(new ClosedLoopRampsConfigs().withVoltageClosedLoopRampPeriod(0.1));
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
