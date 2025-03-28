@@ -58,9 +58,7 @@ import frc.robot.subsystems.led.Led;
 import frc.robot.subsystems.photon.Vision;
 import frc.robot.subsystems.photon.VisionIOPhotonVision;
 import frc.robot.subsystems.photon.VisionIOPhotonVisionSim;
-
 import java.awt.Color;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -244,10 +242,9 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "DealgifyL3", pivot.executePreset(PivotPosition.Dealgify).withTimeout(0.5));
     NamedCommands.registerCommand(
-            "DealgifyL2", pivot.executePreset(PivotPosition.Dealgify2).withTimeout(0.5));
+        "DealgifyL2", pivot.executePreset(PivotPosition.Dealgify2).withTimeout(0.5));
     NamedCommands.registerCommand(
         "DefaultPivot", pivot.executePreset(PivotPosition.Default).withTimeout(0.5));
-
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -470,13 +467,12 @@ public class RobotContainer {
                 // .andThen(() -> algae.getCurrentCommand().cancel(), algae)
                 .andThen(() -> drive.getCurrentCommand().cancel(), drive));
 
-
     // Trigger Commands
-    coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2)
-    .alongWith(led.setColor(Color.RED)));
+    coralFound
+        .and(() -> DriverStation.isTeleopEnabled())
+        .whileTrue(endEffector.runEffector(2).alongWith(led.setColor(Color.RED)));
     coralIn.and(() -> DriverStation.isTeleopEnabled()).whileTrue(led.setColor(Color.GREEN));
     atSetpoint.and(() -> DriverStation.isTeleopEnabled()).whileTrue(led.setColor(Color.PINK));
-    
   }
 
   public Command getAutonomousCommand() {

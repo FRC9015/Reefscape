@@ -30,7 +30,7 @@ public class AlgaeIOTalonFX implements AlgaeIO {
 
   // private final DigitalInput algaeSensor;--> Do we need this?
   public AlgaeIOTalonFX(int motorId1) {
-    motor = new TalonFX(motorId1);
+    motor = new TalonFX(motorId1, "");
     rpmSignal = motor.getVelocity();
     // Configure motors
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
