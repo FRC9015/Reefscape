@@ -16,8 +16,6 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -80,7 +78,7 @@ public class RobotContainer {
 
   // private final UsbCamera elavatorCamera;
   // Driver Controller
-  private final UsbCamera elavatorCamera;
+  //   private final UsbCamera elavatorCamera;
 
   private final CommandXboxController driverController = new CommandXboxController(0);
   // Operator Controller
@@ -124,7 +122,7 @@ public class RobotContainer {
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
       case SIM:
@@ -148,7 +146,7 @@ public class RobotContainer {
         algae = new Algae(new AlgaeIOSim());
         pivot = new Pivot(new PivotIOSim());
         coralFound = new Trigger(() -> intake.isCoralIn());
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
 
       default:
@@ -179,7 +177,7 @@ public class RobotContainer {
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        // elavatorCamera = CameraServer.startAutomaticCapture();
         break;
     }
 
@@ -218,8 +216,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    elavatorCamera.setResolution(640, 480);
-    elavatorCamera.setFPS(24);
+    // elavatorCamera.setResolution(640, 480);
+    // elavatorCamera.setFPS(24);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -274,16 +272,24 @@ public class RobotContainer {
                 () -> -driverController.getLeftY() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
-
     driverController
-                .rightTrigger().and(driverController.leftTrigger())
+                .rightTrigger()
                 .whileTrue(
                     DriveCommands.joystickDrive(
                         drive,
-                        () -> -driverController.getLeftY() * Constants.MANUAL_ALIGN_CONSTANT,
-                        () -> -driverController.getLeftX() * Constants.MANUAL_ALIGN_CONSTANT,
-                        () -> -driverController.getRightX() * Constants.MANUAL_ALIGN_CONSTANT));
-    
+                        () -> -driverController.getLeftY() * Constants.CLIMB_ALIGN_CONSTANT,
+                        () -> -driverController.getLeftX() * Constants.CLIMB_ALIGN_CONSTANT,
+                        () -> -driverController.getRightX() * Constants.CLIMB_ALIGN_CONSTANT));
+
+    driverController
+        .rightTrigger()
+        .and(driverController.leftTrigger())
+        .whileTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -driverController.getLeftY() * Constants.MANUAL_ALIGN_CONSTANT,
+                () -> -driverController.getLeftX() * Constants.MANUAL_ALIGN_CONSTANT,
+                () -> -driverController.getRightX() * Constants.MANUAL_ALIGN_CONSTANT));
 
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
@@ -393,8 +399,8 @@ public class RobotContainer {
         .withWidget(BuiltInWidgets.kBooleanBox);
     Shuffleboard.getTab("MatchData")
         .add("Match Timer", DriverStation.getMatchTime())
-        .withWidget(BuiltInWidgets.kTextView);
-    Shuffleboard.getTab("MatchData").add(elavatorCamera).withSize(4, 4);
+        .withWidget(BuiltInWidgets.kNumberBar);
+    // Shuffleboard.getTab("MatchData").add(elavatorCamera).withSize(4, 4);
     Shuffleboard.getTab("MatchData").addCamera("Bow Camera", "Bow", null);
   }
 
