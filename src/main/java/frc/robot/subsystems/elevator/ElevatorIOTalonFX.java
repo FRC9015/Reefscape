@@ -71,10 +71,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
    */
   public ElevatorIOTalonFX(int motorID, int followMotorID, int encoderId, int limitSwitchPort) {
     zeroSwitch = new DigitalInput(limitSwitchPort);
-    elevatorMotor = new TalonFX(motorID);
+    elevatorMotor = new TalonFX(motorId, Constants.CAN_BUS);
     elevatorEncoder = new CANcoder(encoderId);
-    elevatorMotor1 = new TalonFX(followMotorID);
-    elevatorMotor1.setControl(new Follower(motorID, true));
+    elevatorMotor1 = new TalonFX(motorId1, Constants.CAN_BUS);
+    elevatorFollower = new Follower(motorId, true);
+    elevatorMotor1.setControl(elevatorFollower);
 
     // Configure the motor
     TalonFXConfiguration motorConfig =

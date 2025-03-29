@@ -25,6 +25,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Constants;
 
 /** the. */
 public class EndEffectorIOTalonFX implements EndEffectorIO {
@@ -43,7 +44,7 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
    * @param motorId1 The ID of the motor.
    */
   public EndEffectorIOTalonFX(int motorId1) { // , int canRangeID1, int canRangeID2, int canRangeID3
-    motor1 = new TalonFX(motorId1);
+    motor1 = new TalonFX(motorId1, Constants.CAN_BUS);
 
     // Configure motor
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
