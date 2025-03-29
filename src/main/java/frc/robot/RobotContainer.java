@@ -347,40 +347,40 @@ public class RobotContainer {
     // Button Box
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive, endEffector));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BL, drive, endEffector));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive, endEffector));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DL, drive, endEffector));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_EL, drive, endEffector));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_EL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FL, drive, endEffector));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FL, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive, endEffector));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BR, drive, endEffector));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive, endEffector));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DR, drive, endEffector));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DR, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_ER, drive, endEffector));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_ER, drive));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FR, drive, endEffector));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FR, drive));
 
     // operatorButtonBox
     //     .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())

@@ -7,7 +7,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.endeffector.EndEffector;
 import frc.robot.util.PhoenixUtil;
 import org.littletonrobotics.junction.Logger;
 
@@ -16,16 +15,12 @@ public class AutoDrive extends Command {
   private PIDController rotationController = new PIDController(4, 0, 0.02); // 4 0.02
   private PIDController yController = new PIDController(1.5, 0.0, 0.02); // 4 0.04
   private PIDController xController = new PIDController(1.5, 0.0, 0.02); // 2.5 0.04
-  private PIDController endEffectorController =
-      new PIDController(0.01, 0.0, 0.01); // To be tested values
-  private EndEffector endEffector;
   private Pose2d targetPose, flippedPose;
   private Drive drive;
   public static boolean atSetpoint = false;
 
-  public AutoDrive(Pose2d desiredPose, Drive drive, EndEffector endEffector) {
+  public AutoDrive(Pose2d desiredPose, Drive drive) {
     this.drive = drive;
-    this.endEffector = endEffector;
     flippedPose = FlippingUtil.flipFieldPose(desiredPose);
     this.targetPose = PhoenixUtil.isRed() ? flippedPose : desiredPose;
   }
@@ -37,7 +32,6 @@ public class AutoDrive extends Command {
     rotationController.setTolerance(Units.degreesToRadians(1));
     yController.setTolerance(Units.inchesToMeters(0.4));
     xController.setTolerance(Units.inchesToMeters(0.4));
-    endEffectorController.setTolerance(0.1);
   }
 
   @Override
@@ -49,12 +43,6 @@ public class AutoDrive extends Command {
             currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
     double yVelocity = yController.calculate(currentPose.getY(), targetPose.getY());
     double xVelocity = xController.calculate(currentPose.getX(), targetPose.getX());
-
-    // Endeffector alignment logic
-    double currentRPM = endEffector.getRPM();
-    double endEffectorAdjustment =
-        endEffectorController.calculate(currentRPM, 2000); // Target RPM is 0 for alignment
-    endEffector.setVoltage(currentRPM + endEffectorAdjustment);
 
     ChassisSpeeds robotRelativeSpeeds = new ChassisSpeeds();
 
@@ -69,7 +57,6 @@ public class AutoDrive extends Command {
     Logger.recordOutput("AutoDrive/targetPose", targetPose);
     Logger.recordOutput("AutoDrive/robotrelativespeeds", field);
     Logger.recordOutput("AutoDrive/flippedPose", flippedPose);
-    Logger.recordOutput("AutoDrive/endEffectorAdjustment", endEffectorAdjustment);
   }
 
   @Override
