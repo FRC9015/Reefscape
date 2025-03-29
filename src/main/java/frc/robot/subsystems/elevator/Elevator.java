@@ -36,11 +36,11 @@ public class Elevator extends SubsystemBase {
   private ElevatorFeedforward feedforward;
 
   // Elevator PID constants - Initial values
-  private double kP = 5;
+  private double kP = 0;//5
   private double kI = 0.0;
   private double kD = 0.0;
   private double kS = 0;
-  private double kG = 1;
+  private double kG = 0;//1
   private double kV = 0;
   private double kA = 0.0;
   private double offset = 0.0;

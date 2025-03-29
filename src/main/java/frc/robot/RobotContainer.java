@@ -333,14 +333,14 @@ public class RobotContainer {
                 () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
 
-                driverController
-                .rightTrigger()
-                .whileTrue(
-                    DriveCommands.joystickDrive(
-                        drive,
-                        () -> -driverController.getLeftY() * Constants.CLIMB_ALIGN_CONSTANT,
-                        () -> -driverController.getLeftX() * Constants.CLIMB_ALIGN_CONSTANT,
-                        () -> -driverController.getRightX() * Constants.CLIMB_ALIGN_CONSTANT));
+    driverController
+        .rightTrigger()
+        .whileTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -driverController.getLeftY() * Constants.CLIMB_ALIGN_CONSTANT,
+                () -> -driverController.getLeftX() * Constants.CLIMB_ALIGN_CONSTANT,
+                () -> -driverController.getRightX() * Constants.CLIMB_ALIGN_CONSTANT));
 
     driverController
         .rightTrigger()

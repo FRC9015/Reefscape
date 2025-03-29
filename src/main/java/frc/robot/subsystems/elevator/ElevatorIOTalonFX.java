@@ -32,6 +32,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** the. */
 public class ElevatorIOTalonFX implements ElevatorIO {
@@ -94,6 +95,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     inputs.elevatorPosition = encoderPositionSignal.getValueAsDouble();
     inputs.elevatorAppliedVolts = motorAppliedVoltsSignal.getValueAsDouble();
     inputs.elevatorCurrentAmps = motorCurrentSignal.getValueAsDouble();
+
   }
 
   @Override

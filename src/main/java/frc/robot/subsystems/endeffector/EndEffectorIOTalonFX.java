@@ -26,6 +26,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** the. */
 public class EndEffectorIOTalonFX implements EndEffectorIO {
@@ -83,6 +84,9 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
     inputs.endEffectorRPM = rpmSignal.getValueAsDouble();
     inputs.endEffectorAppliedVolts = appliedVoltsSignal.getValueAsDouble();
     inputs.endEffectorCurrentAmps = currentSignal.getValueAsDouble();
+
+    SmartDashboard.putBoolean("coralSensor(s)", inputs.coralDetected);
+
     // inputs.canRange1 = sideRange1.getIsDetected().getValue();
     // inputs.canRange2 = sideRange2.getIsDetected().getValue();
     // inputs.canRange3 = middleRange.getIsDetected().getValue();
