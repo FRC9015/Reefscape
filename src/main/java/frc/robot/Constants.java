@@ -41,9 +41,9 @@ public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
   public static final double SLOW_MODE_CONSTANT = 0.55;
+  public static final String CAN_BUS = "*";
 
   // public static final Transform3d CAMERA_1_TO_ROBOT = new Transform3d();
-
 
   public static enum Mode {
     /** Running on a real robot. */
@@ -100,25 +100,24 @@ public final class Constants {
             new Translation2d(1.403, 6.991), new Rotation2d(Radians.convertFrom(-55, Degrees)));
     // Reef poses/locations
     public static final Pose2d REEF_AR =
-        new Pose2d(new Translation2d(3.052, 3.83), new Rotation2d());
+        new Pose2d(new Translation2d(3.126, 3.872), new Rotation2d());
     public static final Pose2d REEF_AL =
-        new Pose2d(new Translation2d(3.052, 4.15), new Rotation2d());
+        new Pose2d(new Translation2d(3.126, 4.193), new Rotation2d());
 
     public static final Pose2d REEF_BR =
-        new Pose2d(new Translation2d(3.634 - 0.025, 5.185), new Rotation2d(5 * Math.PI / 3));
+        new Pose2d(new Translation2d(3.671, 5.118), new Rotation2d(5 * Math.PI / 3));
     public static final Pose2d REEF_BL =
-        new Pose2d(
-            new Translation2d(3.940 - 0.052, 5.327 - 0.007), new Rotation2d(5 * Math.PI / 3));
+        new Pose2d(new Translation2d(3.962, 5.275), new Rotation2d(5 * Math.PI / 3));
 
     public static final Pose2d REEF_CR =
         new Pose2d(new Translation2d(4.992, 5.282), new Rotation2d(4 * Math.PI / 3));
     public static final Pose2d REEF_CL =
-        new Pose2d(new Translation2d(5.290, 5.215), new Rotation2d(4 * Math.PI / 3));
+        new Pose2d(new Translation2d(5.290, 5.103), new Rotation2d(4 * Math.PI / 3));
 
     public static final Pose2d REEF_DR =
-        new Pose2d(new Translation2d(5.9, 4.178), new Rotation2d(Math.PI));
+        new Pose2d(new Translation2d(5.835, 4.2), new Rotation2d(Math.PI));
     public static final Pose2d REEF_DL =
-        new Pose2d(new Translation2d(5.9, 3.902), new Rotation2d(Math.PI));
+        new Pose2d(new Translation2d(5.835, 3.872), new Rotation2d(Math.PI));
 
     public static final Pose2d REEF_ER =
         new Pose2d(new Translation2d(5.305, 2.887), new Rotation2d(2 * Math.PI / 3));
@@ -130,7 +129,6 @@ public final class Constants {
     public static final Pose2d REEF_FL =
         new Pose2d(new Translation2d(3.649, 2.857), new Rotation2d(Math.PI / 3));
   }
-
 
   public static class AutoConstants {
     public static final PathConstraints PP_CONSTRAINTS =
@@ -150,7 +148,7 @@ public final class Constants {
     public static final double ELEVATOR_MAGNET_OFFSET = 0.478;
   }
 
-  public static class LEDConstants{
+  public static class LEDConstants {
     public static final int CANDLE_ID = 45;
   }
 

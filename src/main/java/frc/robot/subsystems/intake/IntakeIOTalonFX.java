@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.hardware.CANrange;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.Constants;
 import org.littletonrobotics.junction.Logger;
 
 // import com.ctre.phoenix6.BaseStatusSignal;
@@ -49,7 +50,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     // motor = new TalonFX(motorId);
     coralInSensor = new DigitalInput(coralInChannel);
     coralSetSensor = new DigitalInput(coralSetChannel);
-    middleRange = new CANrange(canRangeID1, "*");
+    middleRange = new CANrange(canRangeID1, Constants.CAN_BUS);
 
     CANrangeConfiguration rangeConfig = new CANrangeConfiguration();
     // rangeConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 0.0;

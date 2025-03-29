@@ -13,14 +13,13 @@ import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import java.awt.Color;
 
 /**
  * Implementation of the LedIO interface using the CANdle LED controller. This class configures and
  * controls the LED strip connected to the CANdle.
  */
-public class Led extends SubsystemBase{
+public class Led extends SubsystemBase {
   /** Number of LEDs in the strip. */
   private final int ledCount = 110;
 
@@ -33,7 +32,7 @@ public class Led extends SubsystemBase{
   /** Constructor to initialize and configure the CANdle LED controller. */
   public Led(int candleID) {
     candle = new CANdle(candleID);
-    
+
     CANdleConfiguration candleConfiguration = new CANdleConfiguration();
     candleConfiguration.statusLedOffWhenActive = true;
     candleConfiguration.disableWhenLOS = false;

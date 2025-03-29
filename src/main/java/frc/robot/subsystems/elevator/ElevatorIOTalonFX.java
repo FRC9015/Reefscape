@@ -32,6 +32,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.Constants;
 
 /** the. */
 public class ElevatorIOTalonFX implements ElevatorIO {
@@ -60,9 +61,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
    */
   public ElevatorIOTalonFX(int motorId, int motorId1, int encoderId, int limitSwitchPort) {
     zeroSwitch = new DigitalInput(limitSwitchPort);
-    elevatorMotor = new TalonFX(motorId);
+    elevatorMotor = new TalonFX(motorId, Constants.CAN_BUS);
     elevatorEncoder = new CANcoder(encoderId);
-    elevatorMotor1 = new TalonFX(motorId1);
+    elevatorMotor1 = new TalonFX(motorId1, Constants.CAN_BUS);
     elevatorFollower = new Follower(motorId, true);
     elevatorMotor1.setControl(elevatorFollower);
 
