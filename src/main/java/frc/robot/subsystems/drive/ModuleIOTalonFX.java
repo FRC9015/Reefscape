@@ -41,7 +41,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.generated.TunerConstants;
 import java.util.Queue;
 
 /**
@@ -99,12 +98,9 @@ public class ModuleIOTalonFX implements ModuleIO {
       SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
           constants) {
     this.constants = constants;
-    driveTalon =
-        new TalonFX(constants.DriveMotorId, TunerConstants.swerveDrivetrainConstants.CANBusName);
-    turnTalon =
-        new TalonFX(constants.SteerMotorId, TunerConstants.swerveDrivetrainConstants.CANBusName);
-    cancoder =
-        new CANcoder(constants.EncoderId, TunerConstants.swerveDrivetrainConstants.CANBusName);
+    driveTalon = new TalonFX(constants.DriveMotorId, "CANivore");
+    turnTalon = new TalonFX(constants.SteerMotorId, "CANivore");
+    cancoder = new CANcoder(constants.EncoderId, "CANivore");
 
     // Configure drive motor
     TalonFXConfiguration driveConfig = constants.DriveMotorInitialConfigs;
@@ -260,6 +256,20 @@ public class ModuleIOTalonFX implements ModuleIO {
   }
 
   @Override
+  public void setDriveVelocity(double velocityRadPerSec, double feedfoward) {
+    double velocityRotPerSec = Units.radiansToRotations(velocityRadPerSec);
+    driveTalon.setControl(
+        switch (constants.DriveMotorClosedLoopOutput) {
+          case Voltage ->
+              velocityVoltageRequest.withVelocity(velocityRotPerSec).withFeedForward(feedfoward);
+          case TorqueCurrentFOC ->
+              velocityTorqueCurrentRequest
+                  .withVelocity(velocityRotPerSec)
+                  .withFeedForward(feedfoward);
+        });
+  }
+
+  @Override
   public void setTurnPosition(Rotation2d rotation) {
     turnTalon.setControl(
         switch (constants.SteerMotorClosedLoopOutput) {
@@ -267,5 +277,15 @@ public class ModuleIOTalonFX implements ModuleIO {
           case TorqueCurrentFOC ->
               positionTorqueCurrentRequest.withPosition(rotation.getRotations());
         });
+  }
+
+  @Override
+  public void setBrakeMode() {
+    driveTalon.setNeutralMode(NeutralModeValue.Brake);
+  }
+
+  @Override
+  public void setCoastMode() {
+    driveTalon.setNeutralMode(NeutralModeValue.Coast);
   }
 }

@@ -24,8 +24,11 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.FlippingUtil;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import com.pathplanner.lib.util.swerve.SwerveSetpoint;
+import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
@@ -74,21 +77,20 @@ public class Drive extends SubsystemBase {
           Math.max(
               Math.hypot(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
-
+  private static final double slipRatio = 5.0;
   // PathPlanner config constants
-  private static final double ROBOT_MASS_KG = 74.088;
-  private static final double ROBOT_MOI = 6.883;
-  private static final double WHEEL_COF = 1.2;
+  private static final double ROBOT_MASS_KG = 59.90;
+  private static final double ROBOT_MOI = 6.554;
+  private static final double WHEEL_COF = 1.19;
   private static final RobotConfig PP_CONFIG =
       new RobotConfig(
           ROBOT_MASS_KG,
-          ROBOT_MOI,
+          ROBOT_MOI, // lxx 7.524, lyy 8.372, lxz 0.654,
           new ModuleConfig(
               TunerConstants.FrontLeft.WheelRadius,
               TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
               WHEEL_COF,
-              DCMotor.getKrakenX60Foc(1)
-                  .withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
+              DCMotor.getKrakenX60(1).withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
               TunerConstants.FrontLeft.SlipCurrent,
               1),
           getModuleTranslations());
@@ -118,8 +120,10 @@ public class Drive extends SubsystemBase {
           rawGyroRotation,
           lastModulePositions,
           new Pose2d(),
-          VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+          VecBuilder.fill(0.9, 0.9, 0.9),
           VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(15)));
+  private SwerveSetpointGenerator setpointGenerator;
+  private SwerveSetpoint prevSetpoint;
 
   /**
    * Constructs a new Drive.
@@ -144,7 +148,7 @@ public class Drive extends SubsystemBase {
 
     // Usage reporting for swerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_AdvantageKit);
-
+    setpointGenerator = new SwerveSetpointGenerator(PP_CONFIG, Units.degreesToRadians(1040));
     // Start odometry thread
     PhoenixOdometryThread.getInstance().start();
 
@@ -154,9 +158,11 @@ public class Drive extends SubsystemBase {
         this::setPose,
         this::getChassisSpeeds,
         this::runVelocity,
+        // new PPHolonomicDriveController(new PIDConstants(2, 0.0, 0), new PIDConstants(5.0, 0.0,
+        // 0)),
+        //     new PIDConstants(4.5, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.02)),
         new PPHolonomicDriveController(
             new PIDConstants(2, 0.0, 0.12), new PIDConstants(5.0, 0.0, 0.02)),
-        //     new PIDConstants(4.5, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.02)),
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -170,7 +176,9 @@ public class Drive extends SubsystemBase {
         (targetPose) -> {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
-
+    setpointGenerator = new SwerveSetpointGenerator(PP_CONFIG, Units.degreesToRadians(720));
+    prevSetpoint =
+        new SwerveSetpoint(getChassisSpeeds(), getModuleStates(), DriveFeedforwards.zeros(4));
     // Configure SysId
     sysId =
         new SysIdRoutine(
@@ -181,6 +189,9 @@ public class Drive extends SubsystemBase {
                 (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+
+    prevSetpoint =
+        new SwerveSetpoint(getChassisSpeeds(), getModuleStates(), DriveFeedforwards.zeros(4));
   }
 
   @Override
@@ -215,7 +226,11 @@ public class Drive extends SubsystemBase {
       SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
       for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
-        modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
+        if (isSlipping()) {
+          modulePositions[moduleIndex] = lastModulePositions[moduleIndex];
+        } else {
+          modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
+        }
         moduleDeltas[moduleIndex] =
             new SwerveModulePosition(
                 modulePositions[moduleIndex].distanceMeters
@@ -240,6 +255,8 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    Logger.recordOutput("SwerveStates/SlipRatio", getSkiddingRatio(getModuleStates(), kinematics));
   }
 
   /**
@@ -248,14 +265,17 @@ public class Drive extends SubsystemBase {
    * @param speeds Speeds in meters/sec
    */
   public void runVelocity(ChassisSpeeds speeds) {
-    // Calculate module setpoints
+
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, TunerConstants.kSpeedAt12Volts);
-
+    // Calculate module setpoints
+    prevSetpoint =
+        setpointGenerator.generateSetpoint(prevSetpoint, speeds, PP_CONSTRAINTS, 0.02, 12.0);
     // Log unoptimized setpoints and setpoint speeds
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
     Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
+    Logger.recordOutput("SwerveStates/SetpointGenerated", prevSetpoint.moduleStates());
 
     // Send setpoints to modules
     for (int i = 0; i < 4; i++) {
@@ -264,6 +284,26 @@ public class Drive extends SubsystemBase {
 
     // Log optimized setpoints (runSetpoint mutates each state)
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
+  }
+
+  public void runVelocityAuto(ChassisSpeeds speeds) {
+    // Calculate module setpoints
+    ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+    SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, TunerConstants.kSpeedAt12Volts);
+    prevSetpoint =
+        setpointGenerator.generateSetpoint(prevSetpoint, speeds, PP_CONSTRAINTS, 0.02, 12.0);
+    // Log unoptimized setpoints and setpoint speeds
+    Logger.recordOutput("AutoDrive/Setpoints", setpointStates);
+    Logger.recordOutput("AutoDrive/Setpoints", discreteSpeeds);
+
+    // Send setpoints to modules
+    for (int i = 0; i < 4; i++) {
+      modules[i].runSetpoint(prevSetpoint.moduleStates()[i]);
+    }
+
+    // Log optimized setpoints (runSetpoint mutates each state)
+    Logger.recordOutput("AutoDrive/SetpointsOptimized", setpointStates);
   }
 
   /** Runs the drive in a straight line with the specified drive output. */
@@ -405,9 +445,14 @@ public class Drive extends SubsystemBase {
   }
 
   // change this to whatever color we are playing for ther match flipled is for red
-  public Command pathfindToPose(Pose2d targetpose, double endVelocity) {
+  public Command pathfindToPose(
+      Pose2d targetpose, double endVelocity, DriverStation.Alliance alliance) {
     Logger.recordOutput("isRed?", PhoenixUtil.isRed());
+    // if (alliance == DriverStation.Alliance.Red) {
     return this.pathfindToPoseFlipped(targetpose, endVelocity);
+    // } else {
+    //   return this.pfToPose(targetpose, endVelocity);
+    // }
   }
 
   public Command pfToPose(Pose2d targetpose, double endVelocity) {
@@ -417,5 +462,56 @@ public class Drive extends SubsystemBase {
   public Command pathfindToPoseFlipped(Pose2d targetPose, double endVelocity) {
     Pose2d tp = FlippingUtil.flipFieldPose(targetPose);
     return AutoBuilder.pathfindToPose(tp, PP_CONSTRAINTS, endVelocity);
+  }
+
+  public static double getSkiddingRatio(
+      SwerveModuleState[] swerveStatesMeasured, SwerveDriveKinematics swerveDriveKinematics) {
+    final double rotationalVelocityMeasured =
+        swerveDriveKinematics.toChassisSpeeds(swerveStatesMeasured).omegaRadiansPerSecond;
+    final SwerveModuleState[] swerveStatesRotational =
+        swerveDriveKinematics.toSwerveModuleStates(
+            new ChassisSpeeds(0, 0, rotationalVelocityMeasured));
+    final double[] swerveStatesTranslationalPartMagnitudes =
+        new double[swerveStatesMeasured.length];
+
+    for (int i = 0; i < swerveStatesMeasured.length; i++) {
+      final Translation2d swerveStateVector =
+          convertSwerveStateToVelocityVector(swerveStatesMeasured[i]);
+      final Translation2d swerveStatesRotationalPartAsVector =
+          convertSwerveStateToVelocityVector(swerveStatesRotational[i]);
+      final Translation2d swerveStatesTranslationalPartAsVector =
+          swerveStateVector.minus(swerveStatesRotationalPartAsVector);
+      swerveStatesTranslationalPartMagnitudes[i] = swerveStatesTranslationalPartAsVector.getNorm();
+    }
+
+    double maximumTranslationalSpeed = 0;
+    double minimumTranslationalSpeed = Double.POSITIVE_INFINITY;
+    for (double translationalSpeed : swerveStatesTranslationalPartMagnitudes) {
+      maximumTranslationalSpeed = Math.max(maximumTranslationalSpeed, translationalSpeed);
+      minimumTranslationalSpeed = Math.min(minimumTranslationalSpeed, translationalSpeed);
+    }
+
+    return maximumTranslationalSpeed / minimumTranslationalSpeed;
+  }
+
+  private static Translation2d convertSwerveStateToVelocityVector(
+      SwerveModuleState swerveModuleState) {
+    return new Translation2d(swerveModuleState.speedMetersPerSecond, swerveModuleState.angle);
+  }
+
+  private boolean isSlipping() {
+    return getSkiddingRatio(this.getModuleStates(), kinematics) > slipRatio;
+  }
+
+  public void setModulesBrake() {
+    for (Module module : modules) {
+      module.setBrakeMode();
+    }
+  }
+
+  public void setModulesCoast() {
+    for (Module module : modules) {
+      module.setCoastMode();
+    }
   }
 }

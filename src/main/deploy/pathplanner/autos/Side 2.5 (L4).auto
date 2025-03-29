@@ -11,34 +11,9 @@
           }
         },
         {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4Position"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "shootCoral"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "DefaultPosition"
-                }
-              },
               {
                 "type": "sequential",
                 "data": {
@@ -46,9 +21,22 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "DealgifyL3"
+                        "name": "L4Position"
                       }
                     },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "shootCoral"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
                     {
                       "type": "named",
                       "data": {
@@ -68,9 +56,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "IntakeCoral"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeCoral"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
+              }
+            ]
           }
         },
         {
@@ -84,21 +85,28 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "shootCoral"
-                }
-              },
-              {
                 "type": "sequential",
                 "data": {
                   "commands": [
                     {
                       "type": "named",
                       "data": {
-                        "name": "DealgifyL3"
+                        "name": "L4Position"
                       }
                     },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "shootCoral"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
                     {
                       "type": "named",
                       "data": {
@@ -109,6 +117,18 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "To Source 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
           }
         }
       ]

@@ -53,7 +53,7 @@ public class EndEffector extends SubsystemBase {
   /**
    * Sets the end effector's RPM.
    *
-   * @param rpm The desired RPM for the end effector.
+   * @param voltage The desired RPM for the end effector.
    */
   public void setVoltage(double voltage) {
     io.setRPM(voltage);
@@ -122,14 +122,16 @@ public class EndEffector extends SubsystemBase {
     return this.startEnd(() -> setVoltage(-voltage), () -> stop());
   }
 
+  /** the. */
   public Command runEffectorAuto(double voltage) {
     return this.run(() -> setVoltage(-voltage));
   }
 
+  /** the. */
   public Command runEffectorAutoCommand() {
     return new SequentialCommandGroup(
         new InstantCommand(this::autoEffectorVoltage),
-        new WaitCommand(0.4),
+        new WaitCommand(0.25),
         new InstantCommand(this::stop));
   }
 

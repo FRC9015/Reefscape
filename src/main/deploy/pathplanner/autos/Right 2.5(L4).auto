@@ -7,26 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Side L1 Revised"
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4Position"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "shootCoral"
-                }
-              }
-            ]
+            "pathName": "l1 right"
           }
         },
         {
@@ -34,28 +15,28 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "DefaultPosition"
-                }
-              },
-              {
                 "type": "sequential",
                 "data": {
                   "commands": [
                     {
                       "type": "named",
                       "data": {
-                        "name": "DealgifyL3"
+                        "name": "L4Position"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "DefaultPivot"
+                        "name": "shootCoral"
                       }
                     }
                   ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "DefaultPivot"
                 }
               }
             ]
@@ -64,7 +45,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "To Source"
+            "pathName": "source right"
           }
         },
         {
@@ -76,7 +57,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "L1 Coral Path"
+            "pathName": "l2 right"
           }
         },
         {
@@ -84,31 +65,43 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "shootCoral"
-                }
-              },
-              {
                 "type": "sequential",
                 "data": {
                   "commands": [
                     {
                       "type": "named",
                       "data": {
-                        "name": "DealgifyL3"
+                        "name": "L4Position"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "DefaultPivot"
+                        "name": "shootCoral"
                       }
                     }
                   ]
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "DefaultPivot"
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "source 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
           }
         }
       ]

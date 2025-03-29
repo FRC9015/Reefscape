@@ -8,9 +8,9 @@ public interface PivotIO {
   public static class PivotIOInputs {
 
     public static enum PivotPosition {
-      CollectAlgae(1.0),
-      PassAlgae(0.5),
-      Default(0);
+      Default(0.5),
+      Dealgify(2),
+      Dealgify2(2.5);
 
       private final double pivotPosition;
 

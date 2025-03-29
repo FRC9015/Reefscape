@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.algae.pivot.PivotIO.PivotIOInputs;
+import frc.robot.subsystems.algae.pivot.PivotIO.PivotIOInputs.PivotPosition;
 import org.littletonrobotics.junction.Logger;
 
 public class Pivot extends SubsystemBase {
@@ -15,16 +16,16 @@ public class Pivot extends SubsystemBase {
   private final PIDController pidController;
 
   // Pivot PID constants
-  private static final double kP = 1.0;
+  private static final double kP = 2.0;
   private static final double kI = 0.0;
-  private static final double kD = 0.0;
+  private static final double kD = 0.02;
   private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
 
   public Pivot(PivotIO io) {
     this.io = io;
     this.pidController = new PIDController(kP, kI, kD);
     this.pidController.setTolerance(kToleranceMeters);
-    // this.setDefaultCommand(executePreset(PivotPosition.Default));
+    this.setDefaultCommand(executePreset(PivotPosition.Default));
     encoderDisconnectedAlert = new Alert("Pivot encoder disconnected!", AlertType.kError);
   }
 
@@ -44,9 +45,9 @@ public class Pivot extends SubsystemBase {
    */
   public void setPreset(PivotIOInputs.PivotPosition state) {
     double targetPosition = state.getPivotPosition();
+    pidController.setSetpoint(targetPosition);
     double output = pidController.calculate(inputs.pivotPosition);
     io.setPivotPosition(output);
-    pidController.setSetpoint(output);
     io.updateInputs(inputs);
 
     Logger.recordOutput("Pivot/Setpoint", targetPosition);
