@@ -123,7 +123,8 @@ public class RobotContainer {
                 new VisionIOPhotonVision("Bow", CameraConstants.bowPose),
                 new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
         endEffector =
-            new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
+            new EndEffector(
+                new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID, 2, 3, 4));
         intake = new Intake(new IntakeIOTalonFX(0, 1));
         led = new Led();
         elevator =
@@ -191,7 +192,8 @@ public class RobotContainer {
         //    new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
         // climber = new Climber(1);
         endEffector =
-            new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
+            new EndEffector(
+                new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID, 2, 3, 4));
         intake = new Intake(new IntakeIOTalonFX(1, 0));
         led = new Led();
         elevator =
@@ -348,40 +350,40 @@ public class RobotContainer {
     // Button Box
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive, endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BL, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BL, drive, endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive, endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DL, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DL, drive, endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_EL, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_EL, drive, endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FL, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FL, drive, endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive, endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BR, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BR, drive, endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive, endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DR, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DR, drive, endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_ER, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_ER, drive, endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FR, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FR, drive, endEffector));
 
     // operatorButtonBox
     //     .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())

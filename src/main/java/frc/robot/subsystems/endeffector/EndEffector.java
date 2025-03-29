@@ -143,9 +143,14 @@ public class EndEffector extends SubsystemBase {
    * Runs the end effector in reverse at the specified RPM.
    *
    * @param voltage Voltage provided to the motor.
+   * @param sensorID the CANrange ID
    * @return A command that runs the end effector in reverse.
    */
   public Command runEffectorReverse(double voltage) {
     return this.startEnd(() -> setVoltage(voltage), () -> stop());
+  }
+
+  public double getCanRangeDistance(int sensorID) {
+    return 0.0;
   }
 }

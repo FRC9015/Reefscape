@@ -27,9 +27,9 @@ public interface EndEffectorIO {
     public boolean endEffectorEncoderConnected = false;
     public double endEffectorRPM = 0.0;
     public boolean coralDetected = false;
-    public boolean canRange1 = false;
-    public boolean canRange2 = false;
-    public boolean canRange3 = false;
+    public double canRange1 = 0.0; // Distance from left sensor
+    public double canRange2 = 0.0; // Distance from right sensor
+    public double canRange3 = 0.0; // Distance from middle sensor
   }
 
   /** Updates the set of loggable inputs. */
