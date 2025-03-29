@@ -35,6 +35,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants;
 
 /** the. */
 public class ElevatorIOTalonFX implements ElevatorIO {
