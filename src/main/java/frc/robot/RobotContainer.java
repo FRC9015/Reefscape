@@ -477,7 +477,7 @@ public class RobotContainer {
             Commands.run(
                     () -> {
                       // Calculate the intake speed using the PID controller to prevent overshooting
-                      double intakeSpeed = intakeController.calculate(intake.getRPM(), 2800);
+                      double intakeSpeed = intakeController.calculate(intake.getRPM(), 1800);
                       endEffector.runEffector(intakeSpeed).schedule();
                     })
                 .alongWith(led.setColor(Color.RED)));

@@ -70,17 +70,23 @@ public class AutoDrive extends Command {
     if (canRangeLeft > desiredDistance) {
       // Left sensor detects something close, move left
       double leftError = desiredDistance - canRangeLeft;
-      field.vyMetersPerSecond = yController.calculate(0, -leftError); // Negative for left movement
-      field.vxMetersPerSecond = xController.calculate(0, leftError); // Postivie for left movement
+      field.vyMetersPerSecond = 
+          yController.calculate(0, -leftError); // Negative for left movement
+      field.vxMetersPerSecond = 
+          xController.calculate(0, leftError); // Postivie for left movement
     } else if (canRangeRight > desiredDistance) {
       // Right sensor detects something close, move right
       double rightError = desiredDistance - canRangeRight;
-      field.vyMetersPerSecond = yController.calculate(0, rightError); // Positive for right movement
-      field.vxMetersPerSecond = xController.calculate(0, -rightError); // Negative for right movement
+      field.vyMetersPerSecond = 
+          yController.calculate(0, rightError); // Positive for right movement
+      field.vxMetersPerSecond =
+          xController.calculate(0, -rightError); // Negative for right movement
     }
 
     // Middle sensor logic for scoring
-    if (canRangeMiddle <= desiredDistance) {
+    if (canRangeMiddle <= desiredDistance
+        && canRangeRight > desiredDistance
+        && canRangeLeft > desiredDistance) {
       // Middle sensor detects an object, allow scoring
       endEffector.setVoltage(1000);
     } else {
