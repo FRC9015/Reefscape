@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -33,12 +34,7 @@ import frc.robot.Constants.CameraConstants;
 import frc.robot.Constants.MotorIDConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.algae.Algae;
-import frc.robot.subsystems.algae.AlgaeIOSim;
-import frc.robot.subsystems.algae.AlgaeIOTalonFX;
-import frc.robot.subsystems.algae.pivot.Pivot;
-import frc.robot.subsystems.algae.pivot.PivotIOSim;
-import frc.robot.subsystems.algae.pivot.PivotIOTalonFX;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -72,9 +68,8 @@ public class RobotContainer {
   private final Intake intake;
   private final EndEffector endEffector;
   private final Elevator elevator;
-  private final Pivot pivot;
-  private final Algae algae;
   private final Vision photon;
+  private final Climber climber;
 
   // private final UsbCamera elavatorCamera;
   // Driver Controller
@@ -119,10 +114,9 @@ public class RobotContainer {
                     MotorIDConstants.ELEVATOR_MOTOR_ID2,
                     MotorIDConstants.ELEVATOR_ENCODER_ID,
                     4));
-        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-        algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
         elavatorCamera = CameraServer.startAutomaticCapture();
+        climber = new Climber(7);
         break;
 
       case SIM:
@@ -143,10 +137,9 @@ public class RobotContainer {
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
-        algae = new Algae(new AlgaeIOSim());
-        pivot = new Pivot(new PivotIOSim());
         coralFound = new Trigger(() -> intake.isCoralIn());
         elavatorCamera = CameraServer.startAutomaticCapture();
+        climber = new Climber(7);
         break;
 
       default:
@@ -174,10 +167,9 @@ public class RobotContainer {
                     MotorIDConstants.ELEVATOR_MOTOR_ID2,
                     MotorIDConstants.ELEVATOR_ENCODER_ID,
                     4));
-        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-        algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
         elavatorCamera = CameraServer.startAutomaticCapture();
+        climber = new Climber(7);
         break;
     }
 
@@ -218,6 +210,7 @@ public class RobotContainer {
 
     elavatorCamera.setResolution(640, 480);
     elavatorCamera.setFPS(24);
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -282,11 +275,9 @@ public class RobotContainer {
     // .leftBumper()
     // .whileTrue(endEffector.runEffector(0.15).until(coralFound));
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
-    operatorController.a().whileTrue(algae.setSpeed(5)).whileFalse(algae.setSpeed(0));
-    operatorController.b().whileTrue(algae.setSpeed(-5)).whileFalse(algae.setSpeed(0));
     operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
-    operatorController.x().whileTrue(pivot.pivotUp(1)).whileFalse(pivot.pivotUp(0));
-    operatorController.y().whileTrue(pivot.pivotUp(-1)).whileFalse(pivot.pivotUp(0));
+    operatorController.leftBumper().onTrue(new InstantCommand(() -> climber.extend()));
+    operatorController.rightTrigger().onTrue(new InstantCommand(() -> climber.retract()));
 
     // Button Box
     operatorButtonBox
@@ -363,8 +354,6 @@ public class RobotContainer {
             Commands.run(() -> endEffector.stop(), endEffector)
                 .andThen(() -> intake.stop(), intake)
                 .andThen(() -> elevator.getCurrentCommand().cancel(), elevator)
-                .andThen(() -> pivot.getCurrentCommand().cancel(), pivot)
-                .andThen(() -> algae.getCurrentCommand().cancel(), algae)
                 .andThen(() -> drive.getCurrentCommand().cancel(), drive));
 
     coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2));
