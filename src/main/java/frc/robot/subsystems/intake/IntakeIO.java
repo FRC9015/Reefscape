@@ -22,8 +22,15 @@ public interface IntakeIO {
     // Fields representing the intake state and inputs
     public boolean coralIn = false;
     public boolean coralSet = false;
-    public double canRangeSTDdevs = 0.0;
-    public double canRangeDistance = 0.0;
+    public double middleSTDdevs = 0.0;
+    public double middleDistance = 0.0;
+    public boolean middleIsDetected = false;
+    public double side1STDdevs = 0.0;
+    public double side1Distance = 0.0;
+    public boolean side1IsDetected = false;
+    public double side2STDdevs = 0.0;
+    public double side2Distance = 0.0;
+    public boolean side2IsDetected = false;
   }
 
   /** Updates the set of loggable inputs. */

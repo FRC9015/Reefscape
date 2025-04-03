@@ -82,6 +82,18 @@ public class Intake extends SubsystemBase {
     return !inputs.coralSet && inputs.coralIn;
   }
 
+  public boolean canRangeLeftDetected() {
+    return inputs.side1IsDetected;
+  }
+
+  public boolean canRangeMiddleDetected() {
+    return inputs.middleIsDetected;
+  }
+
+  public boolean canRangeRightDetected() {
+    return inputs.side2IsDetected;
+  }
+
   /**
    * Returns the current RPM of the intake.
    *

@@ -1,28 +1,39 @@
 package frc.robot.subsystems.climber;
 
+import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.littletonrobotics.junction.Logger;
 
-/** the. */
 public class Climber extends SubsystemBase {
-  private ClimberIO io;
-  private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
+  public final PneumaticHub revPH;
+  public final Solenoid solenoid1;
 
-  /** the. */
-  public Climber(ClimberIO io) {
-    this.io = io;
+  public Climber(int portID) {
+    this.revPH = new PneumaticHub(portID);
+    this.solenoid1 = revPH.makeSolenoid(0);
+    this.setDefaultCommand(retractCommand());
   }
 
-  /** the. */
-  public Command setSpeed(double rpm) {
-    return run(() -> io.setRPM(rpm));
+  public void extend() {
+    this.solenoid1.set(true);
+  }
+
+  public void retract() {
+    this.solenoid1.set(false);
+  }
+
+  // Create commands for unwinding and retracting
+  public Command extendCommand() {
+    return run(this::extend);
+  }
+
+  public Command retractCommand() {
+    return run(this::retract);
   }
 
   @Override
   public void periodic() {
-    io.updateInputs(inputs);
-
-    Logger.processInputs("Climber", inputs);
+    this.revPH.enableCompressorDigital();
   }
 }

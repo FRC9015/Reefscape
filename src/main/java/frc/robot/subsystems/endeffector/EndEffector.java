@@ -135,8 +135,19 @@ public class EndEffector extends SubsystemBase {
         new InstantCommand(this::stop));
   }
 
+  public Command runEffectorAutoCommandL1() {
+    return new SequentialCommandGroup(
+        new InstantCommand(this::autoEffectorVoltageL1),
+        new WaitCommand(0.4),
+        new InstantCommand(this::stop));
+  }
+
   private void autoEffectorVoltage() {
     io.setRPM(-6);
+  }
+
+  private void autoEffectorVoltageL1() {
+    io.setRPM(-4);
   }
 
   /**

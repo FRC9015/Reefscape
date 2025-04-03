@@ -36,8 +36,6 @@ import frc.robot.subsystems.algae.pivot.Pivot;
 import frc.robot.subsystems.algae.pivot.PivotIO.PivotIOInputs.PivotPosition;
 import frc.robot.subsystems.algae.pivot.PivotIOTalonFX;
 import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -58,6 +56,7 @@ import frc.robot.subsystems.led.Led;
 import frc.robot.subsystems.photon.Vision;
 import frc.robot.subsystems.photon.VisionIOPhotonVision;
 import frc.robot.subsystems.photon.VisionIOPhotonVisionSim;
+import java.awt.Color;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -91,6 +90,10 @@ public class RobotContainer {
 
   // Triggers
   private final Trigger coralFound;
+  private final Trigger coralIn;
+  private final Trigger canRangeLeft;
+  private final Trigger canRangeMiddle;
+  private final Trigger canRangeRight;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -118,7 +121,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
-        intake = new Intake(new IntakeIOTalonFX(0, 1, 44));
+        intake = new Intake(new IntakeIOTalonFX(9, 8, 46, 45, 44));
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
@@ -127,10 +130,15 @@ public class RobotContainer {
                     MotorIDConstants.ELEVATOR_ENCODER_ID,
                     4));
         coralFound = new Trigger(() -> intake.isCoralIn());
-        climb =
-            new Climber(
-                new ClimberIOTalonFX(
-                    MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
+        coralIn = new Trigger(() -> intake.isCoralSet());
+        canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
+        canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
+        canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
+        climb = new Climber(7);
+        // climb =
+        //     new Climber(
+        //         new ClimberIOTalonFX(
+        //             MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
@@ -154,12 +162,17 @@ public class RobotContainer {
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
-        climb =
-            new Climber(
-                new ClimberIOTalonFX(
-                    MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
+        // climb =
+        //     new Climber(
+        //         new ClimberIOTalonFX(
+        //             MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
         coralFound = new Trigger(() -> intake.isCoralIn());
+        coralIn = new Trigger(() -> intake.isCoralSet());
+        canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
+        canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
+        canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
+        climb = new Climber(7);
 
         elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
@@ -182,7 +195,7 @@ public class RobotContainer {
         // climber = new Climber(1);
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
-        intake = new Intake(new IntakeIOTalonFX(1, 0, 44));
+        intake = new Intake(new IntakeIOTalonFX(1, 0, 44, 45, 46));
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
@@ -191,7 +204,13 @@ public class RobotContainer {
                     MotorIDConstants.ELEVATOR_ENCODER_ID,
                     4));
         coralFound = new Trigger(() -> intake.isCoralIn());
-        climb = new Climber(new ClimberIO() {});
+        coralIn = new Trigger(() -> intake.isCoralSet());
+        canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
+        canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
+        canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
+        climb = new Climber(7);
+
+        //  climb = new Climber(new ClimberIO() {});
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
 
         elavatorCamera = CameraServer.startAutomaticCapture();
@@ -302,13 +321,13 @@ public class RobotContainer {
 
     // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
     // 0.0));
-    driverController.leftBumper().onTrue(pivot.executePreset(PivotPosition.Dealgify));
-    driverController.rightBumper().onTrue(pivot.executePreset(PivotPosition.Default));
-    driverController.rightTrigger().onTrue(pivot.executePreset(PivotPosition.Dealgify2));
+    driverController.leftBumper().onTrue(climb.extendCommand());
+    driverController.rightBumper().onTrue(climb.retractCommand());
+    driverController.rightTrigger().onTrue(new AutoDrive(drive.getPose(), drive, alliance.get()));
 
-    driverController.povUp().whileTrue(climb.setSpeed(10)).whileFalse(climb.setSpeed(0));
-    driverController.povDown().whileTrue(climb.setSpeed(-10)).whileFalse(climb.setSpeed(0));
-    // Slow mode
+    // driverController.povUp().whileTrue(climb.setSpeed(10)).whileFalse(climb.setSpeed(0));
+    // driverController.povDown().whileTrue(climb.setSpeed(-10)).whileFalse(climb.setSpeed(0));
+    // Slow modec
     driverController
         .leftTrigger()
         .whileTrue(
@@ -332,40 +351,37 @@ public class RobotContainer {
     // Button Box
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BL, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BL, drive, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DL, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DL, drive, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_EL, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_EL, drive, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FL, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FL, drive, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BR, drive));
-    operatorButtonBox
-        .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive));
-    operatorButtonBox
-        .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DR, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BR, drive, alliance.get()));
+    operatorController
+        .rightTrigger()
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_ER, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_ER, drive, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FR, drive));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FR, drive, alliance.get()));
 
     // operatorButtonBox
     //     .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
@@ -411,8 +427,9 @@ public class RobotContainer {
             elevator
                 .executePreset(ElevatorState.CoralL1)
                 .withTimeout(0.2)
-                .andThen(endEffector.runEffectorAutoCommand())
-                .andThen(elevator.executePreset(ElevatorState.Default)));
+                .andThen(endEffector.runEffectorAutoCommandL1())
+                .andThen(elevator.executePreset(ElevatorState.Default))
+                .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L2.getButtonID())
         .onTrue(
@@ -453,6 +470,13 @@ public class RobotContainer {
                 .andThen(() -> drive.getCurrentCommand().cancel(), drive));
 
     coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2));
+
+    canRangeLeft.whileTrue(led.setColor(Color.BLUE));
+    canRangeMiddle
+        .and(() -> !intake.canRangeLeftDetected())
+        .and(() -> !intake.canRangeRightDetected())
+        .whileTrue(led.setColor(Color.MAGENTA));
+    canRangeRight.whileTrue(led.setColor(Color.YELLOW));
   }
 
   public Command getAutonomousCommand() {

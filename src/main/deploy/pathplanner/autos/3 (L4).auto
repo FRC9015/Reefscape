@@ -17,12 +17,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4Position"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "shootCoral"
                 }
               }
@@ -44,12 +38,6 @@
                 "data": {
                   "name": "IntakeCoral"
                 }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.0
-                }
               }
             ]
           }
@@ -64,12 +52,6 @@
           "type": "sequential",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4Position"
-                }
-              },
               {
                 "type": "named",
                 "data": {
@@ -95,6 +77,12 @@
           "type": "path",
           "data": {
             "pathName": "fourth"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
           }
         }
       ]

@@ -5,23 +5,24 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.util.PhoenixUtil;
 import org.littletonrobotics.junction.Logger;
 
 public class AutoDrive extends Command {
 
   private PIDController rotationController = new PIDController(4, 0, 0.02); // 4 0.02
-  private PIDController yController = new PIDController(1.5, 0.0, 0.02); // 4 0.04
-  private PIDController xController = new PIDController(1.5, 0.0, 0.02); // 2.5 0.04
+  private PIDController yController = new PIDController(1.75, 0.0, 0.03); // 4 0.04
+  private PIDController xController = new PIDController(1.75, 0.0, 0.03); // 2.5 0.04
   private Pose2d targetPose, flippedPose;
   private Drive drive;
 
-  public AutoDrive(Pose2d desiredPose, Drive drive) {
+  public AutoDrive(Pose2d desiredPose, Drive drive, DriverStation.Alliance alliance) {
     this.drive = drive;
     flippedPose = FlippingUtil.flipFieldPose(desiredPose);
-    this.targetPose = PhoenixUtil.isRed() ? flippedPose : desiredPose;
+    this.targetPose = alliance == DriverStation.Alliance.Red ? flippedPose : desiredPose;
+    Logger.recordOutput("AutoDrive/alliance?", alliance);
   }
 
   @Override
@@ -57,7 +58,7 @@ public class AutoDrive extends Command {
     Logger.recordOutput("AutoDrive/robotrelativespeeds", field);
     Logger.recordOutput("AutoDrive/flippedPose", flippedPose);
   }
-
+  
   @Override
   public boolean isFinished() {
 

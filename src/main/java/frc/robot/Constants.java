@@ -125,14 +125,14 @@ public final class Constants {
         new Pose2d(new Translation2d(5.835, 3.872), new Rotation2d(Math.PI));
 
     public static final Pose2d REEF_ER =
-        new Pose2d(new Translation2d(5.305, 2.887), new Rotation2d(2 * Math.PI / 3));
+        new Pose2d(new Translation2d(5.268, 2.984), new Rotation2d(2 * Math.PI / 3));
     public static final Pose2d REEF_EL =
-        new Pose2d(new Translation2d(5.029, 2.715), new Rotation2d(2 * Math.PI / 3));
+        new Pose2d(new Translation2d(4.992, 2.812), new Rotation2d(2 * Math.PI / 3));
 
     public static final Pose2d REEF_FR =
-        new Pose2d(new Translation2d(3.925, 2.738), new Rotation2d(Math.PI / 3));
+        new Pose2d(new Translation2d(3.977, 2.820), new Rotation2d(Math.PI / 3));
     public static final Pose2d REEF_FL =
-        new Pose2d(new Translation2d(3.649, 2.857), new Rotation2d(Math.PI / 3));
+        new Pose2d(new Translation2d(3.679, 2.969), new Rotation2d(Math.PI / 3));
   }
 
   public static class AutoConstants {
@@ -176,7 +176,7 @@ public final class Constants {
   }
 
   public static class LEDConstants {
-    public static final int CANDLE_ID = 45;
+    public static final int CANDLE_ID = 47;
   }
 
   public static enum ButtonBoxIds {

@@ -33,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "IntakeCoral",
+      "name": "L4Position",
       "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": 0.8349358974358975,
+      "endWaypointRelativePos": 1.0,
       "command": {
         "type": "named",
         "data": {
-          "name": "IntakeCoral"
+          "name": "L4Position"
         }
       }
     }
@@ -62,5 +62,5 @@
     "velocity": 0,
     "rotation": -55.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
