@@ -21,8 +21,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -33,7 +35,6 @@ import frc.robot.commands.AutoDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.algae.pivot.Pivot;
-import frc.robot.subsystems.algae.pivot.PivotIO.PivotIOInputs.PivotPosition;
 import frc.robot.subsystems.algae.pivot.PivotIOTalonFX;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
@@ -116,9 +117,9 @@ public class RobotContainer {
         photon =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
-                new VisionIOPhotonVision("Bow", CameraConstants.bowPose),
-                new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
+                // new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
+                new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
+        // new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
         intake = new Intake(new IntakeIOTalonFX(9, 8, 46, 45, 44));
@@ -218,12 +219,13 @@ public class RobotContainer {
         break;
     }
     allianceChooser = new SendableChooser<DriverStation.Alliance>();
-    allianceChooser.addOption("Red", DriverStation.Alliance.Red);
-    allianceChooser.addOption("Blue", DriverStation.Alliance.Blue);
-
     // allianceChooser.setDefaultOption("Blue", DriverStation.Alliance.Blue);
 
+    // allianceChooser.addOption("Red", DriverStation.Alliance.Red);
+
     alliance = new LoggedDashboardChooser<>("Alliance", allianceChooser);
+    alliance.addOption("Red", DriverStation.Alliance.Red);
+    alliance.addOption("Blue", DriverStation.Alliance.Blue);
 
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
@@ -321,9 +323,14 @@ public class RobotContainer {
 
     // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
     // 0.0));
-    driverController.leftBumper().onTrue(climb.extendCommand());
-    driverController.rightBumper().onTrue(climb.retractCommand());
-    driverController.rightTrigger().onTrue(new AutoDrive(drive.getPose(), drive, alliance.get()));
+    driverController.rightTrigger().onTrue(climb.retractCommand2());
+    driverController.povDown().onTrue(climb.retractCommand1());
+    driverController
+        .povUp()
+        .onTrue(elevator.executePreset(ElevatorState.CoralL2).alongWith(climb.upGo()));
+    driverController
+        .rightTrigger()
+        .onTrue(new AutoDrive(drive.getPose(), drive, () -> DriverStation.Alliance.Blue));
 
     // driverController.povUp().whileTrue(climb.setSpeed(10)).whileFalse(climb.setSpeed(0));
     // driverController.povDown().whileTrue(climb.setSpeed(-10)).whileFalse(climb.setSpeed(0));
@@ -351,37 +358,40 @@ public class RobotContainer {
     // Button Box
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BL, drive, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DL, drive, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_EL, drive, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_EL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FL, drive, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BR, drive, alliance.get()));
-    operatorController
-        .rightTrigger()
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BR, drive, () -> alliance.get()));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive, () -> alliance.get()));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DR, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_ER, drive, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_ER, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FR, drive, alliance.get()));
+        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FR, drive, () -> alliance.get()));
 
     // operatorButtonBox
     //     .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
@@ -471,12 +481,23 @@ public class RobotContainer {
 
     coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2));
 
-    canRangeLeft.whileTrue(led.setColor(Color.BLUE));
+    canRangeLeft
+        .whileTrue(
+            led.setColor(Color.BLUE)
+                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Left", true))))
+        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Left", false)));
     canRangeMiddle
         .and(() -> !intake.canRangeLeftDetected())
         .and(() -> !intake.canRangeRightDetected())
-        .whileTrue(led.setColor(Color.MAGENTA));
-    canRangeRight.whileTrue(led.setColor(Color.YELLOW));
+        .whileTrue(
+            led.setColor(Color.MAGENTA)
+                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", true))))
+        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", false)));
+    canRangeRight
+        .whileTrue(
+            led.setColor(Color.YELLOW)
+                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Right", true))))
+        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Right", false)));
   }
 
   public Command getAutonomousCommand() {
@@ -489,5 +510,6 @@ public class RobotContainer {
 
   public void onEnabled() {
     drive.setModulesBrake();
+    climb.extend2();
   }
 }

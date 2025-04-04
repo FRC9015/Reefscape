@@ -4,6 +4,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.hardware.CANrange;
+import com.ctre.phoenix6.signals.UpdateModeValue;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import org.littletonrobotics.junction.Logger;
@@ -60,8 +61,10 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     CANrangeConfiguration rangeConfig = new CANrangeConfiguration();
     rangeConfig.FovParams.FOVRangeX = 6.75;
+    rangeConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 2000;
     rangeConfig.ProximityParams.ProximityThreshold = 0.7;
-
+    rangeConfig.ToFParams.UpdateMode = UpdateModeValue.LongRangeUserFreq;
+    rangeConfig.ToFParams.UpdateFrequency = 50.0;
     middleRange.getConfigurator().apply(rangeConfig);
     sideRange1.getConfigurator().apply(rangeConfig);
     sideRange2.getConfigurator().apply(rangeConfig);

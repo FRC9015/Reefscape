@@ -49,6 +49,8 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    motorConfig.CurrentLimits.StatorCurrentLimit = 45.0;
+    motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Configure the integrated encoder (default settings should work)
     motor1.getConfigurator().apply(motorConfig);

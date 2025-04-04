@@ -42,6 +42,17 @@
           "name": "L4Position"
         }
       }
+    },
+    {
+      "name": "IntakeCoral",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": 0.5977564102564099,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeCoral"
+        }
+      }
     }
   ],
   "globalConstraints": {

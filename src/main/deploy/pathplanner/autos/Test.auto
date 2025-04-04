@@ -7,19 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Side L1 3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4PositionL2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shootCoral"
+            "pathName": "Test"
           }
         }
       ]
