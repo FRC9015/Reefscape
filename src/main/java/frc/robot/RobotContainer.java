@@ -330,7 +330,7 @@ public class RobotContainer {
         .onTrue(elevator.executePreset(ElevatorState.CoralL2).alongWith(climb.upGo()));
     driverController
         .rightTrigger()
-        .onTrue(new AutoDrive(drive.getPose(), drive, () -> DriverStation.Alliance.Blue));
+        .onTrue(new AutoDrive(drive.getPose(), drive, photon, () -> DriverStation.Alliance.Blue));
 
     // driverController.povUp().whileTrue(climb.setSpeed(10)).whileFalse(climb.setSpeed(0));
     // driverController.povDown().whileTrue(climb.setSpeed(-10)).whileFalse(climb.setSpeed(0));
@@ -358,41 +358,52 @@ public class RobotContainer {
     // Button Box
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(Constants.FieldConstants.REEF_AL, drive, photon, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(Constants.FieldConstants.REEF_BL, drive, photon, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(Constants.FieldConstants.REEF_CL, drive, photon, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(Constants.FieldConstants.REEF_DL, drive, photon, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_EL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(Constants.FieldConstants.REEF_EL, drive, photon, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(Constants.FieldConstants.REEF_FL, drive, photon, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(Constants.FieldConstants.REEF_AR, drive, photon, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(Constants.FieldConstants.REEF_BR, drive, photon, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(Constants.FieldConstants.REEF_CR, drive, photon, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(Constants.FieldConstants.REEF_DR, drive, photon, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_ER, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(Constants.FieldConstants.REEF_ER, drive, photon, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FR, drive, () -> alliance.get()));
-
+        .onTrue(
+            new AutoDrive(Constants.FieldConstants.REEF_FR, drive, photon, () -> alliance.get()));
     // operatorButtonBox
     //     .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
     //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AL, 0, alliance.get()));
