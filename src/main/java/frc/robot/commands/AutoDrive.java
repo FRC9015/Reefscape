@@ -16,8 +16,8 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 /**
- * AutoDrive command drives the robot from its current pose to a target pose using PID control.
- * It integrates odometry, vision, and collision detection for robust autonomous driving.
+ * AutoDrive command drives the robot from its current pose to a target pose using PID control. It
+ * integrates odometry, vision, and collision detection for robust autonomous driving.
  */
 public class AutoDrive extends Command {
   // PID controllers for rotation and translational control
@@ -53,7 +53,10 @@ public class AutoDrive extends Command {
    * @param allianceSupplier Supplier for alliance information.
    */
   public AutoDrive(
-      Pose2d desiredPose, Drive drive, Vision vision, Supplier<DriverStation.Alliance> allianceSupplier) {
+      Pose2d desiredPose,
+      Drive drive,
+      Vision vision,
+      Supplier<DriverStation.Alliance> allianceSupplier) {
     this.drive = drive;
     this.vision = vision;
     this.allianceSupplier = allianceSupplier;
@@ -69,7 +72,8 @@ public class AutoDrive extends Command {
   @Override
   public void initialize() {
     // Determine the target pose based on alliance color
-    this.targetPose = allianceSupplier.get() == DriverStation.Alliance.Red ? flippedPose : targetPose;
+    this.targetPose =
+        allianceSupplier.get() == DriverStation.Alliance.Red ? flippedPose : targetPose;
 
     // Configure PID controllers
     rotationController.enableContinuousInput(-Math.PI, Math.PI);
@@ -198,11 +202,13 @@ public class AutoDrive extends Command {
    */
   private boolean detectCollision() {
     ChassisSpeeds currentSpeeds = drive.getChassisSpeeds();
-    double currentLinearAccel = Math.sqrt(
-        Math.pow(currentSpeeds.vxMetersPerSecond, 2) + Math.pow(currentSpeeds.vyMetersPerSecond, 2)
-    );
+    double currentLinearAccel =
+        Math.sqrt(
+            Math.pow(currentSpeeds.vxMetersPerSecond, 2)
+                + Math.pow(currentSpeeds.vyMetersPerSecond, 2));
 
-    double jerk = (currentLinearAccel - lastLinearAccel) / (Timer.getFPGATimestamp() - lastUpdateTime);
+    double jerk =
+        (currentLinearAccel - lastLinearAccel) / (Timer.getFPGATimestamp() - lastUpdateTime);
     lastLinearAccel = currentLinearAccel;
 
     final double COLLISION_JERK_THRESHOLD = 10.0; // Adjust based on testing
