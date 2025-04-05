@@ -55,21 +55,23 @@ public class Vision extends SubsystemBase {
     return inputs[cameraIndex].latestTargetObservation.tx();
   }
 
-  //   public TargetObservation getLastTargetObersevation(int camera) {
-  //     return inputs[camera].latestTargetObservation;
-  //   }
-
-  //   public int[] getTagIDs(int cameraIndex) {
-  //     return inputs[cameraIndex].tagIds;
-  //   }
-
-  public Optional<PoseObservation> getNewestPoseObservation(int cameraIndex) {
+  public Pose2d getLatestPose2d(int cameraIndex) {
     PoseObservation[] observations = inputs[cameraIndex].poseObservations;
-    if (observations.length != 0) {
-      return Optional.of(observations[0]);
-    } else {
-      return Optional.empty();
+    for (PoseObservation observation : observations) {
+      // Check if the pose is valid
+      boolean isValid =
+          observation.tagCount() > 0 // Must have at least one tag
+              && (observation.tagCount() > 1 || observation.ambiguity() <= 0.1) // Low ambiguity
+              && observation.pose().getX() >= 0.0
+              && observation.pose().getX() <= CameraConstants.aprilTagLayout.getFieldLength()
+              && observation.pose().getY() >= 0.0
+              && observation.pose().getY() <= CameraConstants.aprilTagLayout.getFieldWidth();
+
+      if (isValid) {
+        return observation.pose().toPose2d();
+      }
     }
+    return new Pose2d(); // Return an empty Pose2d if no valid pose is found
   }
 
   @Override

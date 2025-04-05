@@ -46,24 +46,26 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
    * Constructs an EndEffectorIOTalonFX.
    *
    * @param motorId1 The ID of the motor.
+   * @param canRangeID1 The CANrange ID for the first (sideL) sensor.
+   * @param canRangeID2 The CANrange ID for the second (middle) sensor.
+   * @param canRangeID3 The CANrange ID for the third (sideR) sensor.
    */
   public EndEffectorIOTalonFX(int motorId1, int canRangeID1, int canRangeID2, int canRangeID3) {
-    motor1 = new TalonFX(motorId1);
-    sideRange1 = new CANrange(canRangeID1);
-    middleRange = new CANrange(canRangeID2);
-    sideRange2 = new CANrange(canRangeID3);
+    motor1 = new TalonFX(motorId1, "canivore");
+    sideRange1 = new CANrange(canRangeID1, "canivore");
+    middleRange = new CANrange(canRangeID2, "canivore");
+    sideRange2 = new CANrange(canRangeID3, "canivore");
 
     // Configure motor
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
-    // Configure the integrated encoder (default settings should work)
     motor1.getConfigurator().apply(motorConfig);
 
+    // Configure the CANrange sensors
     CANrangeConfiguration rangeConfig = new CANrangeConfiguration();
-    // rangeConfig.ProximityParams.ProximityThreshold = 0.7;
-
+    // Optionally adjust rangeConfig as needed (e.g., rangeConfig.ProximityParams.ProximityThreshold
+    // = 0.7;)
     sideRange1.getConfigurator().apply(rangeConfig);
     sideRange2.getConfigurator().apply(rangeConfig);
     middleRange.getConfigurator().apply(rangeConfig);
@@ -79,11 +81,16 @@ public class EndEffectorIOTalonFX implements EndEffectorIO {
     // Refresh signals
     StatusCode encoderStatus = BaseStatusSignal.refreshAll(rpmSignal);
 
-    // Update inputs
+    // Update motor inputs
     inputs.endEffectorEncoderConnected = encoderConnectedDebounce.calculate(encoderStatus.isOK());
     inputs.endEffectorRPM = rpmSignal.getValueAsDouble();
     inputs.endEffectorAppliedVolts = appliedVoltsSignal.getValueAsDouble();
     inputs.endEffectorCurrentAmps = currentSignal.getValueAsDouble();
+
+    // Update CANrange distance measurements (assume getDistance() returns a double in meters)
+    // inputs.canRange1 = sideRange1.getDistance();
+    // inputs.canRange2 = sideRange2.getDistance();
+    // inputs.canRange3 = middleRange.getDistance();
     inputs.canRange1 = sideRange1.getIsDetected().getValue() ? 1.0 : 0.0;
     inputs.canRange2 = sideRange2.getIsDetected().getValue() ? 1.0 : 0.0;
     inputs.canRange3 = middleRange.getIsDetected().getValue() ? 1.0 : 0.0;
