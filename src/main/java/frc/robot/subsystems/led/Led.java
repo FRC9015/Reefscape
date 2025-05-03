@@ -21,7 +21,7 @@ import java.awt.Color;
  */
 public class Led extends SubsystemBase {
   /** Number of LEDs in the strip. */
-  private final int ledCount = 110;
+  private final int ledCount = 200;
 
   /** CANdle LED controller instance. */
   private final CANdle candle;

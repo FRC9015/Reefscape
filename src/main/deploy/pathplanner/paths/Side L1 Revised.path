@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 5.024968044311887,
-        "y": 5.3074137196420965
+        "x": 5.025,
+        "y": 5.307
       },
       "prevControl": {
-        "x": 4.773786825423288,
-        "y": 5.2755397788081675
+        "x": 4.773818781111402,
+        "y": 5.275126059166071
       },
       "nextControl": null,
       "isLocked": false,
@@ -40,17 +40,6 @@
         "type": "named",
         "data": {
           "name": "L4Position"
-        }
-      }
-    },
-    {
-      "name": "IntakeCoral",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": 0.5977564102564099,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "IntakeCoral"
         }
       }
     }

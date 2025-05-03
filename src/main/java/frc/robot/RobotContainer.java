@@ -15,8 +15,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -81,7 +79,7 @@ public class RobotContainer {
   double pos = 0.0; // REMOVE
 
   // Driver Controller
-  private final UsbCamera elavatorCamera;
+  //   private final UsbCamera elavatorCamera;
 
   private final CommandXboxController driverController = new CommandXboxController(0);
   // Operator Controller
@@ -118,8 +116,8 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 // new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
-                new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
-        // new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
+                new VisionIOPhotonVision("Bow", CameraConstants.bowPose),
+                new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
         intake = new Intake(new IntakeIOTalonFX(9, 8, 46, 45, 44));
@@ -141,7 +139,7 @@ public class RobotContainer {
         //         new ClimberIOTalonFX(
         //             MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        //  elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
         break;
 
@@ -175,7 +173,7 @@ public class RobotContainer {
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         climb = new Climber(7);
 
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        //  elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
         break;
 
@@ -214,7 +212,7 @@ public class RobotContainer {
         //  climb = new Climber(new ClimberIO() {});
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
 
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        //     elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
         break;
     }
@@ -271,8 +269,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    elavatorCamera.setResolution(640, 480);
-    elavatorCamera.setFPS(24);
+    // elavatorCamera.setResolution(640, 480);
+    // elavatorCamera.setFPS(24);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -323,14 +321,18 @@ public class RobotContainer {
 
     // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
     // 0.0));
-    driverController.rightTrigger().onTrue(climb.retractCommand2());
+    driverController.rightBumper().onTrue(climb.retractCommand2());
     driverController.povDown().onTrue(climb.retractCommand1());
     driverController
         .povUp()
-        .onTrue(elevator.executePreset(ElevatorState.CoralL2).alongWith(climb.upGo()));
+        .onTrue(elevator.executePreset(ElevatorState.CoralL3).alongWith(climb.upGo()));
     driverController
         .rightTrigger()
-        .onTrue(new AutoDrive(drive.getPose(), drive, () -> DriverStation.Alliance.Blue));
+        .onTrue(
+            new InstantCommand(
+                () ->
+                    new AutoDrive(() -> drive.getPose(), drive, () -> DriverStation.Alliance.Blue)
+                        .cancel()));
 
     // driverController.povUp().whileTrue(climb.setSpeed(10)).whileFalse(climb.setSpeed(0));
     // driverController.povDown().whileTrue(climb.setSpeed(-10)).whileFalse(climb.setSpeed(0));
@@ -358,40 +360,40 @@ public class RobotContainer {
     // Button Box
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AL, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_AL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BL, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_BL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CL, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_CL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DL, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_DL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_EL, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_EL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FL, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_FL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_AR, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_AR, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_BR, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_BR, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_CR, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_CR, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_DR, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_DR, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_ER, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_ER, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
-        .onTrue(new AutoDrive(Constants.FieldConstants.REEF_FR, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_FR, drive, () -> alliance.get()));
 
     // operatorButtonBox
     //     .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())

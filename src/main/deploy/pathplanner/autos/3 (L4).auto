@@ -84,6 +84,18 @@
           "data": {
             "name": "shootCoral"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "to source 323"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
+          }
         }
       ]
     }
