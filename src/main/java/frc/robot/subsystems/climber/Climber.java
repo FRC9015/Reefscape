@@ -1,66 +1,79 @@
 package frc.robot.subsystems.climber;
 
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
-  public final SparkFlex climberMotor;
-  public final SparkMaxConfig climberConfig;
+  public final PneumaticHub revPH;
+  public final Solenoid solenoid1, solenoid2, solenoid3;
 
-  // Constants for motor speed (tune these for your robot)
-  private static final double UNWIND_SPEED = -0.8; // Extend (down)
-  private static final double RETRACT_SPEED = 0.8; // Pull up
+  public Climber(int portID) {
+    this.revPH = new PneumaticHub(portID);
+    this.solenoid1 = revPH.makeSolenoid(1);
+    this.solenoid2 = revPH.makeSolenoid(4);
+    this.solenoid3 = revPH.makeSolenoid(0);
 
-  public Climber(int motorID) {
-    this.climberMotor = new SparkFlex(motorID, SparkFlex.MotorType.kBrushless);
-    this.climberConfig = new SparkMaxConfig();
-
-    climberConfig.inverted(true).idleMode(IdleMode.kBrake);
-    climberConfig.encoder.positionConversionFactor(1).velocityConversionFactor(1);
-
-    // Configure the motor
-    climberConfig.encoder.positionConversionFactor(1).velocityConversionFactor(1);
-    climberConfig
-        .closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(2, 0.0, 0.0)
-        .outputRange(0, 1)
-        .velocityFF(1.0 / 565.0);
-
-    // Zero the encoder
-    climberMotor.getEncoder().setPosition(0);
+    this.setDefaultCommand(defaultCommand());
   }
 
-  public void unwind() {
-    climberMotor.set(UNWIND_SPEED);
+  public void extend1() {
+    this.solenoid1.set(true);
   }
 
-  public void retract() {
-    climberMotor.set(RETRACT_SPEED);
-  }
-
-  public void stop() {
-    climberMotor.set(0);
+  public void retract1() {
+    this.solenoid1.set(false);
   }
 
   // Create commands for unwinding and retracting
-  public Command unwindCommand() {
-    return run(this::unwind).finallyDo((interrupted) -> stop());
+  public Command extendCommand1() {
+    return run(this::extend1);
   }
 
-  public Command retractCommand() {
-    return run(this::retract).finallyDo((interrupted) -> stop());
+  public Command retractCommand1() {
+    return run(this::retract1);
+  }
+
+  public void extend2() {
+    this.solenoid2.set(true);
+    // this.solenoid3.set(false);
+  }
+
+  public void retract2() {
+    this.solenoid2.set(false);
+    this.solenoid3.set(true);
+  }
+
+  public void default1() {
+    this.solenoid1.set(false);
+    this.solenoid2.set(true);
+  }
+
+  public void goUp() {
+    retract2();
+    extend1();
+  }
+
+  public Command upGo() {
+    return run(this::goUp);
+  }
+
+  // Create commands for unwinding and retracting
+  public Command extendCommand2() {
+    return run(this::extend2);
+  }
+
+  public Command retractCommand2() {
+    return run(this::retract2);
+  }
+
+  public Command defaultCommand() {
+    return run(this::default1);
   }
 
   @Override
   public void periodic() {
-    // Display climber position & status on SmartDashboard
-    SmartDashboard.putNumber("Climber Position", climberMotor.getEncoder().getPosition());
-    SmartDashboard.putNumber("Climber Current", climberMotor.getOutputCurrent());
+    this.revPH.enableCompressorDigital();
   }
 }

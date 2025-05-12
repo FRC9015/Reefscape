@@ -39,7 +39,6 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Intake", inputs);
 
     // Update alerts
-    encoderDisconnectedAlert.set(!inputs.intakeEncoderConnected);
     coralInAlert.set(inputs.coralIn);
     coralSetAlert.set(inputs.coralSet);
   }
@@ -83,33 +82,29 @@ public class Intake extends SubsystemBase {
     return !inputs.coralSet && inputs.coralIn;
   }
 
+  public boolean canRangeLeftDetected() {
+    return inputs.side1IsDetected;
+  }
+
+  public boolean canRangeMiddleDetected() {
+    return inputs.middleIsDetected;
+  }
+
+  public boolean canRangeRightDetected() {
+    return inputs.side2IsDetected;
+  }
+
   /**
    * Returns the current RPM of the intake.
    *
    * @return The RPM of the intake.
    */
-  public double getRPM() {
-    return inputs.intakeRPM;
-  }
 
   /**
    * Returns the current voltage applied to the intake motors.
    *
    * @return The applied voltage.
    */
-  public double getAppliedVolts() {
-    return inputs.intakeAppliedVolts;
-  }
-
-  /**
-   * Returns the current drawn by the intake motors.
-   *
-   * @return The current in amps.
-   */
-  public double getCurrentAmps() {
-    return inputs.intakeCurrentAmps;
-  }
-
   public Command runIntake(double rpm) {
     return this.startEnd(() -> setRPM(rpm), () -> stop());
   }

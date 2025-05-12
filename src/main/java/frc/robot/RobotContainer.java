@@ -15,30 +15,26 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.events.EventTrigger;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.CameraConstants;
 import frc.robot.Constants.MotorIDConstants;
+import frc.robot.commands.AutoDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.algae.Algae;
-import frc.robot.subsystems.algae.AlgaeIOSim;
-import frc.robot.subsystems.algae.AlgaeIOTalonFX;
 import frc.robot.subsystems.algae.pivot.Pivot;
-import frc.robot.subsystems.algae.pivot.PivotIOSim;
 import frc.robot.subsystems.algae.pivot.PivotIOTalonFX;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -55,9 +51,11 @@ import frc.robot.subsystems.endeffector.EndEffectorIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.led.Led;
 import frc.robot.subsystems.photon.Vision;
 import frc.robot.subsystems.photon.VisionIOPhotonVision;
 import frc.robot.subsystems.photon.VisionIOPhotonVisionSim;
+import java.awt.Color;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -72,13 +70,16 @@ public class RobotContainer {
   private final Intake intake;
   private final EndEffector endEffector;
   private final Elevator elevator;
-  private final Pivot pivot;
-  private final Algae algae;
   private final Vision photon;
+  // private final VisionProcessor visionProcessor;
+  private final Climber climb;
+  private final Pivot pivot;
+  private final Led led;
 
-  // private final UsbCamera elavatorCamera;
+  double pos = 0.0; // REMOVE
+
   // Driver Controller
-  private final UsbCamera elavatorCamera;
+  //   private final UsbCamera elavatorCamera;
 
   private final CommandXboxController driverController = new CommandXboxController(0);
   // Operator Controller
@@ -88,9 +89,16 @@ public class RobotContainer {
 
   // Triggers
   private final Trigger coralFound;
+  private final Trigger coralIn;
+  private final Trigger canRangeLeft;
+  private final Trigger canRangeMiddle;
+  private final Trigger canRangeRight;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  private final LoggedDashboardChooser<DriverStation.Alliance> alliance;
+  private final SendableChooser<DriverStation.Alliance> allianceChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -107,11 +115,12 @@ public class RobotContainer {
         photon =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
-                new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
+                // new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
+                new VisionIOPhotonVision("Bow", CameraConstants.bowPose),
+                new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
-        intake = new Intake(new IntakeIOTalonFX(1, 0));
+        intake = new Intake(new IntakeIOTalonFX(9, 8, 46, 45, 44));
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
@@ -119,10 +128,19 @@ public class RobotContainer {
                     MotorIDConstants.ELEVATOR_MOTOR_ID2,
                     MotorIDConstants.ELEVATOR_ENCODER_ID,
                     4));
-        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-        algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        coralIn = new Trigger(() -> intake.isCoralSet());
+        canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
+        canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
+        canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
+        climb = new Climber(7);
+        // climb =
+        //     new Climber(
+        //         new ClimberIOTalonFX(
+        //             MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
+        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
+        //  elavatorCamera = CameraServer.startAutomaticCapture();
+        led = new Led(Constants.LEDConstants.CANDLE_ID);
         break;
 
       case SIM:
@@ -137,16 +155,26 @@ public class RobotContainer {
         photon =
             new Vision(
                 drive::addVisionMeasurement,
-                // new VisionIOPhotonVisionSim("Starboard", CameraConstants.starboardPose),
-                new VisionIOPhotonVisionSim("Bow", CameraConstants.bowPose));
+                new VisionIOPhotonVisionSim("Bow", CameraConstants.starboardPose));
+        // new VisionIOPhotonVisionSim("Bow", CameraConstants.bowPose));
         // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
-        algae = new Algae(new AlgaeIOSim());
-        pivot = new Pivot(new PivotIOSim());
+        // climb =
+        //     new Climber(
+        //         new ClimberIOTalonFX(
+        //             MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
         coralFound = new Trigger(() -> intake.isCoralIn());
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        coralIn = new Trigger(() -> intake.isCoralSet());
+        canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
+        canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
+        canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
+        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
+        climb = new Climber(7);
+
+        //  elavatorCamera = CameraServer.startAutomaticCapture();
+        led = new Led(Constants.LEDConstants.CANDLE_ID);
         break;
 
       default:
@@ -161,12 +189,12 @@ public class RobotContainer {
         photon =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
-                new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
+                new VisionIOPhotonVision("Bow", CameraConstants.starboardPose));
+        //    new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
         // climber = new Climber(1);
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
-        intake = new Intake(new IntakeIOTalonFX(1, 0));
+        intake = new Intake(new IntakeIOTalonFX(1, 0, 44, 45, 46));
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
@@ -174,28 +202,53 @@ public class RobotContainer {
                     MotorIDConstants.ELEVATOR_MOTOR_ID2,
                     MotorIDConstants.ELEVATOR_ENCODER_ID,
                     4));
-        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-        algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.ALGAE_MOTOR_ID));
         coralFound = new Trigger(() -> intake.isCoralIn());
-        elavatorCamera = CameraServer.startAutomaticCapture();
+        coralIn = new Trigger(() -> intake.isCoralSet());
+        canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
+        canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
+        canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
+        climb = new Climber(7);
+
+        //  climb = new Climber(new ClimberIO() {});
+        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
+
+        //     elavatorCamera = CameraServer.startAutomaticCapture();
+        led = new Led(Constants.LEDConstants.CANDLE_ID);
         break;
     }
+    allianceChooser = new SendableChooser<DriverStation.Alliance>();
+    // allianceChooser.setDefaultOption("Blue", DriverStation.Alliance.Blue);
+
+    // allianceChooser.addOption("Red", DriverStation.Alliance.Red);
+
+    alliance = new LoggedDashboardChooser<>("Alliance", allianceChooser);
+    alliance.addOption("Red", DriverStation.Alliance.Red);
+    alliance.addOption("Blue", DriverStation.Alliance.Blue);
 
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
         "IntakeCoral",
-        endEffector.runEffectorAuto(2).until(intake::isCoralSet).andThen(endEffector::stop));
-    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(6).withTimeout(1));
+        endEffector
+            .runEffectorAuto(2)
+            .alongWith(elevator.executePreset(ElevatorState.Default))
+            .until(intake::isCoralSet)
+            .andThen(endEffector::stop));
+    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(5).withTimeout(0.4));
     NamedCommands.registerCommand(
         "TestCommand", Commands.run(() -> System.out.println("TestCommand Works")));
-    new EventTrigger("coral?").and(coralFound).whileTrue(endEffector.runEffectorReverse(6));
+    NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));
     NamedCommands.registerCommand(
-        "DefaultPosition", elevator.executePreset(ElevatorState.Default).withTimeout(1));
-    NamedCommands.registerCommand("L2Position", elevator.executePreset(ElevatorState.CoralL2));
-    NamedCommands.registerCommand("L3Position", elevator.executePreset(ElevatorState.CoralL3));
+        "L2Position",
+        elevator.executePreset(ElevatorState.CoralL2).withTimeout(0.5).unless(coralFound));
+    NamedCommands.registerCommand(
+        "L3Position",
+        elevator.executePreset(ElevatorState.CoralL3).withTimeout(0.7).unless(coralFound));
     NamedCommands.registerCommand(
         "L4Position",
         elevator.executePreset(ElevatorState.CoralL4).withTimeout(1.1).unless(coralFound));
+    NamedCommands.registerCommand(
+        "L4PositionL2",
+        elevator.executePreset(ElevatorState.CoralL4).withTimeout(0.7).unless(coralFound));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -216,18 +269,20 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    elavatorCamera.setResolution(640, 480);
-    elavatorCamera.setFPS(24);
+    // elavatorCamera.setResolution(640, 480);
+    // elavatorCamera.setFPS(24);
+
     // Configure the button bindings
     configureButtonBindings();
+
+    /**
+     * Use this method to define your button->command mappings. Buttons can be created by
+     * instantiating a {@link GenericHID} or one of its subclasses ({@link
+     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     */
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -257,13 +312,31 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    driverController.y().onTrue(drive.pathfindToPose(Constants.FieldConstants.SourceL, 0.0));
-    driverController.a().onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0));
+    driverController
+        .y()
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.SourceL, 0.0, alliance.get()));
+    driverController
+        .a()
+        .onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
+
     // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
     // 0.0));
-    // driverController.leftBumper().whileTrue(pivot.pivotDown(0.25));
-    // driverController.rightBumper().whileTrue(pivot.pivotUp(0.25));
-    // Slow mode
+    driverController.rightBumper().onTrue(climb.retractCommand2());
+    driverController.povDown().onTrue(climb.retractCommand1());
+    driverController
+        .povUp()
+        .onTrue(elevator.executePreset(ElevatorState.CoralL3).alongWith(climb.upGo()));
+    driverController
+        .rightTrigger()
+        .onTrue(
+            new InstantCommand(
+                () ->
+                    new AutoDrive(() -> drive.getPose(), drive, () -> DriverStation.Alliance.Blue)
+                        .cancel()));
+
+    // driverController.povUp().whileTrue(climb.setSpeed(10)).whileFalse(climb.setSpeed(0));
+    // driverController.povDown().whileTrue(climb.setSpeed(-10)).whileFalse(climb.setSpeed(0));
+    // Slow modec
     driverController
         .leftTrigger()
         .whileTrue(
@@ -282,52 +355,93 @@ public class RobotContainer {
     // .leftBumper()
     // .whileTrue(endEffector.runEffector(0.15).until(coralFound));
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
-    operatorController.a().whileTrue(algae.setSpeed(5)).whileFalse(algae.setSpeed(0));
-    operatorController.b().whileTrue(algae.setSpeed(-5)).whileFalse(algae.setSpeed(0));
     operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
-    operatorController.x().whileTrue(pivot.pivotUp(1)).whileFalse(pivot.pivotUp(0));
-    operatorController.y().whileTrue(pivot.pivotUp(-1)).whileFalse(pivot.pivotUp(0));
 
     // Button Box
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AL, 0.0));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_AL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BL, 0.0));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_BL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CL, 0.0));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_CL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DL, 0.0));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_DL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_EL, 0.0));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_EL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FL, 0.0));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_FL, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AR, 0.0));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_AR, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0.0));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_BR, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CR, 0.0));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_CR, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DR, 0.0));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_DR, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_ER, 0.0));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_ER, drive, () -> alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FR, 0.0));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_FR, drive, () -> alliance.get()));
+
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AL, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
+    //     .onTrue(
+    //         drive.pathfindToPose(Constants.FieldConstants.REEF_BL, 0,
+    // DriverStation.Alliance.Red));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CL, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DL, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_EL, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FL, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AR, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CR, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DR, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_ER, 0, alliance.get()));
+    // operatorButtonBox
+    //     .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FR, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L1.getButtonID())
-        .onTrue(elevator.executePreset(ElevatorState.CoralL1));
+        .onTrue(
+            elevator
+                .executePreset(ElevatorState.CoralL1)
+                .withTimeout(0.2)
+                .andThen(endEffector.runEffectorAutoCommandL1())
+                .andThen(elevator.executePreset(ElevatorState.Default))
+                .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L2.getButtonID())
         .onTrue(
@@ -353,7 +467,7 @@ public class RobotContainer {
         .onTrue(
             elevator
                 .executePreset(ElevatorState.CoralL4)
-                .withTimeout(1.1)
+                .withTimeout(0.75)
                 .andThen(endEffector.runEffectorAutoCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
                 .unless(() -> intake.isCoralIn()));
@@ -363,22 +477,41 @@ public class RobotContainer {
             Commands.run(() -> endEffector.stop(), endEffector)
                 .andThen(() -> intake.stop(), intake)
                 .andThen(() -> elevator.getCurrentCommand().cancel(), elevator)
-                .andThen(() -> pivot.getCurrentCommand().cancel(), pivot)
-                .andThen(() -> algae.getCurrentCommand().cancel(), algae)
+                // .andThen(() -> pivot.getCurrentCommand().cancel(), pivot)
+                // .andThen(() -> algae.getCurrentCommand().cancel(), algae)
                 .andThen(() -> drive.getCurrentCommand().cancel(), drive));
 
     coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2));
 
-    // Pathfind to source
-
+    canRangeLeft
+        .whileTrue(
+            led.setColor(Color.BLUE)
+                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Left", true))))
+        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Left", false)));
+    canRangeMiddle
+        .and(() -> !intake.canRangeLeftDetected())
+        .and(() -> !intake.canRangeRightDetected())
+        .whileTrue(
+            led.setColor(Color.MAGENTA)
+                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", true))))
+        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", false)));
+    canRangeRight
+        .whileTrue(
+            led.setColor(Color.YELLOW)
+                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Right", true))))
+        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Right", false)));
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void onDisabled() {
+    drive.setModulesCoast();
+  }
+
+  public void onEnabled() {
+    drive.setModulesBrake();
+    climb.extend2();
   }
 }

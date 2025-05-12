@@ -260,6 +260,20 @@ public class ModuleIOTalonFX implements ModuleIO {
   }
 
   @Override
+  public void setDriveVelocity(double velocityRadPerSec, double feedfoward) {
+    double velocityRotPerSec = Units.radiansToRotations(velocityRadPerSec);
+    driveTalon.setControl(
+        switch (constants.DriveMotorClosedLoopOutput) {
+          case Voltage ->
+              velocityVoltageRequest.withVelocity(velocityRotPerSec).withFeedForward(feedfoward);
+          case TorqueCurrentFOC ->
+              velocityTorqueCurrentRequest
+                  .withVelocity(velocityRotPerSec)
+                  .withFeedForward(feedfoward);
+        });
+  }
+
+  @Override
   public void setTurnPosition(Rotation2d rotation) {
     turnTalon.setControl(
         switch (constants.SteerMotorClosedLoopOutput) {
@@ -267,5 +281,15 @@ public class ModuleIOTalonFX implements ModuleIO {
           case TorqueCurrentFOC ->
               positionTorqueCurrentRequest.withPosition(rotation.getRotations());
         });
+  }
+
+  @Override
+  public void setBrakeMode() {
+    driveTalon.setNeutralMode(NeutralModeValue.Brake);
+  }
+
+  @Override
+  public void setCoastMode() {
+    driveTalon.setNeutralMode(NeutralModeValue.Coast);
   }
 }

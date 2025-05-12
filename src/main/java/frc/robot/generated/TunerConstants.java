@@ -32,7 +32,7 @@ public class TunerConstants {
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
   private static final Slot0Configs driveGains =
-      new Slot0Configs().withKP(0.75).withKI(0).withKD(0).withKS(0.15238).withKV(0.77902);
+      new Slot0Configs().withKP(0.75).withKI(0).withKD(0).withKS(0.14364).withKV(0.78001);
 
   // The closed-loop output type to use for the steer motors;
   // This affects the PID/FF gains for  steer motors
@@ -66,7 +66,7 @@ public class TunerConstants {
                   // Swerve azimuth does not require much torque output, so we can set a relatively
                   // low
                   // stator current limit to help avoid brownouts without impacting performance.
-                  .withStatorCurrentLimit(Amps.of(80))
+                  .withStatorCurrentLimit(Amps.of(60))
                   .withStatorCurrentLimitEnable(true));
   private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
   // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
@@ -74,7 +74,7 @@ public class TunerConstants {
 
   // CAN bus that the devices are located on;
   // All swerve devices must share the same CAN bus
-  public static final CANBus kCANBus = new CANBus("", "./logs/example.hoot");
+  public static final CANBus kCANBus = new CANBus("*", "./logs/example.hoot");
 
   // Theoretical free speed (m/s) at 12 V applied output;
   // This needs to be tuned to your individual robot
@@ -86,7 +86,7 @@ public class TunerConstants {
 
   private static final double kDriveGearRatio = 6.746031746031747;
   private static final double kSteerGearRatio = 12.8;
-  private static final Distance kWheelRadius = Inches.of(1.932);
+  private static final Distance kWheelRadius = Inches.of(1.814);
 
   private static final boolean kInvertLeftSide = false;
   private static final boolean kInvertRightSide = true;

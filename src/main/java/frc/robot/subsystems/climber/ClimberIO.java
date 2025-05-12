@@ -11,36 +11,33 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.climber;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface IntakeIO {
+/** the. */
+public interface ClimberIO {
+
+  /** the. */
   @AutoLog
-  public static class IntakeIOInputs {
+  public static class ClimberIOInputs {
 
     // Fields representing the intake state and inputs
-    public boolean coralIn = false;
-    public boolean coralSet = false;
-    public double middleSTDdevs = 0.0;
-    public double middleDistance = 0.0;
-    public boolean middleIsDetected = false;
-    public double side1STDdevs = 0.0;
-    public double side1Distance = 0.0;
-    public boolean side1IsDetected = false;
-    public double side2STDdevs = 0.0;
-    public double side2Distance = 0.0;
-    public boolean side2IsDetected = false;
+    public double climberAppliedVolts = 0.0;
+    public double climberCurrentAmps = 0.0;
+    public double climberRPM = 0.0;
+    public double climberPosition = 0.0;
   }
 
   /** Updates the set of loggable inputs. */
-  public default void updateInputs(IntakeIOInputs inputs) {}
+  public default void updateInputs(ClimberIOInputs inputs) {}
 
-  /** Stop intake`from running */
+  /** Stop intake`from running. */
   default void stop() {}
 
   /** Enable or disable brake mode on the intake motor. */
   default void setBrakeMode(boolean enable) {}
 
+  /** the. */
   default void setRPM(double rpm) {}
 }
