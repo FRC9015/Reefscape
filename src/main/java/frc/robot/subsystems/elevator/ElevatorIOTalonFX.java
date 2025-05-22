@@ -92,7 +92,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     // Configure the encoder
     CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
     encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-    // encoderConfig.MagnetSensor.MagnetOffset = MotorIDConstants.ELEVATOR_MAGNET_OFFSET;
+    encoderConfig.MagnetSensor.MagnetOffset = ElevatorConstants.ELEVATOR_MAGNET_OFFSET;
     elevatorEncoder.getConfigurator().apply(encoderConfig);
 
     // Signals

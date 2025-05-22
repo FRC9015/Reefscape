@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer; // <-- Add this at the top
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
@@ -13,13 +14,15 @@ import org.littletonrobotics.junction.Logger;
 
 public class AutoDrive extends Command {
 
-  private PIDController rotationController = new PIDController(4, 0, 0.02); // 4 0.02
-  private PIDController yController = new PIDController(2.5, 0.0, 0.03); // 4 0.04
-  private PIDController xController = new PIDController(2.5, 0.0, 0.03); // 2.5 0.04
+  private PIDController rotationController = new PIDController(4, 0, 0.02);
+  private PIDController yController = new PIDController(2.5, 0.0, 0.03);
+  private PIDController xController = new PIDController(2.5, 0.0, 0.03);
   private Supplier<Pose2d> targetPose;
   private Pose2d flippedPose, targetPose2d;
   private Drive drive;
   private Supplier<DriverStation.Alliance> allaince;
+
+  private final Timer timer = new Timer(); // <-- Add this
 
   public AutoDrive(
       Supplier<Pose2d> desiredPose, Drive drive, Supplier<DriverStation.Alliance> alliance) {
@@ -38,6 +41,9 @@ public class AutoDrive extends Command {
     yController.setTolerance(Units.inchesToMeters(0.4));
     xController.setTolerance(Units.inchesToMeters(0.4));
     Logger.recordOutput("AutoDrive/alliance?", allaince.get());
+
+    timer.reset(); // <-- Start of timer setup
+    timer.start(); // <--
   }
 
   @Override
@@ -66,8 +72,13 @@ public class AutoDrive extends Command {
   }
 
   @Override
-  public boolean isFinished() {
+  public void end(boolean interrupted) {
+    timer.stop(); // <-- Clean up the timer
+  }
 
-    return rotationController.atSetpoint() && yController.atSetpoint() && xController.atSetpoint();
+  @Override
+  public boolean isFinished() {
+    return (rotationController.atSetpoint() && yController.atSetpoint() && xController.atSetpoint())
+        || timer.hasElapsed(3.5); // <-- 3.5-second timeout
   }
 }
