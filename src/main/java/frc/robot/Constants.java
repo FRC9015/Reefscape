@@ -153,7 +153,7 @@ public final class Constants {
   }
 
   public static class ElevatorConstants {
-    public static final double ELEVATOR_MAGNET_OFFSET = 0.09;
+    public static final double ELEVATOR_MAGNET_OFFSET = -0.13;
     public static final MotionMagicConfigs MOTION_MAGIC_CONFIGS =
         new MotionMagicConfigs().withMotionMagicAcceleration(150).withMotionMagicCruiseVelocity(50);
     public static final Slot0Configs SLOT0_CONFIGS =
