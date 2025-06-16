@@ -115,7 +115,7 @@ public class RobotContainer {
         photon =
             new Vision(
                 drive::addVisionMeasurement,
-                // new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
+                new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
                 new VisionIOPhotonVision("Bow", CameraConstants.bowPose),
                 new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
         endEffector =
@@ -350,6 +350,7 @@ public class RobotContainer {
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
     operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
     operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
+    operatorController.b().onTrue(climb.extendCommand2());
 
     // operatorController
     // .leftBumper()
