@@ -227,7 +227,7 @@ public class RobotContainer {
     alliance.addOption("Red", DriverStation.Alliance.Red);
     alliance.addOption("Blue", DriverStation.Alliance.Blue);
 
-    
+
     //Dropdown code for AutoAlign to Barge Positions
     bargePos = new LoggedDashboardChooser<>("Barge Position", bargePosChooser);
     bargePos.addOption(
@@ -362,6 +362,12 @@ public class RobotContainer {
                 () -> -driverController.getLeftY() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
+    driverController
+        .povLeft()
+            .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () -> alliance.get()));
+    driverController
+        .povRight()
+            .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceR, drive, () -> alliance.get()));
 
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
