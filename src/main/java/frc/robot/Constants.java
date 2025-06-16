@@ -103,6 +103,9 @@ public final class Constants {
     public static final Pose2d SourceL =
         new Pose2d(
             new Translation2d(1.403, 6.991), new Rotation2d(Radians.convertFrom(-55, Degrees)));
+    public static final Pose2d SourceR =
+            new Pose2d(
+                new Translation2d(1.403, 0.991), new Rotation2d(Radians.convertFrom(55, Degrees)));
     // Reef poses/locations
     public static final Pose2d REEF_AR =
         new Pose2d(new Translation2d(3.126, 3.82), new Rotation2d());
@@ -133,6 +136,16 @@ public final class Constants {
         new Pose2d(new Translation2d(3.977, 2.820), new Rotation2d(Math.PI / 3));
     public static final Pose2d REEF_FL =
         new Pose2d(new Translation2d(3.679, 2.969), new Rotation2d(Math.PI / 3));
+
+    //Tune these poses
+    public static final Pose2d RedBargeLeft =
+        new Pose2d(new Translation2d(7.648, 3.024), new Rotation2d(Math.PI));
+
+    public static final Pose2d RedBargeMiddle =
+        new Pose2d(new Translation2d(7.648, 1.993), new Rotation2d(Math.PI));
+
+    public static final Pose2d RedBargeRight =
+        new Pose2d(new Translation2d(7.648, 0.758), new Rotation2d(Math.PI));
   }
 
   public static class AutoConstants {

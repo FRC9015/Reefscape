@@ -96,9 +96,10 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-
+  private final LoggedDashboardChooser<Command> bargePos;
   private final LoggedDashboardChooser<DriverStation.Alliance> alliance;
   private final SendableChooser<DriverStation.Alliance> allianceChooser;
+  private final SendableChooser<Command> bargePosChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -217,6 +218,7 @@ public class RobotContainer {
         break;
     }
     allianceChooser = new SendableChooser<DriverStation.Alliance>();
+    bargePosChooser = new SendableChooser<Command>();
     // allianceChooser.setDefaultOption("Blue", DriverStation.Alliance.Blue);
 
     // allianceChooser.addOption("Red", DriverStation.Alliance.Red);
@@ -225,6 +227,21 @@ public class RobotContainer {
     alliance.addOption("Red", DriverStation.Alliance.Red);
     alliance.addOption("Blue", DriverStation.Alliance.Blue);
 
+    
+    //Dropdown code for AutoAlign to Barge Positions
+    bargePos = new LoggedDashboardChooser<>("Barge Position", bargePosChooser);
+    bargePos.addOption(
+        "Barge Left",
+        new AutoDrive(
+            () -> Constants.FieldConstants.RedBargeLeft, drive, () -> alliance.get()));
+    bargePos.addOption(
+        "Barge Middle",
+        new AutoDrive(
+            () -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
+    bargePos.addOption(
+                "Barge Right",
+                new AutoDrive(
+                    () -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
         "IntakeCoral",
