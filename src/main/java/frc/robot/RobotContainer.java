@@ -227,21 +227,17 @@ public class RobotContainer {
     alliance.addOption("Red", DriverStation.Alliance.Red);
     alliance.addOption("Blue", DriverStation.Alliance.Blue);
 
-
-    //Dropdown code for AutoAlign to Barge Positions
+    // Dropdown code for AutoAlign to Barge Positions
     bargePos = new LoggedDashboardChooser<>("Barge Position", bargePosChooser);
     bargePos.addOption(
         "Barge Left",
-        new AutoDrive(
-            () -> Constants.FieldConstants.RedBargeLeft, drive, () -> alliance.get()));
+        new AutoDrive(() -> Constants.FieldConstants.RedBargeLeft, drive, () -> alliance.get()));
     bargePos.addOption(
         "Barge Middle",
-        new AutoDrive(
-            () -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
+        new AutoDrive(() -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
     bargePos.addOption(
-                "Barge Right",
-                new AutoDrive(
-                    () -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
+        "Barge Right",
+        new AutoDrive(() -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
         "IntakeCoral",
@@ -364,10 +360,10 @@ public class RobotContainer {
                 () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
     driverController
         .povLeft()
-            .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () -> alliance.get()));
     driverController
         .povRight()
-            .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceR, drive, () -> alliance.get()));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceR, drive, () -> alliance.get()));
 
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
@@ -512,18 +508,16 @@ public class RobotContainer {
             led.setColor(Color.BLUE)
                 .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Left", true))))
         .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Left", false)));
-    canRangeMiddle
-        .and(() -> !intake.canRangeLeftDetected())
-        .and(() -> !intake.canRangeRightDetected())
-        .whileTrue(
-            led.setColor(Color.MAGENTA)
-                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", true))))
-        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", false)));
     canRangeRight
         .whileTrue(
             led.setColor(Color.YELLOW)
                 .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Right", true))))
         .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Right", false)));
+    canRangeMiddle
+        .whileTrue(
+            led.setColor(Color.MAGENTA)
+                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", true))))
+        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", false)));
   }
 
   public Command getAutonomousCommand() {
