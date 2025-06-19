@@ -31,7 +31,8 @@ public class Led extends SubsystemBase {
 
   /** Constructor to initialize and configure the CANdle LED controller. */
   public Led(int candleID) {
-    candle = new CANdle(candleID);
+    candle = new CANdle(candleID, "rio");
+
     CANdleConfiguration candleConfiguration = new CANdleConfiguration();
     candleConfiguration.statusLedOffWhenActive = true;
     candleConfiguration.disableWhenLOS = false;

@@ -59,15 +59,23 @@ public class IntakeIOTalonFX implements IntakeIO {
     sideRange1 = new CANrange(canRangeID2);
     sideRange2 = new CANrange(canRangeID3);
 
-    CANrangeConfiguration rangeConfig = new CANrangeConfiguration();
-    rangeConfig.FovParams.FOVRangeX = 6.75;
-    rangeConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 2000;
-    rangeConfig.ProximityParams.ProximityThreshold = 0.7;
-    rangeConfig.ToFParams.UpdateMode = UpdateModeValue.LongRangeUserFreq;
-    rangeConfig.ToFParams.UpdateFrequency = 50.0;
-    middleRange.getConfigurator().apply(rangeConfig);
-    sideRange1.getConfigurator().apply(rangeConfig);
-    sideRange2.getConfigurator().apply(rangeConfig);
+    CANrangeConfiguration sideConfig = new CANrangeConfiguration();
+    CANrangeConfiguration middleConfig = new CANrangeConfiguration();
+
+    middleConfig.FovParams.FOVRangeX = 6.75;
+    middleConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 2000;
+    middleConfig.ProximityParams.ProximityThreshold = 0.7;
+    middleConfig.ToFParams.UpdateMode = UpdateModeValue.LongRangeUserFreq;
+    middleConfig.ToFParams.UpdateFrequency = 50.0;
+
+    sideConfig.FovParams.FOVRangeX = 15;
+    sideConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 2000;
+    sideConfig.ProximityParams.ProximityThreshold = 0.7;
+    sideConfig.ToFParams.UpdateMode = UpdateModeValue.LongRangeUserFreq;
+    sideConfig.ToFParams.UpdateFrequency = 50.0;
+    middleRange.getConfigurator().apply(middleConfig);
+    sideRange1.getConfigurator().apply(sideConfig);
+    sideRange2.getConfigurator().apply(sideConfig);
 
     rangeDistanceMiddle = middleRange.getDistance();
     rangeSTDdevsMiddle = middleRange.getDistanceStdDev();

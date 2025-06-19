@@ -96,9 +96,10 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-
+  private final LoggedDashboardChooser<Command> bargePos;
   private final LoggedDashboardChooser<DriverStation.Alliance> alliance;
   private final SendableChooser<DriverStation.Alliance> allianceChooser;
+  private final SendableChooser<Command> bargePosChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -115,7 +116,7 @@ public class RobotContainer {
         photon =
             new Vision(
                 drive::addVisionMeasurement,
-                // new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
+                new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
                 new VisionIOPhotonVision("Bow", CameraConstants.bowPose),
                 new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
         endEffector =
@@ -217,6 +218,7 @@ public class RobotContainer {
         break;
     }
     allianceChooser = new SendableChooser<DriverStation.Alliance>();
+    bargePosChooser = new SendableChooser<Command>();
     // allianceChooser.setDefaultOption("Blue", DriverStation.Alliance.Blue);
 
     // allianceChooser.addOption("Red", DriverStation.Alliance.Red);
@@ -225,6 +227,17 @@ public class RobotContainer {
     alliance.addOption("Red", DriverStation.Alliance.Red);
     alliance.addOption("Blue", DriverStation.Alliance.Blue);
 
+    // Dropdown code for AutoAlign to Barge Positions
+    bargePos = new LoggedDashboardChooser<>("Barge Position", bargePosChooser);
+    bargePos.addOption(
+        "Barge Left",
+        new AutoDrive(() -> Constants.FieldConstants.RedBargeLeft, drive, () -> alliance.get()));
+    bargePos.addOption(
+        "Barge Middle",
+        new AutoDrive(() -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
+    bargePos.addOption(
+        "Barge Right",
+        new AutoDrive(() -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
         "IntakeCoral",
@@ -345,11 +358,18 @@ public class RobotContainer {
                 () -> -driverController.getLeftY() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
+    driverController
+        .povLeft()
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () -> alliance.get()));
+    driverController
+        .povRight()
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceR, drive, () -> alliance.get()));
 
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
     operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
     operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
+    operatorController.b().onTrue(climb.extendCommand2());
 
     // operatorController
     // .leftBumper()
@@ -488,18 +508,16 @@ public class RobotContainer {
             led.setColor(Color.BLUE)
                 .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Left", true))))
         .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Left", false)));
-    canRangeMiddle
-        .and(() -> !intake.canRangeLeftDetected())
-        .and(() -> !intake.canRangeRightDetected())
-        .whileTrue(
-            led.setColor(Color.MAGENTA)
-                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", true))))
-        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", false)));
     canRangeRight
         .whileTrue(
             led.setColor(Color.YELLOW)
                 .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Right", true))))
         .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Right", false)));
+    canRangeMiddle
+        .whileTrue(
+            led.setColor(Color.MAGENTA)
+                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", true))))
+        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", false)));
   }
 
   public Command getAutonomousCommand() {

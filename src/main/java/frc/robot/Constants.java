@@ -73,14 +73,14 @@ public final class Constants {
     public static final Transform3d starboardPose =
         new Transform3d(
             new Translation3d(
-                Units.inchesToMeters(0), -Units.inchesToMeters(13.5), Units.inchesToMeters(7)),
-            new Rotation3d(0, -Units.degreesToRadians(15), Units.degreesToRadians(270)));
+                Units.inchesToMeters(13.5), Units.inchesToMeters(6.5), Units.inchesToMeters(7)),
+            new Rotation3d(0, -Units.degreesToRadians(15), Units.degreesToRadians(0)));
 
     public static final Transform3d sternPose =
         new Transform3d(
             new Translation3d(
-                -Units.inchesToMeters(13.5), Units.inchesToMeters(6.5), Units.inchesToMeters(7)),
-            new Rotation3d(0, -Units.degreesToRadians(15), Units.degreesToRadians(180)));
+                Units.inchesToMeters(13.5), Units.inchesToMeters(-6.5), Units.inchesToMeters(7)),
+            new Rotation3d(0, -Units.degreesToRadians(15), Units.degreesToRadians(0)));
 
     // Unsure if truly needed
     //    public static final Transform3d topPose =
@@ -103,9 +103,12 @@ public final class Constants {
     public static final Pose2d SourceL =
         new Pose2d(
             new Translation2d(1.403, 6.991), new Rotation2d(Radians.convertFrom(-55, Degrees)));
+    public static final Pose2d SourceR =
+            new Pose2d(
+                new Translation2d(1.403, 0.991), new Rotation2d(Radians.convertFrom(55, Degrees)));
     // Reef poses/locations
     public static final Pose2d REEF_AR =
-        new Pose2d(new Translation2d(3.126, 3.872), new Rotation2d());
+        new Pose2d(new Translation2d(3.126, 3.82), new Rotation2d());
     public static final Pose2d REEF_AL =
         new Pose2d(new Translation2d(3.126, 4.193), new Rotation2d());
 
@@ -120,19 +123,29 @@ public final class Constants {
         new Pose2d(new Translation2d(5.290, 5.103), new Rotation2d(4 * Math.PI / 3));
 
     public static final Pose2d REEF_DR =
-        new Pose2d(new Translation2d(5.835, 4.2), new Rotation2d(Math.PI));
+        new Pose2d(new Translation2d(5.82, 4.2), new Rotation2d(Math.PI));
     public static final Pose2d REEF_DL =
-        new Pose2d(new Translation2d(5.835, 3.872), new Rotation2d(Math.PI));
+        new Pose2d(new Translation2d(5.82, 3.872), new Rotation2d(Math.PI));
 
     public static final Pose2d REEF_ER =
-        new Pose2d(new Translation2d(5.268, 2.984), new Rotation2d(2 * Math.PI / 3));
+        new Pose2d(new Translation2d(5.299, 2.921), new Rotation2d(2 * Math.PI / 3));
     public static final Pose2d REEF_EL =
-        new Pose2d(new Translation2d(4.992, 2.812), new Rotation2d(2 * Math.PI / 3));
+        new Pose2d(new Translation2d(5.017, 2.728), new Rotation2d(2 * Math.PI / 3));
 
     public static final Pose2d REEF_FR =
         new Pose2d(new Translation2d(3.977, 2.820), new Rotation2d(Math.PI / 3));
     public static final Pose2d REEF_FL =
         new Pose2d(new Translation2d(3.679, 2.969), new Rotation2d(Math.PI / 3));
+
+    //Tune these poses
+    public static final Pose2d RedBargeLeft =
+        new Pose2d(new Translation2d(7.648, 3.024), new Rotation2d(Math.PI));
+
+    public static final Pose2d RedBargeMiddle =
+        new Pose2d(new Translation2d(7.648, 1.993), new Rotation2d(Math.PI));
+
+    public static final Pose2d RedBargeRight =
+        new Pose2d(new Translation2d(7.648, 0.758), new Rotation2d(Math.PI));
   }
 
   public static class AutoConstants {
