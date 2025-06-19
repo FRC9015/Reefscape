@@ -35,6 +35,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.algae.pivot.Pivot;
 import frc.robot.subsystems.algae.pivot.PivotIOTalonFX;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -134,7 +135,7 @@ public class RobotContainer {
         canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
-        climb = new Climber(7);
+        climb = new Climber(7, new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID1));
         // climb =
         //     new Climber(
         //         new ClimberIOTalonFX(
@@ -172,7 +173,7 @@ public class RobotContainer {
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-        climb = new Climber(7);
+        climb = new Climber(7, new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID1));
 
         //  elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
@@ -208,7 +209,7 @@ public class RobotContainer {
         canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
-        climb = new Climber(7);
+        climb = new Climber(7, new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID1));
 
         //  climb = new Climber(new ClimberIO() {});
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
