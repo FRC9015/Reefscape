@@ -8,18 +8,20 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Climber extends SubsystemBase {
   public final PneumaticHub revPH;
   public final Solenoid solenoid1, solenoid2, solenoid3;
+  public final ClimberIO io;
 
-  public Climber(int portID) {
+  public Climber(int portID, ClimberIO io) {
     this.revPH = new PneumaticHub(portID);
     this.solenoid1 = revPH.makeSolenoid(1);
     this.solenoid2 = revPH.makeSolenoid(4);
     this.solenoid3 = revPH.makeSolenoid(0);
-
+    this.io = io;
     this.setDefaultCommand(defaultCommand());
   }
 
   public void extend1() {
     this.solenoid1.set(true);
+    this.io.setRPM(6);
   }
 
   public void retract1() {

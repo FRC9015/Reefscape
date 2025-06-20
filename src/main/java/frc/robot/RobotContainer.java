@@ -35,6 +35,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.algae.pivot.Pivot;
 import frc.robot.subsystems.algae.pivot.PivotIOTalonFX;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -93,6 +94,7 @@ public class RobotContainer {
   private final Trigger canRangeLeft;
   private final Trigger canRangeMiddle;
   private final Trigger canRangeRight;
+  private final Trigger inPosition;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -134,7 +136,8 @@ public class RobotContainer {
         canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
-        climb = new Climber(7);
+        inPosition = new Trigger(() -> intake.inPosition());
+        climb = new Climber(7, new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID1));
         // climb =
         //     new Climber(
         //         new ClimberIOTalonFX(
@@ -171,8 +174,9 @@ public class RobotContainer {
         canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
+        inPosition = new Trigger(() -> intake.inPosition());
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-        climb = new Climber(7);
+        climb = new Climber(7, new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID1));
 
         //  elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
@@ -208,7 +212,8 @@ public class RobotContainer {
         canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
-        climb = new Climber(7);
+        inPosition = new Trigger(() -> intake.inPosition());
+        climb = new Climber(7, new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID1));
 
         //  climb = new Climber(new ClimberIO() {});
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
@@ -487,7 +492,7 @@ public class RobotContainer {
         .onTrue(
             elevator
                 .executePreset(ElevatorState.CoralL4)
-                .withTimeout(0.75)
+                .withTimeout(0.85)
                 .andThen(endEffector.runEffectorAutoCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
                 .unless(() -> intake.isCoralIn()));
@@ -514,10 +519,13 @@ public class RobotContainer {
                 .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Right", true))))
         .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Right", false)));
     canRangeMiddle
+        .whileTrue((new InstantCommand(() -> SmartDashboard.putBoolean("Middle", true))))
+        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", false)));
+    inPosition
         .whileTrue(
             led.setColor(Color.MAGENTA)
-                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", true))))
-        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", false)));
+                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Locked", true))))
+        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Locked", false)));
   }
 
   public Command getAutonomousCommand() {
