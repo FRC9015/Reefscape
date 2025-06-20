@@ -94,6 +94,7 @@ public class RobotContainer {
   private final Trigger canRangeLeft;
   private final Trigger canRangeMiddle;
   private final Trigger canRangeRight;
+  private final Trigger inPosition;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -135,6 +136,7 @@ public class RobotContainer {
         canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
+        inPosition = new Trigger(() -> intake.inPosition());
         climb = new Climber(7, new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID1));
         // climb =
         //     new Climber(
@@ -172,6 +174,7 @@ public class RobotContainer {
         canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
+        inPosition = new Trigger(() -> intake.inPosition());
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         climb = new Climber(7, new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID1));
 
@@ -209,6 +212,7 @@ public class RobotContainer {
         canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
+        inPosition = new Trigger(() -> intake.inPosition());
         climb = new Climber(7, new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID1));
 
         //  climb = new Climber(new ClimberIO() {});
@@ -488,7 +492,7 @@ public class RobotContainer {
         .onTrue(
             elevator
                 .executePreset(ElevatorState.CoralL4)
-                .withTimeout(0.75)
+                .withTimeout(0.85)
                 .andThen(endEffector.runEffectorAutoCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
                 .unless(() -> intake.isCoralIn()));
@@ -515,10 +519,13 @@ public class RobotContainer {
                 .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Right", true))))
         .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Right", false)));
     canRangeMiddle
+        .whileTrue((new InstantCommand(() -> SmartDashboard.putBoolean("Middle", true))))
+        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", false)));
+    inPosition
         .whileTrue(
             led.setColor(Color.MAGENTA)
-                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", true))))
-        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Middle", false)));
+                .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Locked", true))))
+        .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Locked", false)));
   }
 
   public Command getAutonomousCommand() {

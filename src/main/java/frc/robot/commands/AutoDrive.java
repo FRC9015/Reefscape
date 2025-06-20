@@ -48,7 +48,7 @@ public class AutoDrive extends Command {
 
   @Override
   public void execute() {
-    Pose2d currentPose = drive.getPose();
+    Pose2d currentPose = drive.getPredictedPose();
 
     double rotationalVelocity =
         rotationController.calculate(
@@ -79,6 +79,6 @@ public class AutoDrive extends Command {
   @Override
   public boolean isFinished() {
     return (rotationController.atSetpoint() && yController.atSetpoint() && xController.atSetpoint())
-        || timer.hasElapsed(3.5); // <-- 3.5-second timeout
+        || timer.hasElapsed(2); // <-- second timeout
   }
 }

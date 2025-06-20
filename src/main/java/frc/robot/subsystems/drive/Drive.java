@@ -401,6 +401,11 @@ public class Drive extends SubsystemBase {
     return poseEstimator.getEstimatedPosition();
   }
 
+  @AutoLogOutput
+  public Pose2d getPredictedPose() {
+    return this.getPose().exp(this.getChassisSpeeds().toTwist2d(0.02));
+  }
+
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();

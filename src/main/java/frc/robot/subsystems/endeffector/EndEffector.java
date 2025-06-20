@@ -143,7 +143,7 @@ public class EndEffector extends SubsystemBase {
   }
 
   private void autoEffectorVoltage() {
-    io.setRPM(-6);
+    io.setRPM(-4);
   }
 
   private void autoEffectorVoltageL1() {

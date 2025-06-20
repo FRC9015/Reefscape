@@ -94,6 +94,10 @@ public class Intake extends SubsystemBase {
     return inputs.side2IsDetected;
   }
 
+  public boolean inPosition() {
+    return (!inputs.side1IsDetected && inputs.middleIsDetected && !inputs.side2IsDetected);
+  }
+
   /**
    * Returns the current RPM of the intake.
    *
