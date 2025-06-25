@@ -532,6 +532,10 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
+  public Command getBargePositionCommand() {
+    return bargePos.get();
+  }
+
   public void onDisabled() {
     drive.setModulesCoast();
   }
