@@ -126,23 +126,6 @@ public class Elevator extends SubsystemBase {
     return run(() -> this.setPreset(supplier.get()));
   }
 
-  // public Command runBufferedPreset() {
-  //   Logger.recordOutput("Elevator/BufferedState", bufferedState.getEncoderPosition());
-  //   if (bufferedState.getEncoderPosition() == ElevatorState.CoralL1.getEncoderPosition()) {
-  //     return executePreset(ElevatorState.CoralL1);
-  //   } else if (bufferedState.getEncoderPosition() == ElevatorState.CoralL2.getEncoderPosition())
-  // {
-  //     return executePreset(ElevatorState.CoralL2);
-  //   } else if (bufferedState.getEncoderPosition() == ElevatorState.CoralL3.getEncoderPosition())
-  // {
-  //     return executePreset(ElevatorState.CoralL3);
-  //   } else if (bufferedState.getEncoderPosition() == ElevatorState.CoralL4.getEncoderPosition())
-  // {
-  //     return executePreset(ElevatorState.CoralL4);
-  //   }
-  //   return executePreset(ElevatorState.Default);
-  // }
-
   public void setBrakeMode() {
     io.setBrakeMode();
   }

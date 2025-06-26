@@ -255,28 +255,13 @@ public class RobotContainer {
     bargePos = new LoggedDashboardChooser<>("Barge Position", bargePosChooser);
     bargePos.addOption(
         "Barge Left",
-        new AutoDrive(
-            () -> Constants.FieldConstants.RedBargeLeft,
-            drive,
-            () -> alliance.get(),
-            elevator,
-            endEffector));
+        new AutoDrive(() -> Constants.FieldConstants.RedBargeLeft, drive, () -> alliance.get()));
     bargePos.addOption(
         "Barge Middle",
-        new AutoDrive(
-            () -> Constants.FieldConstants.RedBargeMiddle,
-            drive,
-            () -> alliance.get(),
-            elevator,
-            endEffector));
+        new AutoDrive(() -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
     bargePos.addOption(
         "Barge Right",
-        new AutoDrive(
-            () -> Constants.FieldConstants.RedBargeMiddle,
-            drive,
-            () -> alliance.get(),
-            elevator,
-            endEffector));
+        new AutoDrive(() -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
         "IntakeCoral",
@@ -308,37 +293,13 @@ public class RobotContainer {
         "L4PositionL2",
         elevator.executePreset(ElevatorState.CoralL4).withTimeout(0.7).unless(coralFound));
     NamedCommands.registerCommand(
-        "AL",
-        new AutoDrive(
-            () -> Constants.FieldConstants.REEF_AL,
-            drive,
-            () -> alliance.get(),
-            elevator,
-            endEffector));
+        "AL", new AutoDrive(() -> Constants.FieldConstants.REEF_AL, drive, () -> alliance.get()));
     NamedCommands.registerCommand(
-        "CR",
-        new AutoDrive(
-            () -> Constants.FieldConstants.REEF_CR,
-            drive,
-            () -> alliance.get(),
-            elevator,
-            endEffector));
+        "CR", new AutoDrive(() -> Constants.FieldConstants.REEF_CR, drive, () -> alliance.get()));
     NamedCommands.registerCommand(
-        "BR",
-        new AutoDrive(
-            () -> Constants.FieldConstants.REEF_BR,
-            drive,
-            () -> alliance.get(),
-            elevator,
-            endEffector));
+        "BR", new AutoDrive(() -> Constants.FieldConstants.REEF_BR, drive, () -> alliance.get()));
     NamedCommands.registerCommand(
-        "BL",
-        new AutoDrive(
-            () -> Constants.FieldConstants.REEF_BL,
-            drive,
-            () -> alliance.get(),
-            elevator,
-            endEffector));
+        "BL", new AutoDrive(() -> Constants.FieldConstants.REEF_BL, drive, () -> alliance.get()));
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -420,22 +381,10 @@ public class RobotContainer {
                 () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
     driverController
         .povLeft()
-        .onTrue(
-            new AutoDrive(
-                () -> Constants.FieldConstants.SourceL,
-                drive,
-                () -> alliance.get(),
-                elevator,
-                endEffector));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () -> alliance.get()));
     driverController
         .povRight()
-        .onTrue(
-            new AutoDrive(
-                () -> Constants.FieldConstants.SourceR,
-                drive,
-                () -> alliance.get(),
-                elevator,
-                endEffector));
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceR, drive, () -> alliance.get()));
 
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
@@ -453,110 +402,63 @@ public class RobotContainer {
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
         .onTrue(
-            new AutoDrive(
-                () -> Constants.FieldConstants.REEF_AL,
-                drive,
-                () -> alliance.get(),
-                elevator,
-                endEffector));
+            new AutoDrive(() -> Constants.FieldConstants.REEF_AL, drive, () -> alliance.get())
+                .alongWith(autoElevatorCommand(() -> selectedElevatorState)));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
         .onTrue(
-            new AutoDrive(
-                () -> Constants.FieldConstants.REEF_BL,
-                drive,
-                () -> alliance.get(),
-                elevator,
-                endEffector));
+            new AutoDrive(() -> Constants.FieldConstants.REEF_BL, drive, () -> alliance.get())
+                .alongWith(autoElevatorCommand(() -> selectedElevatorState)));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
         .onTrue(
-            new AutoDrive(
-                () -> Constants.FieldConstants.REEF_CL,
-                drive,
-                () -> alliance.get(),
-                elevator,
-                endEffector));
+            new AutoDrive(() -> Constants.FieldConstants.REEF_CL, drive, () -> alliance.get())
+                .alongWith(autoElevatorCommand(() -> selectedElevatorState)));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
         .onTrue(
-            new AutoDrive(
-                () -> Constants.FieldConstants.REEF_DL,
-                drive,
-                () -> alliance.get(),
-                elevator,
-                endEffector));
+            new AutoDrive(() -> Constants.FieldConstants.REEF_DL, drive, () -> alliance.get())
+                .alongWith(autoElevatorCommand(() -> selectedElevatorState)));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
         .onTrue(
-            new AutoDrive(
-                () -> Constants.FieldConstants.REEF_EL,
-                drive,
-                () -> alliance.get(),
-                elevator,
-                endEffector));
+            new AutoDrive(() -> Constants.FieldConstants.REEF_EL, drive, () -> alliance.get())
+                .alongWith(autoElevatorCommand(() -> selectedElevatorState)));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
         .onTrue(
-            new AutoDrive(
-                () -> Constants.FieldConstants.REEF_FL,
-                drive,
-                () -> alliance.get(),
-                elevator,
-                endEffector));
+            new AutoDrive(() -> Constants.FieldConstants.REEF_FL, drive, () -> alliance.get())
+                .alongWith(autoElevatorCommand(() -> selectedElevatorState)));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
         .onTrue(
-            new AutoDrive(
-                () -> Constants.FieldConstants.REEF_AR,
-                drive,
-                () -> alliance.get(),
-                elevator,
-                endEffector));
+            new AutoDrive(() -> Constants.FieldConstants.REEF_AR, drive, () -> alliance.get())
+                .alongWith(autoElevatorCommand(() -> selectedElevatorState)));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
         .onTrue(
-            new AutoDrive(
-                () -> Constants.FieldConstants.REEF_BR,
-                drive,
-                () -> alliance.get(),
-                elevator,
-                endEffector));
+            new AutoDrive(() -> Constants.FieldConstants.REEF_BR, drive, () -> alliance.get())
+                .alongWith(autoElevatorCommand(() -> selectedElevatorState)));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
         .onTrue(
-            new AutoDrive(
-                    () -> Constants.FieldConstants.REEF_CR,
-                    drive,
-                    () -> alliance.get())
+            new AutoDrive(() -> Constants.FieldConstants.REEF_CR, drive, () -> alliance.get())
                 .alongWith(autoElevatorCommand(() -> selectedElevatorState)));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
         .onTrue(
-            new AutoDrive(
-                () -> Constants.FieldConstants.REEF_DR,
-                drive,
-                () -> alliance.get(),
-                elevator,
-                endEffector));
+            new AutoDrive(() -> Constants.FieldConstants.REEF_DR, drive, () -> alliance.get())
+                .alongWith(autoElevatorCommand(() -> selectedElevatorState)));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
         .onTrue(
-            new AutoDrive(
-                () -> Constants.FieldConstants.REEF_ER,
-                drive,
-                () -> alliance.get(),
-                elevator,
-                endEffector));
+            new AutoDrive(() -> Constants.FieldConstants.REEF_ER, drive, () -> alliance.get())
+                .alongWith(autoElevatorCommand(() -> selectedElevatorState)));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
         .onTrue(
-            new AutoDrive(
-                () -> Constants.FieldConstants.REEF_FR,
-                drive,
-                () -> alliance.get(),
-                elevator,
-                endEffector));
+            new AutoDrive(() -> Constants.FieldConstants.REEF_FR, drive, () -> alliance.get())
+                .alongWith(autoElevatorCommand(() -> selectedElevatorState)));
 
     // operatorButtonBox
     //     .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
