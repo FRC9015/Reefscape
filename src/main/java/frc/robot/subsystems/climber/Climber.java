@@ -7,34 +7,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
   public final PneumaticHub revPH;
-  public final Solenoid solenoid1, solenoid2, solenoid3;
+  public final Solenoid solenoid2, solenoid3;
   public final ClimberIO io;
 
   public Climber(int portID, ClimberIO io) {
     this.revPH = new PneumaticHub(portID);
-    this.solenoid1 = revPH.makeSolenoid(1);
     this.solenoid2 = revPH.makeSolenoid(4);
     this.solenoid3 = revPH.makeSolenoid(0);
     this.io = io;
     this.setDefaultCommand(defaultCommand());
-  }
-
-  public void extend1() {
-    this.solenoid1.set(true);
-    this.io.setRPM(6);
-  }
-
-  public void retract1() {
-    this.solenoid1.set(false);
-  }
-
-  // Create commands for unwinding and retracting
-  public Command extendCommand1() {
-    return run(this::extend1);
-  }
-
-  public Command retractCommand1() {
-    return run(this::retract1);
   }
 
   public void extend2() {
@@ -48,17 +29,23 @@ public class Climber extends SubsystemBase {
   }
 
   public void default1() {
-    this.solenoid1.set(false);
     this.solenoid2.set(true);
   }
 
-  public void goUp() {
-    retract2();
-    extend1();
+  public Command upGo() {
+    return runOnce(this::retract2);
   }
 
-  public Command upGo() {
-    return run(this::goUp);
+  public Command up() {
+    return this.startEnd(() -> io.setClimbRPM(10), () -> io.setClimbRPM(0));
+  }
+
+  public Command down() {
+    return this.startEnd(() -> io.setClimbRPM(-10), () -> io.setClimbRPM(0));
+  }
+
+  public Command topMotor() {
+    return this.startEnd(() -> io.setTopRPM(6), () -> io.setTopRPM(0));
   }
 
   // Create commands for unwinding and retracting

@@ -15,7 +15,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -32,8 +31,6 @@ import frc.robot.Constants.MotorIDConstants;
 import frc.robot.commands.AutoDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.algae.pivot.Pivot;
-import frc.robot.subsystems.algae.pivot.PivotIOTalonFX;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
@@ -57,6 +54,8 @@ import frc.robot.subsystems.photon.Vision;
 import frc.robot.subsystems.photon.VisionIOPhotonVision;
 import frc.robot.subsystems.photon.VisionIOPhotonVisionSim;
 import java.awt.Color;
+import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -71,13 +70,11 @@ public class RobotContainer {
   private final Intake intake;
   private final EndEffector endEffector;
   private final Elevator elevator;
-  private final Vision photon;
-  // private final VisionProcessor visionProcessor;
-  private final Climber climb;
-  private final Pivot pivot;
-  private final Led led;
 
-  double pos = 0.0; // REMOVE
+  private final Vision photon;
+  private final Climber climb;
+  //   private final Pivot pivot;
+  private final Led led;
 
   // Driver Controller
   //   private final UsbCamera elavatorCamera;
@@ -102,6 +99,9 @@ public class RobotContainer {
   private final LoggedDashboardChooser<DriverStation.Alliance> alliance;
   private final SendableChooser<DriverStation.Alliance> allianceChooser;
   private final SendableChooser<Command> bargePosChooser;
+
+  // Elevator state
+  private ElevatorState selectedElevatorState = ElevatorState.Default;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -137,12 +137,18 @@ public class RobotContainer {
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
-        climb = new Climber(7, new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID1));
+        climb =
+            new Climber(
+                7,
+                new ClimberIOTalonFX(
+                    MotorIDConstants.CLIMBER_TOP_MOTOR_ID,
+                    MotorIDConstants.CLIMBER_MOTOR_ID1,
+                    MotorIDConstants.CLIMBER_MOTOR_ID2));
         // climb =
         //     new Climber(
         //         new ClimberIOTalonFX(
         //             MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
-        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
+        // pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         //  elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
         break;
@@ -175,8 +181,14 @@ public class RobotContainer {
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
-        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-        climb = new Climber(7, new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID1));
+        // pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
+        climb =
+            new Climber(
+                7,
+                new ClimberIOTalonFX(
+                    MotorIDConstants.CLIMBER_TOP_MOTOR_ID,
+                    MotorIDConstants.CLIMBER_MOTOR_ID1,
+                    MotorIDConstants.CLIMBER_MOTOR_ID2));
 
         //  elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
@@ -213,10 +225,17 @@ public class RobotContainer {
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
-        climb = new Climber(7, new ClimberIOTalonFX(MotorIDConstants.CLIMBER_MOTOR_ID1));
+
+        climb =
+            new Climber(
+                7,
+                new ClimberIOTalonFX(
+                    MotorIDConstants.CLIMBER_TOP_MOTOR_ID,
+                    MotorIDConstants.CLIMBER_MOTOR_ID1,
+                    MotorIDConstants.CLIMBER_MOTOR_ID2));
 
         //  climb = new Climber(new ClimberIO() {});
-        pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
+        // pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
 
         //     elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
@@ -236,13 +255,28 @@ public class RobotContainer {
     bargePos = new LoggedDashboardChooser<>("Barge Position", bargePosChooser);
     bargePos.addOption(
         "Barge Left",
-        new AutoDrive(() -> Constants.FieldConstants.RedBargeLeft, drive, () -> alliance.get()));
+        new AutoDrive(
+            () -> Constants.FieldConstants.RedBargeLeft,
+            drive,
+            () -> alliance.get(),
+            elevator,
+            endEffector));
     bargePos.addOption(
         "Barge Middle",
-        new AutoDrive(() -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
+        new AutoDrive(
+            () -> Constants.FieldConstants.RedBargeMiddle,
+            drive,
+            () -> alliance.get(),
+            elevator,
+            endEffector));
     bargePos.addOption(
         "Barge Right",
-        new AutoDrive(() -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
+        new AutoDrive(
+            () -> Constants.FieldConstants.RedBargeMiddle,
+            drive,
+            () -> alliance.get(),
+            elevator,
+            endEffector));
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
         "IntakeCoral",
@@ -251,6 +285,12 @@ public class RobotContainer {
             .alongWith(elevator.executePreset(ElevatorState.Default))
             .until(intake::isCoralSet)
             .andThen(endEffector::stop));
+    NamedCommands.registerCommand(
+        "IntakeCoralDrive",
+        endEffector
+            .runEffectorAuto(4)
+            .alongWith(elevator.executePreset(ElevatorState.Default))
+            .until(intake::inRamp));
     NamedCommands.registerCommand("shootCoral", endEffector.runEffector(5).withTimeout(0.4));
     NamedCommands.registerCommand(
         "TestCommand", Commands.run(() -> System.out.println("TestCommand Works")));
@@ -267,7 +307,38 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "L4PositionL2",
         elevator.executePreset(ElevatorState.CoralL4).withTimeout(0.7).unless(coralFound));
-
+    NamedCommands.registerCommand(
+        "AL",
+        new AutoDrive(
+            () -> Constants.FieldConstants.REEF_AL,
+            drive,
+            () -> alliance.get(),
+            elevator,
+            endEffector));
+    NamedCommands.registerCommand(
+        "CR",
+        new AutoDrive(
+            () -> Constants.FieldConstants.REEF_CR,
+            drive,
+            () -> alliance.get(),
+            elevator,
+            endEffector));
+    NamedCommands.registerCommand(
+        "BR",
+        new AutoDrive(
+            () -> Constants.FieldConstants.REEF_BR,
+            drive,
+            () -> alliance.get(),
+            elevator,
+            endEffector));
+    NamedCommands.registerCommand(
+        "BL",
+        new AutoDrive(
+            () -> Constants.FieldConstants.REEF_BL,
+            drive,
+            () -> alliance.get(),
+            elevator,
+            endEffector));
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -320,37 +391,21 @@ public class RobotContainer {
                 () -> -driverController.getLeftX(),
                 () -> new Rotation2d()));
     // Reset gyro to 0° when B button is pressed
-    driverController
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // driverController.b().onTrue(bargePos.get());
 
     driverController
         .y()
         .onTrue(drive.pathfindToPose(Constants.FieldConstants.SourceL, 0.0, alliance.get()));
-    driverController
-        .a()
-        .onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
+    // driverController
+    //     .a()
+    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
 
     // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
     // 0.0));
     driverController.rightBumper().onTrue(climb.retractCommand2());
-    driverController.povDown().onTrue(climb.retractCommand1());
-    driverController
-        .povUp()
-        .onTrue(elevator.executePreset(ElevatorState.CoralL3).alongWith(climb.upGo()));
-    driverController
-        .rightTrigger()
-        .onTrue(
-            new InstantCommand(
-                () ->
-                    new AutoDrive(() -> drive.getPose(), drive, () -> DriverStation.Alliance.Blue)
-                        .cancel()));
+    driverController.povDown().whileTrue(climb.down());
+    driverController.povUp().whileTrue(climb.up());
+    driverController.rightTrigger().whileTrue(climb.topMotor());
 
     // driverController.povUp().whileTrue(climb.setSpeed(10)).whileFalse(climb.setSpeed(0));
     // driverController.povDown().whileTrue(climb.setSpeed(-10)).whileFalse(climb.setSpeed(0));
@@ -365,10 +420,22 @@ public class RobotContainer {
                 () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
     driverController
         .povLeft()
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                () -> Constants.FieldConstants.SourceL,
+                drive,
+                () -> alliance.get(),
+                elevator,
+                endEffector));
     driverController
         .povRight()
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                () -> Constants.FieldConstants.SourceR,
+                drive,
+                () -> alliance.get(),
+                elevator,
+                endEffector));
 
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
@@ -385,40 +452,111 @@ public class RobotContainer {
     // Button Box
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_AL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                () -> Constants.FieldConstants.REEF_AL,
+                drive,
+                () -> alliance.get(),
+                elevator,
+                endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_BL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                () -> Constants.FieldConstants.REEF_BL,
+                drive,
+                () -> alliance.get(),
+                elevator,
+                endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_CL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                () -> Constants.FieldConstants.REEF_CL,
+                drive,
+                () -> alliance.get(),
+                elevator,
+                endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_DL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                () -> Constants.FieldConstants.REEF_DL,
+                drive,
+                () -> alliance.get(),
+                elevator,
+                endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_EL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                () -> Constants.FieldConstants.REEF_EL,
+                drive,
+                () -> alliance.get(),
+                elevator,
+                endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_FL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                () -> Constants.FieldConstants.REEF_FL,
+                drive,
+                () -> alliance.get(),
+                elevator,
+                endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_AR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                () -> Constants.FieldConstants.REEF_AR,
+                drive,
+                () -> alliance.get(),
+                elevator,
+                endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_BR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                () -> Constants.FieldConstants.REEF_BR,
+                drive,
+                () -> alliance.get(),
+                elevator,
+                endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_CR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                    () -> Constants.FieldConstants.REEF_CR,
+                    drive,
+                    () -> alliance.get())
+                .alongWith(autoElevatorCommand(() -> selectedElevatorState)));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_DR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                () -> Constants.FieldConstants.REEF_DR,
+                drive,
+                () -> alliance.get(),
+                elevator,
+                endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_ER, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                () -> Constants.FieldConstants.REEF_ER,
+                drive,
+                () -> alliance.get(),
+                elevator,
+                endEffector));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_FR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(
+                () -> Constants.FieldConstants.REEF_FR,
+                drive,
+                () -> alliance.get(),
+                elevator,
+                endEffector));
 
     // operatorButtonBox
     //     .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
@@ -460,6 +598,16 @@ public class RobotContainer {
     //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FR, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L1.getButtonID())
+        .and(() -> elevator.getToggle())
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  selectedElevatorState = ElevatorState.CoralL1;
+                  Logger.recordOutput("selectedState", selectedElevatorState);
+                }));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.ELEVATOR_L1.getButtonID())
+        .and(() -> !elevator.getToggle())
         .onTrue(
             elevator
                 .executePreset(ElevatorState.CoralL1)
@@ -469,6 +617,16 @@ public class RobotContainer {
                 .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L2.getButtonID())
+        .and(() -> elevator.getToggle())
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  selectedElevatorState = ElevatorState.CoralL2;
+                  Logger.recordOutput("selectedState", selectedElevatorState);
+                }));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.ELEVATOR_L2.getButtonID())
+        .and(() -> !elevator.getToggle())
         .onTrue(
             elevator
                 .executePreset(ElevatorState.CoralL2)
@@ -478,17 +636,36 @@ public class RobotContainer {
                 .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L3.getButtonID())
+        .and(() -> elevator.getToggle())
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  selectedElevatorState = ElevatorState.CoralL3;
+                  Logger.recordOutput("selectedState", selectedElevatorState);
+                }));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.ELEVATOR_L3.getButtonID())
+        .and(() -> !elevator.getToggle())
         .onTrue(
             elevator
                 .executePreset(ElevatorState.CoralL3)
-                .withTimeout(0.8)
-                .andThen(
-                    endEffector
-                        .runEffectorAutoCommand()
-                        .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                        .unless(() -> intake.isCoralIn())));
+                .withTimeout(0.75)
+                .andThen(endEffector.runEffectorAutoCommand())
+                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
+                .unless(() -> intake.isCoralIn()));
+
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L4.getButtonID())
+        .and(() -> elevator.getToggle())
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  selectedElevatorState = ElevatorState.CoralL4;
+                  Logger.recordOutput("selectedState", selectedElevatorState);
+                }));
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.ELEVATOR_L4.getButtonID())
+        .and(() -> !elevator.getToggle())
         .onTrue(
             elevator
                 .executePreset(ElevatorState.CoralL4)
@@ -496,15 +673,8 @@ public class RobotContainer {
                 .andThen(endEffector.runEffectorAutoCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
                 .unless(() -> intake.isCoralIn()));
-    operatorButtonBox
-        .button(Constants.ButtonBoxIds.ABORT.getButtonID())
-        .onTrue(
-            Commands.run(() -> endEffector.stop(), endEffector)
-                .andThen(() -> intake.stop(), intake)
-                .andThen(() -> elevator.getCurrentCommand().cancel(), elevator)
-                // .andThen(() -> pivot.getCurrentCommand().cancel(), pivot)
-                // .andThen(() -> algae.getCurrentCommand().cancel(), algae)
-                .andThen(() -> drive.getCurrentCommand().cancel(), drive));
+
+    operatorButtonBox.button(Constants.ButtonBoxIds.ABORT.getButtonID()).onTrue(elevator.toggle());
 
     coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2));
 
@@ -539,5 +709,14 @@ public class RobotContainer {
   public void onEnabled() {
     drive.setModulesBrake();
     climb.extend2();
+  }
+
+  private Command autoElevatorCommand(Supplier<ElevatorState> stateSupplier) {
+    return elevator
+        .executePreset(stateSupplier)
+        .withTimeout(1.5)
+        .andThen(endEffector.runEffectorAutoCommand())
+        .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
+        .unless(() -> intake.isCoralIn());
   }
 }

@@ -38,6 +38,7 @@ public interface ClimberIO {
   /** Enable or disable brake mode on the intake motor. */
   default void setBrakeMode(boolean enable) {}
 
-  /** the. */
-  default void setRPM(double rpm) {}
+  default void setTopRPM(double rpm) {}
+
+  default void setClimbRPM(double rpm) {}
 }

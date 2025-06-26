@@ -71,10 +71,10 @@
     "rotation": -119.99999999999999
   },
   "reversed": false,
-  "folder": "three note",
+  "folder": "four note",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }

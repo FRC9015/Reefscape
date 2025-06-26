@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.713450545831575,
-        "y": 6.2840066715058285
+        "x": 7.699887278734009,
+        "y": 6.407179510117563
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.025,
-        "y": 5.307
+        "x": 5.313,
+        "y": 5.155
       },
       "prevControl": {
-        "x": 4.764924523968109,
-        "y": 5.2253979358668365
+        "x": 5.087717841152337,
+        "y": 5.046612044465558
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "L4Position",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": 1.0,
       "command": {
         "type": "named",
@@ -71,7 +71,7 @@
     "rotation": -119.99999999999999
   },
   "reversed": false,
-  "folder": "three note",
+  "folder": "four note",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs.ElevatorState;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 /**
@@ -120,6 +121,28 @@ public class Elevator extends SubsystemBase {
     return run(() -> this.setPreset(state));
   }
 
+  public Command executePreset(Supplier<ElevatorState> supplier) {
+    Logger.recordOutput("state: ", supplier.get());
+    return run(() -> this.setPreset(supplier.get()));
+  }
+
+  // public Command runBufferedPreset() {
+  //   Logger.recordOutput("Elevator/BufferedState", bufferedState.getEncoderPosition());
+  //   if (bufferedState.getEncoderPosition() == ElevatorState.CoralL1.getEncoderPosition()) {
+  //     return executePreset(ElevatorState.CoralL1);
+  //   } else if (bufferedState.getEncoderPosition() == ElevatorState.CoralL2.getEncoderPosition())
+  // {
+  //     return executePreset(ElevatorState.CoralL2);
+  //   } else if (bufferedState.getEncoderPosition() == ElevatorState.CoralL3.getEncoderPosition())
+  // {
+  //     return executePreset(ElevatorState.CoralL3);
+  //   } else if (bufferedState.getEncoderPosition() == ElevatorState.CoralL4.getEncoderPosition())
+  // {
+  //     return executePreset(ElevatorState.CoralL4);
+  //   }
+  //   return executePreset(ElevatorState.Default);
+  // }
+
   public void setBrakeMode() {
     io.setBrakeMode();
   }
@@ -157,5 +180,14 @@ public class Elevator extends SubsystemBase {
    */
   public ElevatorState getElevatorState() {
     return inputs.elevatorState;
+  }
+
+  /** Toggles toggle. */
+  public Command toggle() {
+    return this.runOnce(io::switchToggle);
+  }
+
+  public boolean getToggle() {
+    return inputs.toggle;
   }
 }

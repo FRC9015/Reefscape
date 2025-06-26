@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer; // <-- Add this at the top
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs.ElevatorState;
+import frc.robot.subsystems.endeffector.EndEffector;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -18,6 +21,7 @@ public class AutoDrive extends Command {
   private PIDController yController = new PIDController(2.5, 0.0, 0.03);
   private PIDController xController = new PIDController(2.5, 0.0, 0.03);
   private Supplier<Pose2d> targetPose;
+  private ElevatorState state;
   private Pose2d flippedPose, targetPose2d;
   private Drive drive;
   private Supplier<DriverStation.Alliance> allaince;
@@ -25,7 +29,9 @@ public class AutoDrive extends Command {
   private final Timer timer = new Timer(); // <-- Add this
 
   public AutoDrive(
-      Supplier<Pose2d> desiredPose, Drive drive, Supplier<DriverStation.Alliance> alliance) {
+      Supplier<Pose2d> desiredPose,
+      Drive drive,
+      Supplier<DriverStation.Alliance> alliance) {
     this.drive = drive;
     this.targetPose = desiredPose;
     this.allaince = alliance;
@@ -69,6 +75,7 @@ public class AutoDrive extends Command {
     Logger.recordOutput("AutoDrive/targetPose", targetPose.get());
     Logger.recordOutput("AutoDrive/robotrelativespeeds", field);
     Logger.recordOutput("AutoDrive/flippedPose", flippedPose);
+    Logger.recordOutput("AutoDrive/state", state);
   }
 
   @Override

@@ -27,7 +27,7 @@ public interface ElevatorIO {
      */
     public enum ElevatorState {
       Default(0.378),
-      CoralL1(0.7),
+      CoralL1(0.65),
       CoralL2(1.7),
       DealgifyL2(1.5),
       CoralL3(3.95),
@@ -58,6 +58,7 @@ public interface ElevatorIO {
     public boolean elevatorAtSetpoint = false;
     public boolean zeroSwitchTriggered = false;
     public double elevatorMotorPosition = 0.0;
+    public boolean toggle = false;
 
     // Utility method to get the desired encoder position for the current state
     public double getDesiredEncoderPosition() {
@@ -80,6 +81,7 @@ public interface ElevatorIO {
   /** Enable or disable brake mode on the elevator motor. */
   default void setBrakeMode() {}
 
+  /** Set the Elevator to Coast. */
   default void setCoastMode() {}
 
   /** Get if the Limit Switch is triggered. */
@@ -87,4 +89,7 @@ public interface ElevatorIO {
 
   /** Zero the Elevator Encoder. */
   default void zeroElevator() {}
+
+  /** Switch the Toggle State of the Elevator. */
+  default void switchToggle() {}
 }
