@@ -48,6 +48,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   private final StatusSignal<Voltage> motorAppliedVoltsSignal;
   private final StatusSignal<Current> motorCurrentSignal;
   private final StatusSignal<Angle> motorPosition;
+  private boolean toggleSwitch;
 
   private final Debouncer encoderConnectedDebounce = new Debouncer(0.5);
   private final NeutralOut neutralOut = new NeutralOut();
@@ -100,6 +101,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     motorAppliedVoltsSignal = elevatorMotor.getMotorVoltage();
     motorCurrentSignal = elevatorMotor.getStatorCurrent();
     motorPosition = elevatorMotor.getPosition();
+    toggleSwitch = false;
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, encoderPositionSignal, motorAppliedVoltsSignal, motorCurrentSignal, motorPosition);
@@ -121,6 +123,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     inputs.elevatorAppliedVolts = motorAppliedVoltsSignal.getValueAsDouble();
     inputs.elevatorCurrentAmps = motorCurrentSignal.getValueAsDouble();
     inputs.elevatorMotorPosition = motorPosition.getValueAsDouble();
+    inputs.toggle = toggleSwitch;
   }
 
   @Override
@@ -160,5 +163,10 @@ public class ElevatorIOTalonFX implements ElevatorIO {
   @Override
   public void zeroElevator() {
     elevatorEncoder.setPosition(0); // Zero the CANcoder encoder
+  }
+
+  @Override
+  public void switchToggle() {
+    toggleSwitch = !toggleSwitch;
   }
 }

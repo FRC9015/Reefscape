@@ -15,7 +15,7 @@ import edu.wpi.first.units.measure.Voltage;
 /** the. */
 public class ClimberIOTalonFX implements ClimberIO {
 
-  public final TalonFX motor;
+  public final TalonFX topMotor, climbMotor1, climbMotor2;
   public StatusSignal<Voltage> motorVolts;
   public StatusSignal<Current> motorAmps;
   public StatusSignal<AngularVelocity> motorRPM;
@@ -27,23 +27,31 @@ public class ClimberIOTalonFX implements ClimberIO {
    *
    * @param motorID The ID of the motor.
    */
-  public ClimberIOTalonFX(int motorID) {
-    motor = new TalonFX(motorID);
+  public ClimberIOTalonFX(int topMotorID, int climbID1, int climbID2) {
+    topMotor = new TalonFX(topMotorID);
+    climbMotor1 = new TalonFX(climbID1);
+    climbMotor2 = new TalonFX(climbID2);
 
     // Configure motor
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
+    TalonFXConfiguration motorConfig2 = new TalonFXConfiguration();
+    motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
     // Configure the integrated encoder (default settings should work)
-    motor.getConfigurator().apply(motorConfig);
+    topMotor.getConfigurator().apply(motorConfig);
+    climbMotor1.getConfigurator().apply(motorConfig);
+    climbMotor2.getConfigurator().apply(motorConfig2);
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    motorVolts = motor.getMotorVoltage();
-    motorAmps = motor.getStatorCurrent();
-    motorRPM = motor.getVelocity();
+    motorVolts = topMotor.getMotorVoltage();
+    motorAmps = topMotor.getStatorCurrent();
+    motorRPM = topMotor.getVelocity();
 
     BaseStatusSignal.setUpdateFrequencyForAll(50.0, motorVolts, motorAmps, motorRPM);
-    ParentDevice.optimizeBusUtilizationForAll(motor);
+    ParentDevice.optimizeBusUtilizationForAll(topMotor);
   }
 
   @Override
@@ -63,11 +71,17 @@ public class ClimberIOTalonFX implements ClimberIO {
   public void setBrakeMode(boolean enable) {}
 
   @Override
-  public void setRPM(double voltage) {
-    motor.setVoltage(MathUtil.clamp(voltage, -12.0, 12.0));
+  public void setTopRPM(double voltage) {
+    topMotor.setVoltage(MathUtil.clamp(voltage, -12.0, 12.0));
+  }
+
+  @Override
+  public void setClimbRPM(double voltage) {
+    climbMotor1.setVoltage(MathUtil.clamp(voltage, -12.0, 12.0));
+    climbMotor2.setVoltage(MathUtil.clamp(voltage, -12.0, 12.0));
   }
 
   public double getPosition() {
-    return motor.getPosition().getValueAsDouble();
+    return topMotor.getPosition().getValueAsDouble();
   }
 }
