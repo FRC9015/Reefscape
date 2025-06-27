@@ -62,15 +62,15 @@ public class IntakeIOTalonFX implements IntakeIO {
     CANrangeConfiguration sideConfig = new CANrangeConfiguration();
     CANrangeConfiguration middleConfig = new CANrangeConfiguration();
 
-    middleConfig.FovParams.FOVRangeX = 7;
-    middleConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 2000;
-    middleConfig.ProximityParams.ProximityThreshold = 0.52;
+    middleConfig.FovParams.FOVRangeX = 6.75;
+    middleConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 1000;
+    middleConfig.ProximityParams.ProximityThreshold = 0.55;
     middleConfig.ToFParams.UpdateMode = UpdateModeValue.LongRangeUserFreq;
     middleConfig.ToFParams.UpdateFrequency = 50.0;
 
-    sideConfig.FovParams.FOVRangeX = 24;
-    sideConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 2000;
-    sideConfig.ProximityParams.ProximityThreshold = 0.52;
+    sideConfig.FovParams.FOVRangeX = 25;
+    sideConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 1000;
+    sideConfig.ProximityParams.ProximityThreshold = 0.55;
     sideConfig.ToFParams.UpdateMode = UpdateModeValue.LongRangeUserFreq;
     sideConfig.ToFParams.UpdateFrequency = 50.0;
     middleRange.getConfigurator().apply(middleConfig);

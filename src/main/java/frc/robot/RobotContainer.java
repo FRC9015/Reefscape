@@ -576,18 +576,27 @@ public class RobotContainer {
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
                 .unless(() -> intake.isCoralIn()));
 
-    operatorButtonBox.button(Constants.ButtonBoxIds.ABORT.getButtonID()).onTrue(elevator.toggle());
-
+    operatorButtonBox
+        .button(Constants.ButtonBoxIds.ABORT.getButtonID())
+        .onTrue(
+            elevator
+                .toggle()
+                .alongWith(
+                    Commands.runOnce(
+                        () -> {
+                          selectedElevatorState = ElevatorState.Default;
+                          Logger.recordOutput("selectedState", selectedElevatorState);
+                        })));
     coralFound.and(() -> DriverStation.isTeleopEnabled()).whileTrue(endEffector.runEffector(2));
 
     canRangeLeft
         .whileTrue(
-            led.setColor(Color.BLUE)
+            led.setColor(Color.YELLOW)
                 .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Left", true))))
         .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Left", false)));
     canRangeRight
         .whileTrue(
-            led.setColor(Color.YELLOW)
+            led.setColor(Color.RED)
                 .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Right", true))))
         .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Right", false)));
     canRangeMiddle
@@ -598,6 +607,8 @@ public class RobotContainer {
             led.setColor(Color.MAGENTA)
                 .alongWith(new InstantCommand(() -> SmartDashboard.putBoolean("Locked", true))))
         .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Locked", false)));
+    canRangeLeft.and(canRangeMiddle).whileTrue(led.setColor(Color.YELLOW));
+    canRangeRight.and(canRangeMiddle).whileTrue(led.setColor(Color.RED));
   }
 
   public Command getAutonomousCommand() {
