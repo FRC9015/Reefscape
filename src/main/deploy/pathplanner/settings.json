@@ -4,8 +4,9 @@
   "holonomicMode": true,
   "pathFolders": [
     "GoToHP Paths- From Start Zones",
-    "three note",
-    "Two Note"
+    "four note",
+    "Two Note",
+    "three note"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,

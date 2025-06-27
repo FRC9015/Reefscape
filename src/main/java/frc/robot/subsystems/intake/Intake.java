@@ -82,6 +82,10 @@ public class Intake extends SubsystemBase {
     return !inputs.coralSet && inputs.coralIn;
   }
 
+  public boolean inRamp() {
+    return !inputs.coralSet && !inputs.coralIn;
+  }
+
   public boolean canRangeLeftDetected() {
     return inputs.side1IsDetected;
   }
