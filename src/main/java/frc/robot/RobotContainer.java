@@ -92,7 +92,7 @@ public class RobotContainer {
   private final Trigger canRangeMiddle;
   private final Trigger canRangeRight;
   private final Trigger inPosition;
-
+  private final Trigger robotAtTarget;
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
   private final LoggedDashboardChooser<Command> bargePos;
@@ -139,6 +139,7 @@ public class RobotContainer {
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
+        robotAtTarget = new Trigger(() -> drive.isAtTarget()).debounce(0.05);
         climb =
             new Climber(
                 7,
@@ -183,6 +184,7 @@ public class RobotContainer {
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
+        robotAtTarget = new Trigger(() -> drive.isAtTarget()).debounce(0.05);
         // pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         climb =
             new Climber(
@@ -227,7 +229,7 @@ public class RobotContainer {
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
-
+        robotAtTarget = new Trigger(() -> drive.isAtTarget()).debounce(0.05);
         climb =
             new Climber(
                 7,
@@ -265,7 +267,7 @@ public class RobotContainer {
     bargePos.addOption(
         "Barge Right",
         new AutoDrive(() -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
- 
+
     bargeMode = new LoggedDashboardChooser<>("Barge Auto Drive?", bargeModeChooser);
     bargeMode.addOption("Yes", 1);
     bargeMode.addOption("No", 0);
@@ -618,15 +620,15 @@ public class RobotContainer {
     canRangeRight.and(canRangeMiddle).whileTrue(led.setColor(Color.RED));
 
     (operatorController.a())
-        .onTrue(Commands.runOnce(()->{
-            final Command bargePosCommand = this.getBargePositionCommand();
-            if (bargePosCommand != null) {
-            bargePosCommand.schedule();
-            }
-            bargePosCommand.cancel();
-        }));
-            
-
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  final Command bargePosCommand = this.getBargePositionCommand();
+                  if (bargePosCommand != null) {
+                    bargePosCommand.schedule();
+                  }
+                  bargePosCommand.cancel();
+                }));
   }
 
   public Command getAutonomousCommand() {
@@ -649,7 +651,7 @@ public class RobotContainer {
   private Command autoElevatorCommand(Supplier<ElevatorState> stateSupplier) {
     return elevator
         .executePreset(stateSupplier)
-        .withTimeout(1.5)
+        .until(robotAtTarget)
         .andThen(endEffector.runEffectorAutoCommand())
         .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
         .unless(() -> intake.isCoralIn());

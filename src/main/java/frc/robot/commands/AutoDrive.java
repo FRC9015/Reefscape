@@ -6,10 +6,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer; // <-- Add this at the top
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs.ElevatorState;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -24,7 +25,50 @@ public class AutoDrive extends Command {
   private Drive drive;
   private Supplier<DriverStation.Alliance> allaince;
 
-  private final Timer timer = new Timer(); // <-- Add this
+  private final Timer timer = new Timer();
+
+  // For calculus-based settling
+  private Pose2d previousPose;
+  private double previousTime = 0.0;
+  private double previousVelocity = 0.0;
+
+  private final BooleanSupplier isSettlingQuickly =
+      () -> {
+        Pose2d currentPose = drive.getPredictedPose();
+        double currentTime = Timer.getFPGATimestamp();
+        double dt = currentTime - previousTime;
+
+        if (dt == 0) return false;
+
+        // Positional error magnitude (Euclidean distance)
+        double dx = currentPose.getX() - targetPose2d.getX();
+        double dy = currentPose.getY() - targetPose2d.getY();
+        double error = Math.hypot(dx, dy);
+
+        // Previous error magnitude
+        Pose2d prev = previousPose == null ? currentPose : previousPose;
+        double prevDx = prev.getX() - targetPose2d.getX();
+        double prevDy = prev.getY() - targetPose2d.getY();
+        double prevError = Math.hypot(prevDx, prevDy);
+
+        double velocity = (error - prevError) / dt;
+        double acceleration = (velocity - previousVelocity) / dt;
+
+        // Update for next iteration
+        previousPose = currentPose;
+        previousTime = currentTime;
+        previousVelocity = velocity;
+
+        boolean closeEnough = error < Units.inchesToMeters(0.75);
+        boolean slowEnough = Math.abs(velocity) < Units.inchesToMeters(0.5);
+        boolean decelerating = acceleration < 0;
+
+        Logger.recordOutput("AutoDrive/SettleError", error);
+        Logger.recordOutput("AutoDrive/SettleVelocity", velocity);
+        Logger.recordOutput("AutoDrive/SettleAccel", acceleration);
+
+        return closeEnough && slowEnough && decelerating;
+      };
 
   public AutoDrive(
       Supplier<Pose2d> desiredPose, Drive drive, Supplier<DriverStation.Alliance> alliance) {
@@ -35,6 +79,7 @@ public class AutoDrive extends Command {
 
   @Override
   public void initialize() {
+    drive.setTargetPose(targetPose2d);
     flippedPose = FlippingUtil.flipFieldPose(targetPose.get());
     this.targetPose2d =
         allaince.get() == DriverStation.Alliance.Red ? flippedPose : targetPose.get();
@@ -44,8 +89,12 @@ public class AutoDrive extends Command {
     xController.setTolerance(Units.inchesToMeters(0.4));
     Logger.recordOutput("AutoDrive/alliance?", allaince.get());
 
-    timer.reset(); // <-- Start of timer setup
-    timer.start(); // <--
+    timer.reset();
+    timer.start();
+
+    previousTime = Timer.getFPGATimestamp();
+    previousPose = drive.getPredictedPose();
+    previousVelocity = 0.0;
   }
 
   @Override
@@ -76,12 +125,16 @@ public class AutoDrive extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    timer.stop(); // <-- Clean up the timer
+    timer.stop();
   }
 
   @Override
   public boolean isFinished() {
-    return (rotationController.atSetpoint() && yController.atSetpoint() && xController.atSetpoint())
-        || timer.hasElapsed(2); // <-- second timeout
+    boolean pidDone =
+        rotationController.atSetpoint() && yController.atSetpoint() && xController.atSetpoint();
+    boolean timeout = timer.hasElapsed(1.5);
+    boolean settlingFast = isSettlingQuickly.getAsBoolean();
+
+    return pidDone || settlingFast || timeout;
   }
 }

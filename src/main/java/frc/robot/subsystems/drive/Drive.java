@@ -51,6 +51,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -125,6 +126,12 @@ public class Drive extends SubsystemBase {
   private SwerveSetpointGenerator setpointGenerator;
   private SwerveSetpoint prevSetpoint;
 
+  // For Target Checking Logic
+  private Pose2d targetPose = null;
+  private Pose2d previousPoseForTarget = null;
+  private double previousVelocityForTarget = 0.0;
+  private double previousTimeForTarget = 0.0;
+
   /**
    * Constructs a new Drive.
    *
@@ -158,9 +165,6 @@ public class Drive extends SubsystemBase {
         this::setPose,
         this::getChassisSpeeds,
         this::runVelocity,
-        //  new PPHolonomicDriveController(new PIDConstants(5, 0.0, 0), new PIDConstants(5.0, 0.0,
-        // 0)),
-        //     new PIDConstants(4.5, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.02)),
         new PPHolonomicDriveController(
             new PIDConstants(2, 0.0, 0.12), new PIDConstants(5.0, 0.0, 0.02)),
         PP_CONFIG,
@@ -257,6 +261,44 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
     Logger.recordOutput("SwerveStates/SlipRatio", getSkiddingRatio(getModuleStates(), kinematics));
+  }
+
+  /** Sets the target pose for the robot. */
+  public void setTargetPose(Pose2d pose) {
+    this.targetPose = pose;
+    this.previousPoseForTarget = getPredictedPose();
+    this.previousVelocityForTarget = 0.0;
+    this.previousTimeForTarget = Timer.getFPGATimestamp();
+  }
+
+  /** Checks if the robot has settled at the target position. */
+  public boolean isAtTarget() {
+    if (targetPose == null) return false;
+
+    Pose2d currentPose = getPredictedPose();
+    double dx = currentPose.getX() - targetPose.getX();
+    double dy = currentPose.getY() - targetPose.getY();
+    double error = Math.hypot(dx, dy);
+
+    double dt = Timer.getFPGATimestamp() - previousTimeForTarget;
+    if (dt <= 0.0) return false;
+
+    double prevDx = previousPoseForTarget.getX() - targetPose.getX();
+    double prevDy = previousPoseForTarget.getY() - targetPose.getY();
+    double prevError = Math.hypot(prevDx, prevDy);
+
+    double velocity = (error - prevError) / dt;
+    double acceleration = (velocity - previousVelocityForTarget) / dt;
+
+    previousPoseForTarget = currentPose;
+    previousVelocityForTarget = velocity;
+    previousTimeForTarget = Timer.getFPGATimestamp();
+
+    boolean closeEnough = error < Units.inchesToMeters(0.75);
+    boolean slowEnough = Math.abs(velocity) < Units.inchesToMeters(0.5);
+    boolean decelerating = acceleration < 0;
+
+    return closeEnough && slowEnough && decelerating;
   }
 
   /**
