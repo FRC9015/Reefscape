@@ -155,16 +155,13 @@ public class Robot extends LoggedRobot {
       autonomousCommand.cancel();
     }
     robotContainer.onEnabled();
-    bargePosCommand = robotContainer.getBargePositionCommand();
-    if (bargePosCommand != null) {
-      bargePosCommand.schedule();
-      bargePosCommand.cancel();
-    }
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override

@@ -99,6 +99,8 @@ public class RobotContainer {
   private final LoggedDashboardChooser<DriverStation.Alliance> alliance;
   private final SendableChooser<DriverStation.Alliance> allianceChooser;
   private final SendableChooser<Command> bargePosChooser;
+  private final SendableChooser<Integer> bargeModeChooser;
+  private final LoggedDashboardChooser<Integer> bargeMode;
 
   // Elevator state
   private ElevatorState selectedElevatorState = ElevatorState.Default;
@@ -243,6 +245,7 @@ public class RobotContainer {
     }
     allianceChooser = new SendableChooser<DriverStation.Alliance>();
     bargePosChooser = new SendableChooser<Command>();
+    bargeModeChooser = new SendableChooser<Integer>();
     // allianceChooser.setDefaultOption("Blue", DriverStation.Alliance.Blue);
 
     // allianceChooser.addOption("Red", DriverStation.Alliance.Red);
@@ -262,6 +265,10 @@ public class RobotContainer {
     bargePos.addOption(
         "Barge Right",
         new AutoDrive(() -> Constants.FieldConstants.RedBargeMiddle, drive, () -> alliance.get()));
+ 
+    bargeMode = new LoggedDashboardChooser<>("Barge Auto Drive?", bargeModeChooser);
+    bargeMode.addOption("Yes", 1);
+    bargeMode.addOption("No", 0);
     // Named commands for pathplanner autos
     NamedCommands.registerCommand(
         "IntakeCoral",
@@ -609,6 +616,17 @@ public class RobotContainer {
         .whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Locked", false)));
     canRangeLeft.and(canRangeMiddle).whileTrue(led.setColor(Color.YELLOW));
     canRangeRight.and(canRangeMiddle).whileTrue(led.setColor(Color.RED));
+
+    (operatorController.a())
+        .onTrue(Commands.runOnce(()->{
+            final Command bargePosCommand = this.getBargePositionCommand();
+            if (bargePosCommand != null) {
+            bargePosCommand.schedule();
+            }
+            bargePosCommand.cancel();
+        }));
+            
+
   }
 
   public Command getAutonomousCommand() {
