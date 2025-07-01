@@ -395,6 +395,14 @@ public class Drive extends SubsystemBase {
     return output;
   }
 
+  public double getVelocityMetersPerSec() {
+    double output = 0.0;
+    for (int i = 0; i < 4; i++) {
+      output += modules[i].getVelocityMetersPerSec() / 4.0;
+    }
+    return output;
+  }
+
   /** Returns the current odometry pose. */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
