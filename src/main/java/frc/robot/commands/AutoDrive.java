@@ -87,7 +87,7 @@ public class AutoDrive extends Command {
             drive.getPredictedPose().getY() - targetPose2d.getY());
     return // Any one of the following:
     (rotationController.atSetpoint() && yController.atSetpoint() && xController.atSetpoint())
-        || timer.hasElapsed(2)
+        || timer.hasElapsed(3)
         || drive.getVelocityMetersPerSec() < .3 && distance < 0.09;
   }
 }

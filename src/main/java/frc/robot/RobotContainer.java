@@ -415,97 +415,97 @@ public class RobotContainer {
         .onTrue(
             new AutoDrive(() -> Constants.FieldConstants.REEF_AL, drive, () -> alliance.get())
                 .raceWith(autoElevatorCommand(() -> selectedElevatorState))
-                .andThen(endEffector.runEffectorAutoCommand())
+                .andThen(autoShootCoralCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
                 .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
         .onTrue(
             new AutoDrive(() -> Constants.FieldConstants.REEF_BL, drive, () -> alliance.get())
-                .raceWith(autoElevatorCommand(() -> selectedElevatorState))
-                .andThen(endEffector.runEffectorAutoCommand())
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+            .raceWith(autoElevatorCommand(() -> selectedElevatorState))
+            .andThen(autoShootCoralCommand())
+            .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
+            .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
         .onTrue(
             new AutoDrive(() -> Constants.FieldConstants.REEF_CL, drive, () -> alliance.get())
-                .raceWith(autoElevatorCommand(() -> selectedElevatorState))
-                .andThen(endEffector.runEffectorAutoCommand())
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+            .raceWith(autoElevatorCommand(() -> selectedElevatorState))
+            .andThen(autoShootCoralCommand())
+            .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
+            .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
         .onTrue(
             new AutoDrive(() -> Constants.FieldConstants.REEF_DL, drive, () -> alliance.get())
-                .raceWith(autoElevatorCommand(() -> selectedElevatorState))
-                .andThen(endEffector.runEffectorAutoCommand())
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+            .raceWith(autoElevatorCommand(() -> selectedElevatorState))
+            .andThen(autoShootCoralCommand())
+            .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
+            .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
         .onTrue(
             new AutoDrive(() -> Constants.FieldConstants.REEF_EL, drive, () -> alliance.get())
-                .raceWith(autoElevatorCommand(() -> selectedElevatorState))
-                .andThen(endEffector.runEffectorAutoCommand())
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+            .raceWith(autoElevatorCommand(() -> selectedElevatorState))
+            .andThen(autoShootCoralCommand())
+            .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
+            .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
         .onTrue(
             new AutoDrive(() -> Constants.FieldConstants.REEF_FL, drive, () -> alliance.get())
-                .raceWith(autoElevatorCommand(() -> selectedElevatorState))
-                .andThen(endEffector.runEffectorAutoCommand())
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+            .raceWith(autoElevatorCommand(() -> selectedElevatorState))
+            .andThen(autoShootCoralCommand())
+            .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
+            .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
         .onTrue(
             new AutoDrive(() -> Constants.FieldConstants.REEF_AR, drive, () -> alliance.get())
-                .raceWith(autoElevatorCommand(() -> selectedElevatorState))
-                .andThen(endEffector.runEffectorAutoCommand())
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+            .raceWith(autoElevatorCommand(() -> selectedElevatorState))
+            .andThen(autoShootCoralCommand())
+            .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
+            .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
         .onTrue(
             new AutoDrive(() -> Constants.FieldConstants.REEF_BR, drive, () -> alliance.get())
-                .raceWith(autoElevatorCommand(() -> selectedElevatorState))
-                .andThen(endEffector.runEffectorAutoCommand())
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+            .raceWith(autoElevatorCommand(() -> selectedElevatorState))
+            .andThen(autoShootCoralCommand())
+            .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
+            .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
         .onTrue(
             new AutoDrive(() -> Constants.FieldConstants.REEF_CR, drive, () -> alliance.get())
-                .raceWith(autoElevatorCommand(() -> selectedElevatorState))
-                .andThen(endEffector.runEffectorAutoCommand())
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+            .raceWith(autoElevatorCommand(() -> selectedElevatorState))
+            .andThen(autoShootCoralCommand())
+            .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
+            .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
         .onTrue(
             new AutoDrive(() -> Constants.FieldConstants.REEF_DR, drive, () -> alliance.get())
-                .raceWith(autoElevatorCommand(() -> selectedElevatorState))
-                .andThen(endEffector.runEffectorAutoCommand())
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+            .raceWith(autoElevatorCommand(() -> selectedElevatorState))
+            .andThen(autoShootCoralCommand())
+            .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
+            .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
         .onTrue(
             new AutoDrive(() -> Constants.FieldConstants.REEF_ER, drive, () -> alliance.get())
-                .raceWith(autoElevatorCommand(() -> selectedElevatorState))
-                .andThen(endEffector.runEffectorAutoCommand())
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+            .raceWith(autoElevatorCommand(() -> selectedElevatorState))
+            .andThen(autoShootCoralCommand())
+            .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
+            .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
         .onTrue(
             new AutoDrive(() -> Constants.FieldConstants.REEF_FR, drive, () -> alliance.get())
-                .raceWith(autoElevatorCommand(() -> selectedElevatorState))
-                .andThen(endEffector.runEffectorAutoCommand())
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+            .raceWith(autoElevatorCommand(() -> selectedElevatorState))
+            .andThen(autoShootCoralCommand())
+            .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
+            .unless(() -> intake.isCoralIn()));
     // operatorButtonBox
     //     .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
     //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AL, 0, alliance.get()));
@@ -686,6 +686,10 @@ public class RobotContainer {
   }
 
   private Command autoElevatorCommand(Supplier<ElevatorState> stateSupplier) {
-    return elevator.executePreset(stateSupplier);
+    return elevator.executePreset(stateSupplier).onlyIf(elevatorToggle);
+  }
+
+  private Command autoShootCoralCommand(){
+    return endEffector.runEffectorAutoCommand().onlyIf(elevatorToggle);
   }
 }
