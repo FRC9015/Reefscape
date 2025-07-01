@@ -35,6 +35,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  */
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
+  private Command bargePosCommand; // command for barge position
   private RobotContainer robotContainer;
 
   public Robot() {
@@ -158,7 +159,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override
