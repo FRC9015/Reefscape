@@ -92,6 +92,7 @@ public class RobotContainer {
   private final Trigger canRangeMiddle;
   private final Trigger canRangeRight;
   private final Trigger inPosition;
+  private final Trigger elevatorToggle;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -139,6 +140,7 @@ public class RobotContainer {
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
+        elevatorToggle = new Trigger(() -> elevator.getToggle());
         climb =
             new Climber(
                 7,
@@ -183,6 +185,7 @@ public class RobotContainer {
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
+        elevatorToggle = new Trigger(() -> elevator.getToggle());
         // pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         climb =
             new Climber(
@@ -227,6 +230,7 @@ public class RobotContainer {
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
+        elevatorToggle = new Trigger(() -> elevator.getToggle());
 
         climb =
             new Climber(
@@ -283,7 +287,7 @@ public class RobotContainer {
             .runEffectorAuto(4)
             .alongWith(elevator.executePreset(ElevatorState.Default))
             .until(intake::inRamp));
-    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(5).withTimeout(0.4));
+    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(5.5).withTimeout(0.3));
     NamedCommands.registerCommand(
         "TestCommand", Commands.run(() -> System.out.println("TestCommand Works")));
     NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));

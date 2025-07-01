@@ -49,48 +49,15 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "parallel",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "BL"
-                      }
-                    },
-                    {
-                      "type": "sequential",
-                      "data": {
-                        "commands": [
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "IntakeCoral"
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "L4Position"
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "shootCoral"
-                }
-              }
-            ]
+            "pathName": "L1 Coral Path 4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
           }
         },
         {
@@ -106,48 +73,15 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "parallel",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "BR"
-                      }
-                    },
-                    {
-                      "type": "sequential",
-                      "data": {
-                        "commands": [
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "IntakeCoral"
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "L4Position"
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "shootCoral"
-                }
-              }
-            ]
+            "pathName": "fourth4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
           }
         },
         {
