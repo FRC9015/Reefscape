@@ -64,12 +64,16 @@ public class Pivot extends SubsystemBase {
   public Command pivotDown(double speed) {
     Logger.recordOutput("Pivot/speed", speed);
     Logger.recordOutput("Pivot/CurrentPosition", inputs.pivotPosition);
-    return run(() -> io.setPivotPosition(speed));
+    return run(() -> io.setPivotPosition(-speed));
   }
 
   public Command executePreset(PivotIOInputs.PivotPosition state) {
     Logger.recordOutput("Pivot/State", state);
     Logger.recordOutput("Pivot/CurrentPosition", inputs.pivotPosition);
     return run(() -> this.setPreset(state));
+  }
+
+  public double getPivotPosition() {
+    return inputs.pivotPosition;
   }
 }

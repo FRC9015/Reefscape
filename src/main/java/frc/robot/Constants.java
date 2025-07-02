@@ -155,11 +155,11 @@ public final class Constants {
 
   public static class MotorIDConstants {
     public static final int END_EFFECTOR_MOTOR_ID = 2;
-    public static final int INTAKE_MOTOR_ID = 1;
+    public static final int GROUND_CORAL_MOTOR_ID = 1;
     public static final int CLIMBER_TOP_MOTOR_ID = 5;
     public static final int CLIMBER_MOTOR_ID1 = 4;
     public static final int CLIMBER_MOTOR_ID2 = 6;
-    // public static final int PIVOT_MOTOR_ID = 5;
+    public static final int PIVOT_MOTOR_ID = 7;
 
     public static final int ELEVATOR_MOTOR_ID1 = 9;
     public static final int ELEVATOR_MOTOR_ID2 = 10;

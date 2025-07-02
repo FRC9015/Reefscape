@@ -9,8 +9,7 @@ public interface PivotIO {
 
     public static enum PivotPosition {
       Default(0.5),
-      Dealgify(2),
-      Dealgify2(2.5);
+      Down(2);
 
       private final double pivotPosition;
 
