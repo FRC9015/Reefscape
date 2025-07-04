@@ -27,6 +27,9 @@ public interface ClimberIO {
     public double climberCurrentAmps = 0.0;
     public double climberRPM = 0.0;
     public double climberPosition = 0.0;
+    public double servoPosition = 0.0;
+    public double servoAngle = 0.0;
+    public double servoSpeed = 0.0;
   }
 
   /** Updates the set of loggable inputs. */
@@ -41,4 +44,10 @@ public interface ClimberIO {
   default void setTopRPM(double rpm) {}
 
   default void setClimbRPM(double rpm) {}
+
+  default void servoOpen() {}
+  ;
+
+  default void servoClose() {}
+  ;
 }

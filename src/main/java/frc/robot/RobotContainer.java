@@ -155,7 +155,8 @@ public class RobotContainer {
                 new ClimberIOTalonFX(
                     MotorIDConstants.CLIMBER_TOP_MOTOR_ID,
                     MotorIDConstants.CLIMBER_MOTOR_ID1,
-                    MotorIDConstants.CLIMBER_MOTOR_ID2));
+                    MotorIDConstants.CLIMBER_MOTOR_ID2,
+                    MotorIDConstants.SERVO_CHANNE1));
         // climb =
         //     new Climber(
         //         new ClimberIOTalonFX(
@@ -203,7 +204,8 @@ public class RobotContainer {
                 new ClimberIOTalonFX(
                     MotorIDConstants.CLIMBER_TOP_MOTOR_ID,
                     MotorIDConstants.CLIMBER_MOTOR_ID1,
-                    MotorIDConstants.CLIMBER_MOTOR_ID2));
+                    MotorIDConstants.CLIMBER_MOTOR_ID2,
+                    MotorIDConstants.SERVO_CHANNE1));
 
         //  elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
@@ -250,7 +252,8 @@ public class RobotContainer {
                 new ClimberIOTalonFX(
                     MotorIDConstants.CLIMBER_TOP_MOTOR_ID,
                     MotorIDConstants.CLIMBER_MOTOR_ID1,
-                    MotorIDConstants.CLIMBER_MOTOR_ID2));
+                    MotorIDConstants.CLIMBER_MOTOR_ID2,
+                    MotorIDConstants.SERVO_CHANNE1));
 
         //  climb = new Climber(new ClimberIO() {});
         // pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
@@ -375,9 +378,10 @@ public class RobotContainer {
                 () -> -driverController.getLeftX(),
                 () -> new Rotation2d()));
     // Reset gyro to 0° when B button is pressed
-    // driverController.b().onTrue(bargePos.get());
+
 
     driverController.y().whileTrue(algae.setSpeed(10)).whileFalse(algae.setSpeed(0));
+    driverController.b().whileTrue(algae.setSpeed(-10)).whileFalse(algae.setSpeed(0));
     // driverController
     //     .a()
     //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
@@ -423,6 +427,7 @@ public class RobotContainer {
     // .whileTrue(endEffector.runEffector(0.15).until(coralFound));
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
     operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
+    operatorController.a().onTrue(climb.retractCommand2());
 
     // Button Box
     operatorButtonBox
@@ -719,25 +724,25 @@ public class RobotContainer {
     canRangeLeft.and(canRangeMiddle).whileTrue(led.setColor(Color.YELLOW));
     canRangeRight.and(canRangeMiddle).whileTrue(led.setColor(Color.RED));
 
-    (operatorController.a())
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  final Command bargePosCommand = this.getBargePositionCommand();
-                  if (bargePosCommand != null) {
-                    bargePosCommand.schedule();
-                  }
-                  bargePosCommand.cancel();
-                }));
+    //     (operatorController.a())
+    //         .onTrue(
+    //             Commands.runOnce(
+    //                 () -> {
+    //                   final Command bargePosCommand = this.getBargePositionCommand();
+    //                   if (bargePosCommand != null) {
+    //                     bargePosCommand.schedule();
+    //                   }
+    //                   bargePosCommand.cancel();
+    //               }));
   }
 
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
 
-  public Command getBargePositionCommand() {
-    return bargePos.get();
-  }
+  //   public Command getBargePositionCommand() {
+  //     return bargePos.get();
+  //   }
 
   public void onDisabled() {
     drive.setModulesCoast();
@@ -745,7 +750,7 @@ public class RobotContainer {
 
   public void onEnabled() {
     drive.setModulesBrake();
-    climb.extend2();
+    // climb.extend2();
   }
 
   private Command autoElevatorCommand(Supplier<ElevatorState> stateSupplier) {

@@ -11,14 +11,19 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Servo;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 /** the. */
 public class ClimberIOTalonFX implements ClimberIO {
 
   public final TalonFX topMotor, climbMotor1, climbMotor2;
+  public final Servo servo;
   public StatusSignal<Voltage> motorVolts;
   public StatusSignal<Current> motorAmps;
   public StatusSignal<AngularVelocity> motorRPM;
+  private LoggedNetworkNumber minPosition = new LoggedNetworkNumber("/Tunning/minPosition", 0.0);
+  private LoggedNetworkNumber maxPosition = new LoggedNetworkNumber("/Tunning/maxPOsition", 1.0);
 
   // private final NeutralOut neutralOut = new NeutralOut();
 
@@ -27,10 +32,11 @@ public class ClimberIOTalonFX implements ClimberIO {
    *
    * @param motorID The ID of the motor.
    */
-  public ClimberIOTalonFX(int topMotorID, int climbID1, int climbID2) {
+  public ClimberIOTalonFX(int topMotorID, int climbID1, int climbID2, int servoCannel) {
     topMotor = new TalonFX(topMotorID);
     climbMotor1 = new TalonFX(climbID1);
     climbMotor2 = new TalonFX(climbID2);
+    servo = new Servo(servoCannel);
 
     // Configure motor
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
@@ -62,6 +68,9 @@ public class ClimberIOTalonFX implements ClimberIO {
     inputs.climberCurrentAmps = motorAmps.getValueAsDouble();
     inputs.climberPosition = getPosition();
     inputs.climberRPM = motorRPM.getValueAsDouble();
+    inputs.servoPosition = servo.getPosition();
+    inputs.servoAngle = servo.getAngle();
+    inputs.servoSpeed = servo.getSpeed();
   }
 
   @Override
@@ -78,10 +87,20 @@ public class ClimberIOTalonFX implements ClimberIO {
   @Override
   public void setClimbRPM(double voltage) {
     climbMotor1.setVoltage(MathUtil.clamp(voltage, -12.0, 12.0));
-    climbMotor2.setVoltage(MathUtil.clamp(voltage, -12.0, 12.0));
+    // climbMotor2.setVoltage(MathUtil.clamp(voltage, -12.0, 12.0));
   }
 
   public double getPosition() {
     return topMotor.getPosition().getValueAsDouble();
+  }
+
+  @Override
+  public void servoOpen() {
+    servo.setPosition(minPosition.get());
+  }
+
+  @Override
+  public void servoClose() {
+    servo.setPosition(maxPosition.get());
   }
 }
