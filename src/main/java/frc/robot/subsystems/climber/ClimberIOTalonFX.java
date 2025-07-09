@@ -96,11 +96,11 @@ public class ClimberIOTalonFX implements ClimberIO {
 
   @Override
   public void servoOpen() {
-    servo.setPosition(minPosition.get());
+    servo.setPosition(0.2);
   }
 
   @Override
   public void servoClose() {
-    servo.setPosition(maxPosition.get());
+    servo.setPosition(0.8);
   }
 }

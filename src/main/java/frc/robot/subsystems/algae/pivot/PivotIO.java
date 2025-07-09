@@ -8,7 +8,7 @@ public interface PivotIO {
   public static class PivotIOInputs {
 
     public static enum PivotPosition {
-      Default(0.5),
+      Default(0.0),
       Down(2);
 
       private final double pivotPosition;

@@ -164,7 +164,7 @@ public final class Constants {
     public static final int ELEVATOR_MOTOR_ID1 = 9;
     public static final int ELEVATOR_MOTOR_ID2 = 10;
     public static final int ELEVATOR_ENCODER_ID = 8;
-    public static final int SERVO_CHANNE1 = 1;
+    public static final int SERVO_CHANNE1 = 2;
   }
 
   public static class ElevatorConstants {

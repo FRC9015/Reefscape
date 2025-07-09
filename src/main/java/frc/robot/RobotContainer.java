@@ -326,6 +326,8 @@ public class RobotContainer {
         "BR", new AutoDrive(() -> Constants.FieldConstants.REEF_BR, drive, () -> alliance.get()));
     NamedCommands.registerCommand(
         "BL", new AutoDrive(() -> Constants.FieldConstants.REEF_BL, drive, () -> alliance.get()));
+    NamedCommands.registerCommand(
+        "EL", new AutoDrive(() -> Constants.FieldConstants.REEF_EL, drive, () -> alliance.get()));
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -378,7 +380,6 @@ public class RobotContainer {
                 () -> -driverController.getLeftX(),
                 () -> new Rotation2d()));
     // Reset gyro to 0° when B button is pressed
-
 
     driverController.y().whileTrue(algae.setSpeed(10)).whileFalse(algae.setSpeed(0));
     driverController.b().whileTrue(algae.setSpeed(-10)).whileFalse(algae.setSpeed(0));

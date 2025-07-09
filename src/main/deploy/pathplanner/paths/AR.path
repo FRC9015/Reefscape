@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5,
-        "y": 7.282
+        "x": 1.306,
+        "y": 0.917
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2448549976332544,
-        "y": 6.607098874143733
+        "x": 2.6339923469387765,
+        "y": 2.0737563775510193
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.619,
-        "y": 5.148
+        "x": 3.126,
+        "y": 3.86
       },
       "prevControl": {
-        "x": 3.3504194531038043,
-        "y": 5.3942473698496185
+        "x": 2.2910737102713234,
+        "y": 4.005392164537057
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,11 +32,11 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7818791946308725,
+      "minWaypointRelativePos": 0.8,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 3.0,
-        "maxAcceleration": 2.0,
+        "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -49,7 +49,7 @@
     {
       "name": "L3Position",
       "waypointRelativePos": 0,
-      "endWaypointRelativePos": 0.78,
+      "endWaypointRelativePos": 0.79,
       "command": {
         "type": "sequential",
         "data": {
@@ -72,7 +72,7 @@
     },
     {
       "name": "L4Position",
-      "waypointRelativePos": 0.78,
+      "waypointRelativePos": 0.8,
       "endWaypointRelativePos": 1.0,
       "command": {
         "type": "named",
@@ -84,7 +84,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 4.7,
-    "maxAcceleration": 10.0,
+    "maxAcceleration": 8.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -92,13 +92,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "four note Left",
+  "folder": "Four Note Right",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -55.0
+    "rotation": 55.0
   },
   "useDefaultConstraints": false
 }

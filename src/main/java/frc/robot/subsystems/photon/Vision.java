@@ -188,6 +188,8 @@ public class Vision extends SubsystemBase {
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);
       allRobotPosesRejected.addAll(robotPosesRejected);
+
+      Logger.recordOutput("Vision/StdDevs", curStdDevs);
     }
   }
 

@@ -1,0 +1,117 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "EL"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "L4Position"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "shootCoral"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "To source EL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoralDrive"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "To source FR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoralDrive"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "To source FL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoralDrive"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
