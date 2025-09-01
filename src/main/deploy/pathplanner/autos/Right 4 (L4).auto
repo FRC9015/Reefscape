@@ -49,15 +49,48 @@
           }
         },
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "FR"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shootCoral"
+            "commands": [
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FR"
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "IntakeCoral"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "L4Position"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "shootCoral"
+                }
+              }
+            ]
           }
         },
         {
@@ -73,15 +106,48 @@
           }
         },
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "FL"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shootCoral"
+            "commands": [
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FL"
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "IntakeCoral"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "L4Position"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "shootCoral"
+                }
+              }
+            ]
           }
         },
         {

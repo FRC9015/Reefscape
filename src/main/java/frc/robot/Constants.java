@@ -94,6 +94,9 @@ public final class Constants {
   }
 
   public static class FieldConstants {
+    public static final Pose2d REEF_CENTER =
+        new Pose2d(new Translation2d(4.477, 4.036), new Rotation2d());
+
     public static final Pose2d reef_AL1 =
         new Pose2d(new Translation2d(3.25, 3.8), new Rotation2d());
     public static final Pose2d bargeFar = new Pose2d(new Translation2d(7.6, 6.6), new Rotation2d());
@@ -165,6 +168,7 @@ public final class Constants {
     public static final int ELEVATOR_MOTOR_ID2 = 10;
     public static final int ELEVATOR_ENCODER_ID = 8;
     public static final int SERVO_CHANNE1 = 2;
+    public static final int SERVO_CHANNE2 = 3;
   }
 
   public static class ElevatorConstants {

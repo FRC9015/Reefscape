@@ -36,12 +36,17 @@
       "name": "DefaultPosition",
       "waypointRelativePos": 0,
       "endWaypointRelativePos": 1.0,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "DefaultPosition"
+        }
+      }
     }
   ],
   "globalConstraints": {
     "maxVelocity": 4.7,
-    "maxAcceleration": 8.0,
+    "maxAcceleration": 7.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
