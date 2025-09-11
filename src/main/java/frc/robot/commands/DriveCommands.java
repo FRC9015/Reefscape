@@ -15,6 +15,7 @@ package frc.robot.commands;
 
 import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -165,13 +166,10 @@ public class DriveCommands {
       Supplier<DriverStation.Alliance> allianceSupplier) {
 
     // Create PID controller
-    ProfiledPIDController angleController =
-        new ProfiledPIDController(
-            ANGLE_KP,
-            0.0,
-            ANGLE_KD,
-            new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+    PIDController angleController = new PIDController(ANGLE_KP, 0.0, ANGLE_KD);
     angleController.enableContinuousInput(-Math.PI, Math.PI);
+
+    Pose2d flippedPose = FlippingUtil.flipFieldPose(poseSupplier.get());
 
     // Construct command
     return Commands.run(
@@ -180,40 +178,34 @@ public class DriveCommands {
               Translation2d linearVelocity =
                   getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
+              boolean isFlipped =
+                  DriverStation.getAlliance().isPresent()
+                      && DriverStation.getAlliance().get() == Alliance.Red;
+              Pose2d targetPose = isFlipped ? flippedPose : poseSupplier.get();
               // Calculate angular speed
               double omega =
                   angleController.calculate(
                       drive.getRotation().getRadians(),
                       drive
-                          .getPose()
-                          .getTranslation()
-                          .minus(
-                              allianceSupplier.get() == Alliance.Blue
-                                  ? poseSupplier.get().getTranslation()
-                                  : FlippingUtil.flipFieldPose(poseSupplier.get()).getTranslation())
-                          .getAngle()
-                          .getRadians());
-
+                              .getPose()
+                              .getTranslation()
+                              .minus(targetPose.getTranslation())
+                              .getAngle()
+                              .getRadians()
+                          + Math.PI);
               // Convert to field relative speeds & send command
               ChassisSpeeds speeds =
                   new ChassisSpeeds(
                       linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
                       linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
                       omega);
-              boolean isFlipped =
-                  DriverStation.getAlliance().isPresent()
-                      && DriverStation.getAlliance().get() == Alliance.Red;
-              drive.runVelocity(
-                  ChassisSpeeds.fromFieldRelativeSpeeds(
-                      speeds,
-                      isFlipped
-                          ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                          : drive.getRotation()));
+
+              drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
             },
             drive)
 
         // Reset PID controller when command starts
-        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+        .beforeStarting(() -> angleController.reset());
   }
 
   /**

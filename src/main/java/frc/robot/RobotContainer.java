@@ -384,8 +384,8 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.joystickDriveFacingPose(
                 drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
+                () -> driverController.getLeftY(),
+                () -> driverController.getLeftX(),
                 () -> Constants.FieldConstants.REEF_CENTER,
                 () -> alliance.get()));
     // Reset gyro to 0° when B button is pressed
