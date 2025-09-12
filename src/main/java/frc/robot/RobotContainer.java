@@ -381,6 +381,7 @@ public class RobotContainer {
     // Lock to 0° when A button is held
     driverController
         .a()
+        .or(coralIn)
         .whileTrue(
             DriveCommands.joystickDriveFacingPose(
                 drive,
@@ -444,6 +445,12 @@ public class RobotContainer {
     // operatorController
     // .leftBumper()
     // .whileTrue(endEffector.runEffector(0.15).until(coralFound));
+    // operatorController.x().onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, ()
+    // -> alliance.get()));
+    driverController
+        .x()
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () -> alliance.get()));
+
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
     operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
     operatorController.a().onTrue(climb.extendCommand2());
