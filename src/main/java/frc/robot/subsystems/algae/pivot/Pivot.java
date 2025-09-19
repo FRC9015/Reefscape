@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.algae.pivot.PivotIO.PivotIOInputs;
+import frc.robot.subsystems.algae.pivot.PivotIO.PivotIOInputs.PivotPosition;
 import org.littletonrobotics.junction.Logger;
 
 public class Pivot extends SubsystemBase {
@@ -24,7 +25,7 @@ public class Pivot extends SubsystemBase {
     this.io = io;
     this.pidController = new PIDController(kP, kI, kD);
     this.pidController.setTolerance(kToleranceMeters);
-    // this.setDefaultCommand(executePreset(PivotPosition.Default));
+    this.setDefaultCommand(executePreset(PivotPosition.Default));
     encoderDisconnectedAlert = new Alert("Pivot encoder disconnected!", AlertType.kError);
   }
 

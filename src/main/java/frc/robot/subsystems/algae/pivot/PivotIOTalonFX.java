@@ -19,7 +19,7 @@ public class PivotIOTalonFX implements PivotIO {
 
   public PivotIOTalonFX(int moterID) {
 
-    this.pivotMotor = new TalonFX(moterID);
+    this.pivotMotor = new TalonFX(moterID, "*");
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -42,6 +42,6 @@ public class PivotIOTalonFX implements PivotIO {
 
   @Override
   public void setPivotPosition(double value) {
-    pivotMotor.setControl(voltageOut.withOutput(MathUtil.clamp(value, -12, 12)));
+    pivotMotor.setVoltage(MathUtil.clamp(value, -12, 12));
   }
 }

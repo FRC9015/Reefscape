@@ -165,47 +165,70 @@ public class DriveCommands {
       Supplier<Pose2d> poseSupplier,
       Supplier<DriverStation.Alliance> allianceSupplier) {
 
-    // Create PID controller
     PIDController angleController = new PIDController(ANGLE_KP, 0.0, ANGLE_KD);
     angleController.enableContinuousInput(-Math.PI, Math.PI);
 
-    Pose2d flippedPose = FlippingUtil.flipFieldPose(poseSupplier.get());
+    return new Command() {
+      @Override
+      public void initialize() {
+        angleController.reset();
+      }
 
-    // Construct command
-    return Commands.run(
-            () -> {
-              // Get linear velocity
-              Translation2d linearVelocity =
-                  getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+      @Override
+      public void execute() {
+        // Alliance flip logic every cycle
+        Pose2d flippedPose = FlippingUtil.flipFieldPose(poseSupplier.get());
+        boolean isFlipped =
+            DriverStation.getAlliance().isPresent()
+                && DriverStation.getAlliance().get() == Alliance.Red;
+        Pose2d targetPose = isFlipped ? flippedPose : poseSupplier.get();
 
-              boolean isFlipped =
-                  DriverStation.getAlliance().isPresent()
-                      && DriverStation.getAlliance().get() == Alliance.Red;
-              Pose2d targetPose = isFlipped ? flippedPose : poseSupplier.get();
-              // Calculate angular speed
-              double omega =
-                  angleController.calculate(
-                      drive.getRotation().getRadians(),
-                      drive
-                              .getPose()
-                              .getTranslation()
-                              .minus(targetPose.getTranslation())
-                              .getAngle()
-                              .getRadians()
-                          + Math.PI);
-              // Convert to field relative speeds & send command
-              ChassisSpeeds speeds =
-                  new ChassisSpeeds(
-                      linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                      linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                      omega);
+        // Linear velocity from joysticks
+        Translation2d linearVelocity =
+            getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
-              drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
-            },
-            drive)
+        // Angular correction
+        double omega =
+            angleController.calculate(
+                drive.getRotation().getRadians(),
+                drive
+                        .getPose()
+                        .getTranslation()
+                        .minus(targetPose.getTranslation())
+                        .getAngle()
+                        .getRadians()
+                    + Math.PI);
 
-        // Reset PID controller when command starts
-        .beforeStarting(() -> angleController.reset());
+        // Drive field-relative
+        ChassisSpeeds speeds =
+            new ChassisSpeeds(
+                linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                omega);
+
+        drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
+      }
+
+      @Override
+      public void end(boolean interrupted) {
+        drive.stop();
+      }
+
+      @Override
+      public boolean isFinished() {
+        // Recompute live target pose for distance check
+        Pose2d flippedPose = FlippingUtil.flipFieldPose(poseSupplier.get());
+        boolean isFlipped =
+            DriverStation.getAlliance().isPresent()
+                && DriverStation.getAlliance().get() == Alliance.Red;
+        Pose2d targetPose = isFlipped ? flippedPose : poseSupplier.get();
+
+        Pose2d currentPose = drive.getPose();
+        double distance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
+
+        return distance < 1.0; // or test with 1.0 to confirm
+      }
+    };
   }
 
   /**

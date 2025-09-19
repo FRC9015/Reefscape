@@ -9,7 +9,8 @@ public interface PivotIO {
 
     public static enum PivotPosition {
       Default(0.0),
-      Down(2);
+      Score(-1.6),
+      Down(-6.8);
 
       private final double pivotPosition;
 
