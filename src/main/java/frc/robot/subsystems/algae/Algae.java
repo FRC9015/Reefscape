@@ -1,5 +1,7 @@
 package frc.robot.subsystems.algae;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -29,9 +31,23 @@ public class Algae extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     encoderDisconnectedAlert.set(!inputs.algaeEncoderConnected);
+    Logger.recordOutput("Algae/velocity", inputs.algaeRPM);
+    Logger.recordOutput("Algae/current", inputs.algaeCurrentAmps);
   }
 
   public Command setSpeed(double rpm) {
     return run(() -> io.setRPM(rpm));
+  }
+
+  public boolean isStalled() {
+    //these need to be set basaed on the motors need to be determined in real time.
+    double velocityThreshold = 0.0;
+    double currentThreshold = 0.0;
+
+    if (Math.abs(inputs.algaeRPM) < velocityThreshold
+        && inputs.algaeCurrentAmps > currentThreshold) {
+      return true;
+    }
+    return false;
   }
 }

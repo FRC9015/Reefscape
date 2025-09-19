@@ -33,6 +33,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.algae.Algae;
 import frc.robot.subsystems.algae.AlgaeIOTalonFX;
 import frc.robot.subsystems.algae.pivot.Pivot;
+import frc.robot.subsystems.algae.pivot.PivotIO.PivotIOInputs.PivotPosition;
 import frc.robot.subsystems.algae.pivot.PivotIOTalonFX;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO.ClimberIOInputs.ClimberPositions;
@@ -98,6 +99,7 @@ public class RobotContainer {
   private final Trigger canRangeRight;
   private final Trigger inPosition;
   private final Trigger elevatorToggle;
+  private final Trigger groundStall;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -149,6 +151,7 @@ public class RobotContainer {
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
         elevatorToggle = new Trigger(() -> elevator.getToggle());
+        groundStall = new Trigger(() -> algae.isStalled());
         climb =
             new Climber(
                 7,
@@ -198,6 +201,7 @@ public class RobotContainer {
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
         elevatorToggle = new Trigger(() -> elevator.getToggle());
+        groundStall = new Trigger(() -> algae.isStalled());
         // pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         climb =
             new Climber(
@@ -247,6 +251,7 @@ public class RobotContainer {
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
         elevatorToggle = new Trigger(() -> elevator.getToggle());
+        groundStall = new Trigger(() -> algae.isStalled());
 
         climb =
             new Climber(
@@ -393,6 +398,17 @@ public class RobotContainer {
 
     driverController.y().whileTrue(algae.setSpeed(10)).whileFalse(algae.setSpeed(0));
     driverController.b().whileTrue(algae.setSpeed(-10)).whileFalse(algae.setSpeed(0));
+    driverController.povRight().onTrue(pivot.executePreset(PivotPosition.Score));
+    driverController
+        .povLeft()
+        .onTrue(
+            pivot
+                .executePreset(PivotPosition.Down)
+                .andThen(
+                    algae
+                        .setSpeed(-5)
+                        .until(groundStall)
+                        .andThen(pivot.executePreset(PivotPosition.Default))));
     // driverController
     //     .a()
     //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
