@@ -42,6 +42,6 @@ public class PivotIOTalonFX implements PivotIO {
 
   @Override
   public void setPivotPosition(double value) {
-    pivotMotor.setVoltage(MathUtil.clamp(value, -12, 12));
+    pivotMotor.setVoltage(MathUtil.clamp(value, -8, 8));
   }
 }
