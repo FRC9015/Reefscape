@@ -383,10 +383,9 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
 
-    // Lock to 0° when A button is held
+    // Face Reef Center while holding A
     driverController
         .a()
-        .or(coralIn)
         .whileTrue(
             DriveCommands.joystickDriveFacingPose(
                 drive,
@@ -397,7 +396,7 @@ public class RobotContainer {
     // Reset gyro to 0° when B button is pressed
 
     driverController.y().whileTrue(algae.setSpeed(10)).whileFalse(algae.setSpeed(0));
-    driverController.b().whileTrue(algae.setSpeed(-10)).whileFalse(algae.setSpeed(0));
+    // driverController.b().whileTrue(algae.setSpeed(-10)).whileFalse(algae.setSpeed(0));
     driverController.povRight().onTrue(pivot.executePreset(PivotPosition.Score));
     driverController
         .povLeft()
@@ -409,6 +408,12 @@ public class RobotContainer {
                         .setSpeed(-5)
                         .until(groundStall)
                         .andThen(pivot.executePreset(PivotPosition.Default))));
+    driverController
+        .b()
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceR, drive, () -> alliance.get()));
+    driverController
+        .x()
+        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () -> alliance.get()));
     // driverController
     //     .a()
     //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
@@ -457,15 +462,6 @@ public class RobotContainer {
                 .andThen(elevator.executePreset(ElevatorState.CoralL3).withTimeout(0.75))
                 .andThen(climb.retractCommand2().withTimeout(2))
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.7)));
-    // operatorController.x().onTrue(climb.executePreset(ClimberPositions.Default));
-    // operatorController
-    // .leftBumper()
-    // .whileTrue(endEffector.runEffector(0.15).until(coralFound));
-    // operatorController.x().onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, ()
-    // -> alliance.get()));
-    driverController
-        .x()
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () -> alliance.get()));
 
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
     operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
@@ -727,7 +723,7 @@ public class RobotContainer {
         .onTrue(
             elevator
                 .executePreset(ElevatorState.CoralL4)
-                .withTimeout(0.85)
+                .withTimeout(1.10)
                 .andThen(endEffector.runEffectorAutoCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
                 .unless(() -> intake.isCoralIn()));

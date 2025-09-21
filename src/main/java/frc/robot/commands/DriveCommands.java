@@ -206,7 +206,12 @@ public class DriveCommands {
                 linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
                 omega);
 
-        drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
+        drive.runVelocity(
+            ChassisSpeeds.fromFieldRelativeSpeeds(
+                speeds,
+                isFlipped
+                    ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                    : drive.getRotation()));
       }
 
       @Override
