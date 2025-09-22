@@ -285,7 +285,10 @@ public class Drive extends SubsystemBase {
     // Log optimized setpoints (runSetpoint mutates each state)
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
   }
-
+/**
+ * manages the speeds of individual wheels, makes sure everything is working right, and logs data
+ * @param speeds
+ */
   public void runVelocityAuto(ChassisSpeeds speeds) {
     // Calculate module setpoints
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
@@ -342,7 +345,10 @@ public class Drive extends SubsystemBase {
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
-
+/**
+ * retrieves the path that shares the name as the parameter. if there is an error, it reports the problem and does nothing
+ * @param pathname
+ */
   public Command followPathCommand(String pathname) {
     try {
       return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathname));
@@ -400,7 +406,7 @@ public class Drive extends SubsystemBase {
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
-
+/**returns the expected pose in o.02 seconds */
   @AutoLogOutput
   public Pose2d getPredictedPose() {
     return this.getPose().exp(this.getChassisSpeeds().toTwist2d(0.02));
@@ -444,7 +450,11 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
   }
-
+/**
+ * returns the distiance between where the robot is and where it wants to be
+ * @param targetpose
+ * @return distance to pose
+ */
   public double getDistanceToPose(Translation2d targetpose) {
     return getPose().getTranslation().getDistance(targetpose);
   }
@@ -459,16 +469,29 @@ public class Drive extends SubsystemBase {
     //   return this.pfToPose(targetpose, endVelocity);
     // }
   }
-
+/**
+ * pathfinds to the given position
+ * @param targetpose
+ * @param endVelocity
+ */
   public Command pfToPose(Pose2d targetpose, double endVelocity) {
     return AutoBuilder.pathfindToPose(targetpose, PP_CONSTRAINTS, endVelocity);
   }
-
+/**
+ * pathfinds to the given position on the other side
+ * @param targetPose
+ * @param endVelocity
+ * @see pfToPose
+ */
   public Command pathfindToPoseFlipped(Pose2d targetPose, double endVelocity) {
     Pose2d tp = FlippingUtil.flipFieldPose(targetPose);
     return AutoBuilder.pathfindToPose(tp, PP_CONSTRAINTS, endVelocity);
   }
-
+/**
+ * Calculates the minimum and maximum translational speeds of all the modules
+ * @param swerveStatesMeasured
+ * @param swerveDriveKinematics
+ */
   public static double getSkiddingRatio(
       SwerveModuleState[] swerveStatesMeasured, SwerveDriveKinematics swerveDriveKinematics) {
     final double rotationalVelocityMeasured =
@@ -498,22 +521,26 @@ public class Drive extends SubsystemBase {
 
     return maximumTranslationalSpeed / minimumTranslationalSpeed;
   }
-
+/**Turns wheel state into direction and speed
+ * @param swerveModuleState
+ * @return moule speed, module angle
+ */
   private static Translation2d convertSwerveStateToVelocityVector(
       SwerveModuleState swerveModuleState) {
     return new Translation2d(swerveModuleState.speedMetersPerSecond, swerveModuleState.angle);
   }
-
+/** Checks if wheels are sliping from translational forcs */
   private boolean isSlipping() {
     return getSkiddingRatio(this.getModuleStates(), kinematics) > slipRatio;
   }
-
+  //google says these next two are wrong
+/**makes the modules stop */
   public void setModulesBrake() {
     for (Module module : modules) {
       module.setBrakeMode();
     }
   }
-
+/**makes the modules go into neutral */
   public void setModulesCoast() {
     for (Module module : modules) {
       module.setCoastMode();

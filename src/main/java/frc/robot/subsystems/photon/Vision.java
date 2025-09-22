@@ -71,7 +71,7 @@ public class Vision extends SubsystemBase {
       return Optional.empty();
     }
   }
-
+/**Turns the camera data into useful data, finds robot location, performs huristic, and logs data*/
   @Override
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
@@ -190,9 +190,15 @@ public class Vision extends SubsystemBase {
       allRobotPosesRejected.addAll(robotPosesRejected);
     }
   }
-
+/** interface for camera */
   @FunctionalInterface
   public static interface VisionConsumer {
+    /**
+     * Interface for camera
+     * @param visionRobotPoseMeters
+     * @param timestampSeconds
+     * @param visionMeasurementStdDevs
+     */
     public void accept(
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,

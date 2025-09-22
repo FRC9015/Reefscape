@@ -77,27 +77,27 @@ public class Intake extends SubsystemBase {
   public boolean isCoralIn() {
     return !inputs.coralIn;
   }
-
+/** Returns if coral is set but not in */
   public boolean isCoralSet() {
     return !inputs.coralSet && inputs.coralIn;
   }
-
+/** Returns if coral is set and in */
   public boolean inRamp() {
     return !inputs.coralSet && !inputs.coralIn;
   }
-
+/** Returns if coral is detected by left Can */
   public boolean canRangeLeftDetected() {
     return inputs.side1IsDetected;
   }
-
+/** Returns if coral is detected by middle Can */
   public boolean canRangeMiddleDetected() {
     return inputs.middleIsDetected;
   }
-
+/** Returns if coral is detected by right Can */
   public boolean canRangeRightDetected() {
     return inputs.side2IsDetected;
   }
-
+/** Returns if coral is detected by all Cans */
   public boolean inPosition() {
     return (!inputs.side1IsDetected && inputs.middleIsDetected && !inputs.side2IsDetected);
   }
@@ -116,7 +116,7 @@ public class Intake extends SubsystemBase {
   public Command runIntake(double rpm) {
     return this.startEnd(() -> setRPM(rpm), () -> stop());
   }
-
+/**Returns the current voltage applied to the intake motors in the oposit direction */
   public Command runIntakeReverse(double rpm) {
     return this.startEnd(() -> setRPM(-rpm), () -> stop());
   }

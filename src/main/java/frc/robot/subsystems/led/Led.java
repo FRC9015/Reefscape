@@ -54,14 +54,19 @@ public class Led extends SubsystemBase {
         new StrobeAnimation(color.getRed(), color.getGreen(), color.getBlue(), 0, 1, ledCount);
     candle.animate(bufferedAnimation);
   }
-
+/**
+   * Sets the LED strip to a solid color .
+   *
+   * @param color The color to set the LEDs to.
+   * @see strobeAnimation
+   */
   public Command setColor(Color color) {
     return new Command() {
       @Override
       public void initialize() {
         strobeAnimation(color);
       }
-
+/** sets the leds to black, regardless of the argument */
       @Override
       public void end(boolean interrupted) {
         strobeAnimation(Color.BLACK);

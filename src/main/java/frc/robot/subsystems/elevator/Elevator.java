@@ -76,7 +76,7 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
-   * the.
+   * Logs current state and desired state, keeps the last position in memory
    *
    * @param state The desired preset state.
    */
@@ -125,11 +125,11 @@ public class Elevator extends SubsystemBase {
     Logger.recordOutput("state: ", supplier.get());
     return run(() -> this.setPreset(supplier.get()));
   }
-
+/**Puts the elevator into brake */
   public void setBrakeMode() {
     io.setBrakeMode();
   }
-
+/**Puts the elevator into coast */
   public void setCoastMode() {
     io.setCoastMode();
   }
@@ -151,7 +151,7 @@ public class Elevator extends SubsystemBase {
   public Command zeroTheElevator() {
     return run(() -> io.zeroElevator());
   }
-
+/** Returns if zeroSwitch is triggered */
   public Boolean getElevatorLimitSwitch() {
     return inputs.zeroSwitchTriggered;
   }
@@ -165,11 +165,16 @@ public class Elevator extends SubsystemBase {
     return inputs.elevatorState;
   }
 
-  /** Toggles toggle. */
+  /** Toggles toggle.
+   * @see getToggle
+   */
   public Command toggle() {
     return this.runOnce(io::switchToggle);
   }
-
+/**
+ * checks if toggle is toggled
+ * @return toggle
+ */
   public boolean getToggle() {
     return inputs.toggle;
   }

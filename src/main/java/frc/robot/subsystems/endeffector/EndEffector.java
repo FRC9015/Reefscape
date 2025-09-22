@@ -121,34 +121,35 @@ public class EndEffector extends SubsystemBase {
   public Command runEffector(double voltage) {
     return this.startEnd(() -> setVoltage(-voltage), () -> stop());
   }
-
-  /** the. */
+/**
+ * sets voltage to the negative of the argument
+ * @param voltage
+ */
   public Command runEffectorAuto(double voltage) {
     return this.run(() -> setVoltage(-voltage));
   }
 
-  /** the. */
+  /** sets rpm to -4 for 0.25 seconds */
   public Command runEffectorAutoCommand() {
     return new SequentialCommandGroup(
         new InstantCommand(this::autoEffectorVoltage),
         new WaitCommand(0.25),
         new InstantCommand(this::stop));
   }
-
+/** sets rpm to -4 for.1 seconds */
   public Command runEffectorAutoCommandL1() {
     return new SequentialCommandGroup(
-        new InstantCommand(this::autoEffectorVoltageL1),
+        new InstantCommand(this::autoEffectorVoltage),
         new WaitCommand(0.4),
         new InstantCommand(this::stop));
   }
-
+/**sets rpm to -4
+ * had a duplicate called autoEffectorVoltageL1
+ */
   private void autoEffectorVoltage() {
     io.setRPM(-4);
   }
 
-  private void autoEffectorVoltageL1() {
-    io.setRPM(-4);
-  }
 
   /**
    * Runs the end effector in reverse at the specified RPM.

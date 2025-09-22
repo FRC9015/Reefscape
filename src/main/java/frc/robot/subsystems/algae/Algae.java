@@ -17,7 +17,10 @@ public class Algae extends SubsystemBase {
   private static final double kI = 0.0;
   private static final double kD = 0.0;
   private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
-
+/**
+ * Sets up Algae subsystem
+ * @param algae IO io
+ */
   public Algae(AlgaeIO io) {
     this.io = io;
     this.pidController = new PIDController(kP, kI, kD);
@@ -30,7 +33,10 @@ public class Algae extends SubsystemBase {
     io.updateInputs(inputs);
     encoderDisconnectedAlert.set(!inputs.algaeEncoderConnected);
   }
-
+/**
+ * Sets rpm to an new value
+ * @param rpm
+ */
   public Command setSpeed(double rpm) {
     return run(() -> io.setRPM(rpm));
   }
