@@ -407,8 +407,7 @@ public class RobotContainer {
                 .andThen(
                     algae
                         .setSpeed(-5)
-                        .until(groundStall)
-                        .andThen(pivot.executePreset(PivotPosition.Default))));
+                        .andThen(pivot.executePreset(PivotPosition.Default).onlyIf(groundStall))));
     // driverController
     //     .a()
     //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
@@ -454,9 +453,11 @@ public class RobotContainer {
             climb
                 .executePreset(ClimberPositions.Up)
                 .withTimeout(2.5)
+                .andThen(pivot.executePreset(PivotPosition.Score))
                 .andThen(elevator.executePreset(ElevatorState.CoralL3).withTimeout(0.75))
                 .andThen(climb.retractCommand2().withTimeout(2))
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.7)));
+                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.7))
+                .andThen(pivot.executePreset(PivotPosition.Default)));
     // operatorController.x().onTrue(climb.executePreset(ClimberPositions.Default));
     // operatorController
     // .leftBumper()
