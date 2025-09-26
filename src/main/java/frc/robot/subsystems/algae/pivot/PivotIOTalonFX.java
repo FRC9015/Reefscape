@@ -8,7 +8,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
 import frc.robot.Constants.GroundIntakeConstants;
 import frc.robot.subsystems.algae.pivot.PivotIO.PivotIOInputs.PivotPosition;
@@ -23,11 +22,11 @@ public class PivotIOTalonFX implements PivotIO {
   public PivotIOTalonFX(int moterID) {
 
     this.pivotMotor = new TalonFX(moterID, "*");
-    TalonFXConfiguration motorConfig = 
-      new TalonFXConfiguration()
-        .withSlot0(GroundIntakeConstants.GROUND_CONFIGS)
-        .withMotionMagic(GroundIntakeConstants.GROUND_MAGIC_CONFIGS)
-        .withFeedback(GroundIntakeConstants.GROUND_FEEDBACK_CONFIGS);
+    TalonFXConfiguration motorConfig =
+        new TalonFXConfiguration()
+            .withSlot0(GroundIntakeConstants.GROUND_CONFIGS)
+            .withMotionMagic(GroundIntakeConstants.GROUND_MAGIC_CONFIGS)
+            .withFeedback(GroundIntakeConstants.GROUND_FEEDBACK_CONFIGS);
 
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -50,10 +49,10 @@ public class PivotIOTalonFX implements PivotIO {
 
   @Override
   public void setPivotPosition(double angle) {
-    //pivotMotor.setVoltage(MathUtil.clamp(value, -8, 8));
+    // pivotMotor.setVoltage(MathUtil.clamp(value, -8, 8));
     if (angle > GroundIntakeConstants.maxPosition) {
       angle = GroundIntakeConstants.maxPosition;
-    } 
+    }
     if (angle < GroundIntakeConstants.minPosition) {
       angle = GroundIntakeConstants.minPosition;
     }

@@ -133,7 +133,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
-        intake = new Intake(new IntakeIOTalonFX(9, 8, 46, 45, 44));
+        intake = new Intake(new IntakeIOTalonFX(6, 8, 46, 45, 44));
         elevator =
             new Elevator(
                 new ElevatorIOTalonFX(
@@ -398,23 +398,19 @@ public class RobotContainer {
     driverController.y().whileTrue(algae.setSpeed(10)).whileFalse(algae.setSpeed(0));
     // driverController.b().whileTrue(algae.setSpeed(-10)).whileFalse(algae.setSpeed(0));
     driverController.povRight().onTrue(pivot.executePreset(PivotPosition.Score));
-    driverController
-        .povLeft()
-        .onTrue(
-            pivot
-                .executePreset(PivotPosition.Down)
-                .andThen(
-                    algae
-                        .setSpeed(-5)
-                        .until(groundStall)
-                        .andThen(pivot.executePreset(PivotPosition.Default))));
+    driverController.x().onTrue(pivot.executePreset(PivotPosition.Default));
+    driverController.povLeft().onTrue(pivot.executePreset(PivotPosition.Down));
+    // .andThen(
+    //     algae
+    //         .setSpeed(-5)
+    //         .until(groundStall)
+    //         .andThen(pivot.executePreset(PivotPosition.Default))));
     driverController
         .b()
         .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceR, drive, () -> alliance.get()));
-    driverController
-        .x()
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () -> alliance.get()));
-
+    // driverController
+    //     .x()
+    //     .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () -> alliance.get()));
     // driverController
     //     .a()
     //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
@@ -446,8 +442,8 @@ public class RobotContainer {
     //     .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceR, drive, () ->
     // alliance.get()));
 
-    driverController.povLeft().whileTrue(pivot.pivotUp(3));
-    driverController.povRight().whileTrue(pivot.pivotDown(3));
+    // driverController.povLeft().whileTrue(pivot.pivotUp(3));
+    // driverController.povRight().whileTrue(pivot.pivotDown(3));
 
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
@@ -460,13 +456,10 @@ public class RobotContainer {
             climb
                 .executePreset(ClimberPositions.Up)
                 .withTimeout(2.5)
-                .andThen(pivot.executePreset(PivotPosition.Score))
                 .andThen(elevator.executePreset(ElevatorState.CoralL3).withTimeout(0.75))
                 .andThen(climb.retractCommand2().withTimeout(2))
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.7))
-                .andThen(pivot.executePreset(PivotPosition.Default)));
-   
-   
+                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.7)));
+
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
     operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
     operatorController.a().onTrue(climb.extendCommand2());

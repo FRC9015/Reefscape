@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.351,
-        "y": 7.17
+        "x": 2.047,
+        "y": 7.24
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2257468447658653,
-        "y": 6.5332552282206295
+        "x": 2.7302226855520164,
+        "y": 6.217539074520211
       },
       "isLocked": false,
       "linkedName": null
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 3.865178571428572,
-        "y": 5.289764030612244
+        "y": 5.29
       },
       "prevControl": {
-        "x": 2.0146683673469385,
-        "y": 6.811957908163266
+        "x": 2.635271041862328,
+        "y": 6.710783431615053
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,32 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "L4Position",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "IntakeCoral"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "L4Position"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

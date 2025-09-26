@@ -28,8 +28,7 @@ public class Climber extends SubsystemBase {
     this.setDefaultCommand(extendCommand2());
   }
 
-  /** Locks the servos for the ramp.*/
-
+  /** Locks the servos for the ramp. */
   public void extend2() {
     io.servoLock();
   }
@@ -39,11 +38,12 @@ public class Climber extends SubsystemBase {
     io.servoUnlock();
   }
 
-  /** Sets the position of the climber using voltage control. 
-   * Logs climber setpoint, output, and position. 
+  /**
+   * Sets the position of the climber using voltage control. Logs climber setpoint, output, and
+   * position.
    *
-   *@param 
-   *  state the desired state of the climber.*/
+   * @param state the desired state of the climber.
+   */
   public void setPreset(ClimberIOInputs.ClimberPositions state) {
     pidController.setSetpoint(state.getClimberPosition());
     double output = pidController.calculate(inputs.climberPosition);
@@ -55,20 +55,19 @@ public class Climber extends SubsystemBase {
     Logger.recordOutput("Climber/PositionInput", inputs.climberPosition);
   }
 
-  /** Runs a command to set the position of the climber using voltage control.
-   *  Ends once the PID has reached the setpoint.
+  /**
+   * Runs a command to set the position of the climber using voltage control. Ends once the PID has
+   * reached the setpoint.
    *
-   * @param 
-   *  state the desired state of the climber. 
-   * 
-   * @return
-   *      A run Command that runs the PID until the controller has reached the desired setpoint. */
+   * @param state the desired state of the climber.
+   * @return A run Command that runs the PID until the controller has reached the desired setpoint.
+   */
   public Command executePreset(ClimberIOInputs.ClimberPositions state) {
     Logger.recordOutput("Climber/State", state);
     return run(() -> this.setPreset(state)).until(() -> pidController.atSetpoint());
   }
 
-  /** Creates a runOnce command to retract the ramp servos.*/
+  /** Creates a runOnce command to retract the ramp servos. */
   public Command upGo() {
     return runOnce(this::retract2);
   }
@@ -95,10 +94,10 @@ public class Climber extends SubsystemBase {
 
   /** Creates run command to retract the ramp servos. */
   public Command retractCommand2() {
-    return run(this::retract2); 
+    return run(this::retract2);
   }
 
-  /** Sets climb voltage to 0.*/
+  /** Sets climb voltage to 0. */
   public Command stopClimb() {
     return this.runOnce(() -> io.setClimbRPM(0.0));
   }
