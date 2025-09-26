@@ -88,6 +88,6 @@ public class AutoDrive extends Command {
     return // Any one of the following:
     (rotationController.atSetpoint() && yController.atSetpoint() && xController.atSetpoint())
         || timer.hasElapsed(3)
-        || drive.getVelocityMetersPerSec() < .3 && distance < 0.07;
+        || drive.getVelocityMetersPerSec() < .3 && distance < 0.04;
   }
 }

@@ -1,12 +1,11 @@
 package frc.robot.subsystems.algae;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Algae extends SubsystemBase {
   private final AlgaeIO io;
@@ -40,7 +39,7 @@ public class Algae extends SubsystemBase {
   }
 
   public boolean isStalled() {
-    //these need to be set basaed on the motors need to be determined in real time.
+    // these need to be set basaed on the motors need to be determined in real time.
     double velocityThreshold = 0.0;
     double currentThreshold = 0.0;
 

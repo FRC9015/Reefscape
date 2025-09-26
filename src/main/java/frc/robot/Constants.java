@@ -19,6 +19,7 @@ import static edu.wpi.first.units.Units.Radians;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.pathplanner.lib.path.PathConstraints;
@@ -193,7 +194,38 @@ public final class Constants {
     public static final double maxHeight = 8.25;
     public static final double minHeight = -0.04;
   }
+  public static class GroundIntakeConstants {
 
+    public static final MotionMagicConfigs GROUND_MAGIC_CONFIGS = 
+        new MotionMagicConfigs()
+            .withMotionMagicAcceleration(2)
+            .withMotionMagicCruiseVelocity(6);
+    public static final Slot0Configs GROUND_CONFIGS = 
+        new Slot0Configs()
+            .withGravityType(GravityTypeValue.Arm_Cosine)
+            .withKP(0.5)
+            .withKI(0)
+            .withKD(0)
+            .withKG(0.01)
+            .withKA(0)
+            .withKS(0)
+            .withKV(0);
+    public static final FeedbackConfigs GROUND_FEEDBACK_CONFIGS = 
+    new FeedbackConfigs()
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
+
+    public static final double maxPosition = 6.0;
+    public static final double minPosition = 0.0;
+
+    public static final SoftwareLimitSwitchConfigs GROUND_LIMIT_CONFIGS = 
+        new SoftwareLimitSwitchConfigs()
+            .withForwardSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(maxPosition)
+            .withReverseSoftLimitEnable(true)
+            .withReverseSoftLimitThreshold(minPosition);
+
+    
+  }
   public static class LEDConstants {
     public static final int CANDLE_ID = 47;
   }
