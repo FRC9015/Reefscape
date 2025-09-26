@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7623858959027725,
-        "y": 6.732687680807216
+        "x": 2.611607142857143,
+        "y": 5.864317602040816
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.0891581632653065,
-        "y": 4.192889030612244
+        "x": 3.089,
+        "y": 4.21
       },
       "prevControl": {
-        "x": 3.172760624557998,
-        "y": 4.428495966982556
+        "x": 2.5220663265306125,
+        "y": 4.148118622448979
       },
       "nextControl": null,
       "isLocked": false,
@@ -51,15 +51,28 @@
       "waypointRelativePos": 0,
       "endWaypointRelativePos": 0.8,
       "command": {
-        "type": "named",
+        "type": "sequential",
         "data": {
-          "name": "L3Position"
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "IntakeCoral"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "L3Position"
+              }
+            }
+          ]
         }
       }
     },
     {
       "name": "L4Position",
-      "waypointRelativePos": 0.8,
+      "waypointRelativePos": 0.87,
       "endWaypointRelativePos": 1.0,
       "command": {
         "type": "named",
@@ -71,7 +84,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 4.7,
-    "maxAcceleration": 8.0,
+    "maxAcceleration": 10.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -82,7 +95,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "four note",
+  "folder": "four note Left",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -55.0

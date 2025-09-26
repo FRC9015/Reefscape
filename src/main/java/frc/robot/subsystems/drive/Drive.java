@@ -62,6 +62,7 @@ import frc.robot.util.LocalADStarAK;
 import frc.robot.util.PhoenixUtil;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -124,6 +125,7 @@ public class Drive extends SubsystemBase {
           VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(15)));
   private SwerveSetpointGenerator setpointGenerator;
   private SwerveSetpoint prevSetpoint;
+  private boolean oribtSafe = false;
 
   /**
    * Constructs a new Drive.
@@ -198,6 +200,7 @@ public class Drive extends SubsystemBase {
   public void periodic() {
     odometryLock.lock(); // Prevents odometry updates while reading data
     gyroIO.updateInputs(gyroInputs);
+    Logger.recordOutput("oribtsafe", orbitSafeSupplier());
     Logger.processInputs("Drive/Gyro", gyroInputs);
     for (Module module : modules) {
       module.periodic();
@@ -395,6 +398,14 @@ public class Drive extends SubsystemBase {
     return output;
   }
 
+  public double getVelocityMetersPerSec() {
+    double output = 0.0;
+    for (int i = 0; i < 4; i++) {
+      output += modules[i].getVelocityMetersPerSec() / 4.0;
+    }
+    return output;
+  }
+
   /** Returns the current odometry pose. */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
@@ -518,5 +529,25 @@ public class Drive extends SubsystemBase {
     for (Module module : modules) {
       module.setCoastMode();
     }
+  }
+
+  public BooleanSupplier orbitSafeSupplier() {
+    return () -> oribtSafe;
+  }
+
+  public void setOrbitSafeTrue() {
+    this.oribtSafe = true;
+  }
+
+  public void setOrbitSafeFalse() {
+    this.oribtSafe = false;
+  }
+
+  public Command orbitSafeTrue() {
+    return runOnce(this::setOrbitSafeTrue);
+  }
+
+  public Command orbitSafeFalse() {
+    return runOnce(this::setOrbitSafeFalse);
   }
 }

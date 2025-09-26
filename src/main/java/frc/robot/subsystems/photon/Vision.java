@@ -155,7 +155,7 @@ public class Vision extends SubsystemBase {
           // Decrease std devs if multiple targets are visible
           if (numTags > 1) estStdDevs = CameraConstants.kMultiTagStdDevs;
           // Increase std devs based on (average) distance
-          if (numTags == 1 && avgDist > 3)
+          if (numTags == 1 && avgDist > 5)
             estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
           else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
           curStdDevs = estStdDevs;
@@ -188,6 +188,8 @@ public class Vision extends SubsystemBase {
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);
       allRobotPosesRejected.addAll(robotPosesRejected);
+
+      Logger.recordOutput("Vision/StdDevs", curStdDevs);
     }
   }
 

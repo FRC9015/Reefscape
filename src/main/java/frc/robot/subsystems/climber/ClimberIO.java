@@ -22,11 +22,29 @@ public interface ClimberIO {
   @AutoLog
   public static class ClimberIOInputs {
 
+    public static enum ClimberPositions {
+      Default(0.0),
+      Up(-196.0),
+      Down(0.0);
+
+      private final double climberPosition;
+
+      ClimberPositions(double climberPosition) {
+        this.climberPosition = climberPosition;
+      }
+
+      public double getClimberPosition() {
+        return climberPosition;
+      }
+    }
+
     // Fields representing the intake state and inputs
     public double climberAppliedVolts = 0.0;
     public double climberCurrentAmps = 0.0;
     public double climberRPM = 0.0;
     public double climberPosition = 0.0;
+    public double servoPosition = 0.0;
+    public ClimberPositions currClimberPositions = ClimberPositions.Default;
   }
 
   /** Updates the set of loggable inputs. */
@@ -41,4 +59,12 @@ public interface ClimberIO {
   default void setTopRPM(double rpm) {}
 
   default void setClimbRPM(double rpm) {}
+
+  default void setClimbPosition(double position) {}
+
+  default void servoUnlock() {}
+  ;
+
+  default void servoLock() {}
+  ;
 }

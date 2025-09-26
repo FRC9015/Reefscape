@@ -13,7 +13,9 @@
 
 package frc.robot.commands;
 
+import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -154,6 +156,84 @@ public class DriveCommands {
 
         // Reset PID controller when command starts
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+  }
+
+  public static Command joystickDriveFacingPose(
+      Drive drive,
+      DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier,
+      Supplier<Pose2d> poseSupplier,
+      Supplier<DriverStation.Alliance> allianceSupplier) {
+
+    PIDController angleController = new PIDController(ANGLE_KP, 0.0, ANGLE_KD);
+    angleController.enableContinuousInput(-Math.PI, Math.PI);
+
+    return new Command() {
+      @Override
+      public void initialize() {
+        angleController.reset();
+      }
+
+      @Override
+      public void execute() {
+        // Alliance flip logic every cycle
+        Pose2d flippedPose = FlippingUtil.flipFieldPose(poseSupplier.get());
+        boolean isFlipped =
+            DriverStation.getAlliance().isPresent()
+                && DriverStation.getAlliance().get() == Alliance.Red;
+        Pose2d targetPose = isFlipped ? flippedPose : poseSupplier.get();
+
+        // Linear velocity from joysticks
+        Translation2d linearVelocity =
+            getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+
+        // Angular correction
+        double omega =
+            angleController.calculate(
+                drive.getRotation().getRadians(),
+                drive
+                        .getPose()
+                        .getTranslation()
+                        .minus(targetPose.getTranslation())
+                        .getAngle()
+                        .getRadians()
+                    + Math.PI);
+
+        // Drive field-relative
+        ChassisSpeeds speeds =
+            new ChassisSpeeds(
+                linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                omega);
+
+        drive.runVelocity(
+            ChassisSpeeds.fromFieldRelativeSpeeds(
+                speeds,
+                isFlipped
+                    ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                    : drive.getRotation()));
+      }
+
+      @Override
+      public void end(boolean interrupted) {
+        drive.stop();
+      }
+
+      @Override
+      public boolean isFinished() {
+        // Recompute live target pose for distance check
+        Pose2d flippedPose = FlippingUtil.flipFieldPose(poseSupplier.get());
+        boolean isFlipped =
+            DriverStation.getAlliance().isPresent()
+                && DriverStation.getAlliance().get() == Alliance.Red;
+        Pose2d targetPose = isFlipped ? flippedPose : poseSupplier.get();
+
+        Pose2d currentPose = drive.getPose();
+        double distance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
+
+        return distance < 1.0; // or test with 1.0 to confirm
+      }
+    };
   }
 
   /**

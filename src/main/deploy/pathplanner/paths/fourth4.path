@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.56,
-        "y": 7.26
+        "x": 1.5,
+        "y": 7.282
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3048549976332544,
-        "y": 6.585098874143733
+        "x": 2.2448549976332544,
+        "y": 6.607098874143733
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.619,
-        "y": 5.148
+        "x": 3.642737430167598,
+        "y": 5.1298882681564235
       },
       "prevControl": {
-        "x": 3.3504194531038043,
-        "y": 5.3942473698496185
+        "x": 3.374156883271402,
+        "y": 5.376135638006042
       },
       "nextControl": null,
       "isLocked": false,
@@ -51,9 +51,22 @@
       "waypointRelativePos": 0,
       "endWaypointRelativePos": 0.78,
       "command": {
-        "type": "named",
+        "type": "sequential",
         "data": {
-          "name": "L3Position"
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "IntakeCoral"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "L3Position"
+              }
+            }
+          ]
         }
       }
     },
@@ -71,7 +84,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 4.7,
-    "maxAcceleration": 8.0,
+    "maxAcceleration": 10.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -82,7 +95,7 @@
     "rotation": -59.99999999999999
   },
   "reversed": false,
-  "folder": "four note",
+  "folder": "four note Left",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -55.0

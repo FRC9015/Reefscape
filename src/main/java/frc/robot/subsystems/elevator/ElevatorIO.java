@@ -26,8 +26,8 @@ public interface ElevatorIO {
      * positions.
      */
     public enum ElevatorState {
-      Default(0.378),
-      CoralL1(0.65),
+      Default(0.55),
+      CoralL1(0.72),
       CoralL2(1.7),
       DealgifyL2(1.5),
       CoralL3(3.95),

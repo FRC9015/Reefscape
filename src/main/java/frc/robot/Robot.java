@@ -35,6 +35,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  */
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
+  private Command bargePosCommand; // command for barge position
   private RobotContainer robotContainer;
 
   public Robot() {
@@ -121,7 +122,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    robotContainer.onDisabled();
+    // robotContainer.onDisabled();
   }
 
   /** This function is called periodically when disabled. */

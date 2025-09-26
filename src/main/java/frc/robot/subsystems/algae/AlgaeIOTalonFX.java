@@ -30,7 +30,7 @@ public class AlgaeIOTalonFX implements AlgaeIO {
 
   // private final DigitalInput algaeSensor;--> Do we need this?
   public AlgaeIOTalonFX(int motorId1) {
-    motor = new TalonFX(motorId1);
+    motor = new TalonFX(motorId1, "*");
     rpmSignal = motor.getVelocity();
     // Configure motors
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
@@ -70,6 +70,6 @@ public class AlgaeIOTalonFX implements AlgaeIO {
 
   @Override
   public void setRPM(double rpm) {
-    motor.setControl(voltageOut.withOutput(MathUtil.clamp(rpm, -12, 12)));
+    motor.setVoltage(MathUtil.clamp(rpm, -12, 12));
   }
 }

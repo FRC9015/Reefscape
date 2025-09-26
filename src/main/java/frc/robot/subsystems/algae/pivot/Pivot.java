@@ -16,9 +16,9 @@ public class Pivot extends SubsystemBase {
   private final PIDController pidController;
 
   // Pivot PID constants
-  private static final double kP = 2.0;
+  private static final double kP = 0.5;
   private static final double kI = 0.0;
-  private static final double kD = 0.02;
+  private static final double kD = 0.07;
   private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
 
   public Pivot(PivotIO io) {
@@ -58,18 +58,22 @@ public class Pivot extends SubsystemBase {
   public Command pivotUp(double speed) {
     Logger.recordOutput("Pivot/speed", speed);
     Logger.recordOutput("Pivot/CurrentPosition", inputs.pivotPosition);
-    return run(() -> io.setPivotPosition(speed));
+    return startEnd(() -> io.setPivotPosition(speed), () -> io.setPivotPosition(0));
   }
 
   public Command pivotDown(double speed) {
     Logger.recordOutput("Pivot/speed", speed);
     Logger.recordOutput("Pivot/CurrentPosition", inputs.pivotPosition);
-    return run(() -> io.setPivotPosition(speed));
+    return startEnd(() -> io.setPivotPosition(-speed), () -> io.setPivotPosition(0));
   }
 
   public Command executePreset(PivotIOInputs.PivotPosition state) {
     Logger.recordOutput("Pivot/State", state);
     Logger.recordOutput("Pivot/CurrentPosition", inputs.pivotPosition);
     return run(() -> this.setPreset(state));
+  }
+
+  public double getPivotPosition() {
+    return inputs.pivotPosition;
   }
 }

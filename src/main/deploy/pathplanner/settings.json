@@ -4,8 +4,9 @@
   "holonomicMode": true,
   "pathFolders": [
     "GoToHP Paths- From Start Zones",
-    "four note",
+    "Four Note Right",
     "Two Note",
+    "four note Left",
     "three note"
   ],
   "autoFolders": [],
@@ -14,7 +15,7 @@
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
-  "robotMass": 59.9,
+  "robotMass": 66.5,
   "robotMOI": 0.654,
   "robotTrackwidth": 0.546,
   "driveWheelRadius": 0.05,

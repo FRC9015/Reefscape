@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Algae extends SubsystemBase {
   private final AlgaeIO io;
@@ -29,9 +30,23 @@ public class Algae extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     encoderDisconnectedAlert.set(!inputs.algaeEncoderConnected);
+    Logger.recordOutput("Algae/velocity", inputs.algaeRPM);
+    Logger.recordOutput("Algae/current", inputs.algaeCurrentAmps);
   }
 
   public Command setSpeed(double rpm) {
     return run(() -> io.setRPM(rpm));
+  }
+
+  public boolean isStalled() {
+    // these need to be set basaed on the motors need to be determined in real time.
+    double velocityThreshold = 0.0;
+    double currentThreshold = 0.0;
+
+    if (Math.abs(inputs.algaeRPM) < velocityThreshold
+        && inputs.algaeCurrentAmps > currentThreshold) {
+      return true;
+    }
+    return false;
   }
 }

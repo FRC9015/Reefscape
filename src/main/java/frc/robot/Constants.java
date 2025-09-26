@@ -19,6 +19,7 @@ import static edu.wpi.first.units.Units.Radians;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.pathplanner.lib.path.PathConstraints;
@@ -94,6 +95,9 @@ public final class Constants {
   }
 
   public static class FieldConstants {
+    public static final Pose2d REEF_CENTER =
+        new Pose2d(new Translation2d(4.477, 4.036), new Rotation2d());
+
     public static final Pose2d reef_AL1 =
         new Pose2d(new Translation2d(3.25, 3.8), new Rotation2d());
     public static final Pose2d bargeFar = new Pose2d(new Translation2d(7.6, 6.6), new Rotation2d());
@@ -155,15 +159,17 @@ public final class Constants {
 
   public static class MotorIDConstants {
     public static final int END_EFFECTOR_MOTOR_ID = 2;
-    public static final int INTAKE_MOTOR_ID = 1;
+    public static final int GROUND_CORAL_MOTOR_ID = 1;
     public static final int CLIMBER_TOP_MOTOR_ID = 5;
     public static final int CLIMBER_MOTOR_ID1 = 4;
     public static final int CLIMBER_MOTOR_ID2 = 6;
-    // public static final int PIVOT_MOTOR_ID = 5;
+    public static final int PIVOT_MOTOR_ID = 7;
 
     public static final int ELEVATOR_MOTOR_ID1 = 9;
     public static final int ELEVATOR_MOTOR_ID2 = 10;
     public static final int ELEVATOR_ENCODER_ID = 8;
+    public static final int SERVO_CHANNE1 = 2;
+    public static final int SERVO_CHANNE2 = 3;
   }
 
   public static class ElevatorConstants {
@@ -188,7 +194,38 @@ public final class Constants {
     public static final double maxHeight = 8.25;
     public static final double minHeight = -0.04;
   }
+  public static class GroundIntakeConstants {
 
+    public static final MotionMagicConfigs GROUND_MAGIC_CONFIGS = 
+        new MotionMagicConfigs()
+            .withMotionMagicAcceleration(2)
+            .withMotionMagicCruiseVelocity(6);
+    public static final Slot0Configs GROUND_CONFIGS = 
+        new Slot0Configs()
+            .withGravityType(GravityTypeValue.Arm_Cosine)
+            .withKP(0.5)
+            .withKI(0)
+            .withKD(0)
+            .withKG(0.01)
+            .withKA(0)
+            .withKS(0)
+            .withKV(0);
+    public static final FeedbackConfigs GROUND_FEEDBACK_CONFIGS = 
+    new FeedbackConfigs()
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
+
+    public static final double maxPosition = 6.0;
+    public static final double minPosition = 0.0;
+
+    public static final SoftwareLimitSwitchConfigs GROUND_LIMIT_CONFIGS = 
+        new SoftwareLimitSwitchConfigs()
+            .withForwardSoftLimitEnable(true)
+            .withForwardSoftLimitThreshold(maxPosition)
+            .withReverseSoftLimitEnable(true)
+            .withReverseSoftLimitThreshold(minPosition);
+
+    
+  }
   public static class LEDConstants {
     public static final int CANDLE_ID = 47;
   }
