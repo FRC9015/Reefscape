@@ -18,7 +18,7 @@ public class Pivot extends SubsystemBase {
   // Pivot PID constants
   private static final double kP = 0.5;
   private static final double kI = 0.0;
-  private static final double kD = 0.02;
+  private static final double kD = 0.07;
   private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
 
   public Pivot(PivotIO io) {

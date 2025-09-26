@@ -414,6 +414,7 @@ public class RobotContainer {
     driverController
         .x()
         .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () -> alliance.get()));
+
     // driverController
     //     .a()
     //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
@@ -459,10 +460,13 @@ public class RobotContainer {
             climb
                 .executePreset(ClimberPositions.Up)
                 .withTimeout(2.5)
+                .andThen(pivot.executePreset(PivotPosition.Score))
                 .andThen(elevator.executePreset(ElevatorState.CoralL3).withTimeout(0.75))
                 .andThen(climb.retractCommand2().withTimeout(2))
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.7)));
-
+                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.7))
+                .andThen(pivot.executePreset(PivotPosition.Default)));
+   
+   
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
     operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
     operatorController.a().onTrue(climb.extendCommand2());
