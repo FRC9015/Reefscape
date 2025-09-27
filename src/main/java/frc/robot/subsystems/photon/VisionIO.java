@@ -15,6 +15,9 @@ package frc.robot.subsystems.photon;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+
+import java.util.List;
+
 import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionIO {
@@ -52,7 +55,7 @@ public interface VisionIO {
 
   /** Represents a robot pose sample used for pose estimation. */
   public static record PoseObservation(
-      double timestamp, Pose3d pose, double ambiguity, int tagCount, double averageTagDistance) {}
+      double timestamp, Pose3d pose, double ambiguity, int tagCount, double averageTagDistance, List<Short> tagId) {}
 
   public default void updateInputs(VisionIOInputs inputs) {}
 }
