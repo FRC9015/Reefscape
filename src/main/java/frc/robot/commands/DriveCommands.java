@@ -37,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -191,10 +192,7 @@ public class DriveCommands {
         double omega =
             angleController.calculate(
                 drive.getRotation().getRadians(),
-                drive
-                        .getPose()
-                        .getTranslation()
-                        .minus(targetPose.getTranslation())
+                (drive.getPose().getTranslation().minus(targetPose.getTranslation()))
                         .getAngle()
                         .getRadians()
                     + Math.PI);
@@ -210,8 +208,18 @@ public class DriveCommands {
             ChassisSpeeds.fromFieldRelativeSpeeds(
                 speeds,
                 isFlipped
-                    ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                    : drive.getRotation()));
+                    ? drive.getRotation()
+                    : drive.getRotation().plus(new Rotation2d(Math.PI))));
+
+        Logger.recordOutput("Drive/OrbitMode/rotation", drive.getRotation().getRadians());
+        Logger.recordOutput(
+            "Drive/OrbitMode/targetAngle",
+            drive
+                .getPose()
+                .getTranslation()
+                .minus(targetPose.getTranslation())
+                .getAngle()
+                .getRadians());
       }
 
       @Override

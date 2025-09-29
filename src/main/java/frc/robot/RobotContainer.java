@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -310,7 +311,7 @@ public class RobotContainer {
             .runEffectorAuto(4)
             .alongWith(elevator.executePreset(ElevatorState.Default))
             .until(intake::inRamp));
-    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(5.5).withTimeout(0.3));
+    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(4).withTimeout(0.4));
     NamedCommands.registerCommand(
         "TestCommand", Commands.run(() -> System.out.println("TestCommand Works")));
     NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));
@@ -395,22 +396,38 @@ public class RobotContainer {
                 () -> alliance.get()));
     // Reset gyro to 0° when B button is pressed
 
-    driverController.y().whileTrue(algae.setSpeed(10)).whileFalse(algae.setSpeed(0));
-    // driverController.b().whileTrue(algae.setSpeed(-10)).whileFalse(algae.setSpeed(0));
-    driverController.povRight().onTrue(pivot.executePreset(PivotPosition.Score));
-    driverController.x().onTrue(pivot.executePreset(PivotPosition.Default));
+    driverController.y().whileTrue(algae.setSpeed(6)).whileFalse(algae.setSpeed(0));
+    driverController
+        .b()
+        .onTrue(
+            climb
+                .executePreset(ClimberPositions.Up)
+                .withTimeout(3)
+                .andThen(pivot.executePreset(PivotPosition.Score).withTimeout(0.5))
+                .andThen(climb.retractCommand2())
+                .andThen(new WaitCommand(2))
+                .andThen(pivot.executePreset(PivotPosition.Default).withTimeout(0.5)));
+    driverController
+        .povRight()
+        .onTrue(pivot.executePreset(PivotPosition.Score).alongWith(algae.setSpeed(0)));
+    driverController
+        .x()
+        .onTrue(
+            pivot.executePreset(PivotPosition.Default).withTimeout(0.7).andThen(algae.setSpeed(0)));
     driverController.povLeft().onTrue(pivot.executePreset(PivotPosition.Down));
     // .andThen(
     //     algae
     //         .setSpeed(-5)
     //         .until(groundStall)
     //         .andThen(pivot.executePreset(PivotPosition.Default))));
-    driverController
-        .b()
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceR, drive, () -> alliance.get()));
+    // driverController
+    //     .b()
+    //     .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceR, drive, () ->
+    // alliance.get()));
     // driverController
     //     .x()
-    //     .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () -> alliance.get()));
+    //     .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () ->
+    // alliance.get()));
     // driverController
     //     .a()
     //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
@@ -418,6 +435,7 @@ public class RobotContainer {
     // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
     // 0.0));
     driverController.rightBumper().onTrue(climb.retractCommand2());
+    driverController.leftTrigger().whileTrue(climb.down());
     driverController.povDown().whileTrue(climb.down());
     driverController.povUp().whileTrue(climb.up());
     driverController.rightTrigger().whileTrue(climb.topMotor());
@@ -426,7 +444,7 @@ public class RobotContainer {
     // driverController.povDown().whileTrue(climb.setSpeed(-10)).whileFalse(climb.setSpeed(0));
     // Slow modec
     driverController
-        .leftTrigger()
+        .leftBumper()
         .whileTrue(
             DriveCommands.joystickDrive(
                 drive,
@@ -455,10 +473,13 @@ public class RobotContainer {
         .onTrue(
             climb
                 .executePreset(ClimberPositions.Up)
-                .withTimeout(2.5)
-                .andThen(elevator.executePreset(ElevatorState.CoralL3).withTimeout(0.75))
-                .andThen(climb.retractCommand2().withTimeout(2))
-                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.7)));
+                .withTimeout(3)
+                .andThen(pivot.executePreset(PivotPosition.Score).withTimeout(0.5))
+                .andThen(climb.retractCommand2())
+                .andThen(new WaitCommand(2))
+                .andThen(pivot.executePreset(PivotPosition.Default).withTimeout(0.5)));
+    // .andThen(climb.down())
+    // .withTimeout(0.01));
 
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
     operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
@@ -785,7 +806,7 @@ public class RobotContainer {
 
   public void onEnabled() {
     drive.setModulesBrake();
-    // climb.extend2();
+    climb.extendCommand2();
   }
 
   private Command autoElevatorCommand(Supplier<ElevatorState> stateSupplier) {

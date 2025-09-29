@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
 import frc.robot.Constants.GroundIntakeConstants;
 import frc.robot.subsystems.algae.pivot.PivotIO.PivotIOInputs.PivotPosition;
@@ -21,7 +22,7 @@ public class PivotIOTalonFX implements PivotIO {
 
   public PivotIOTalonFX(int moterID) {
 
-    this.pivotMotor = new TalonFX(moterID, "*");
+    this.pivotMotor = new TalonFX(moterID, "CANivore");
     TalonFXConfiguration motorConfig =
         new TalonFXConfiguration()
             .withSlot0(GroundIntakeConstants.GROUND_CONFIGS)
@@ -33,6 +34,8 @@ public class PivotIOTalonFX implements PivotIO {
 
     pivotMotor.getConfigurator().apply(motorConfig);
     motorPosition = pivotMotor.getPosition();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0, motorPosition);
   }
 
   @Override
@@ -50,10 +53,10 @@ public class PivotIOTalonFX implements PivotIO {
   @Override
   public void setPivotPosition(double angle) {
     // pivotMotor.setVoltage(MathUtil.clamp(value, -8, 8));
-    if (angle > GroundIntakeConstants.maxPosition) {
+    if (angle < GroundIntakeConstants.maxPosition) {
       angle = GroundIntakeConstants.maxPosition;
     }
-    if (angle < GroundIntakeConstants.minPosition) {
+    if (angle > GroundIntakeConstants.minPosition) {
       angle = GroundIntakeConstants.minPosition;
     }
     pivotMotor.setControl(motionMagicVoltage.withPosition(angle));
@@ -61,11 +64,11 @@ public class PivotIOTalonFX implements PivotIO {
 
   @Override
   public void pivotUp(double speed) {
-    pivotMotor.setControl(voltageOut.withOutput(speed));
+    pivotMotor.setVoltage(MathUtil.clamp(speed, -12, 12));
   }
 
   @Override
   public void pivotDown(double speed) {
-    pivotMotor.setControl(voltageOut.withOutput(speed));
+    pivotMotor.setVoltage(MathUtil.clamp(speed, -12, 12));
   }
 }

@@ -73,7 +73,7 @@ public class ClimberIOTalonFX implements ClimberIO {
     BaseStatusSignal.refreshAll(motorVolts, motorAmps, motorRPM, motorPosition);
     inputs.climberAppliedVolts = motorVolts.getValueAsDouble();
     inputs.climberCurrentAmps = motorAmps.getValueAsDouble();
-    inputs.climberPosition = getPosition();
+    // inputs.climberPosition = getPosition();
     inputs.climberRPM = motorRPM.getValueAsDouble();
     inputs.servoPosition = servo1.getPosition();
     inputs.climberPosition = motorPosition.getValueAsDouble();
@@ -92,7 +92,7 @@ public class ClimberIOTalonFX implements ClimberIO {
 
   @Override
   public void setClimbRPM(double voltage) {
-    climbMotor1.setControl(voltageOut.withOutput(MathUtil.clamp(voltage, -12, 12)));
+    climbMotor1.setVoltage(MathUtil.clamp(voltage, -12, 12));
     // climbMotor2.setVoltage(MathUtil.clamp(voltage, -12.0, 12.0));
   }
 

@@ -25,7 +25,7 @@ public class Climber extends SubsystemBase {
     this.io = io;
     this.pidController = new PIDController(kP, kI, kD);
     this.pidController.setTolerance(kToleranceMeters);
-    this.setDefaultCommand(extendCommand2());
+    // this.setDefaultCommand(extendCommand2());
   }
 
   /** Locks the servos for the ramp. */
@@ -89,12 +89,12 @@ public class Climber extends SubsystemBase {
 
   /** Creates run command to retract the ramp servos. */
   public Command extendCommand2() {
-    return run(this::extend2);
+    return runOnce(this::extend2);
   }
 
   /** Creates run command to retract the ramp servos. */
   public Command retractCommand2() {
-    return run(this::retract2);
+    return runOnce(this::retract2);
   }
 
   /** Sets climb voltage to 0. */

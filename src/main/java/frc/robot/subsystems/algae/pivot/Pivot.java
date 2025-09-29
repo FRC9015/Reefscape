@@ -1,6 +1,5 @@
 package frc.robot.subsystems.algae.pivot;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,23 +12,25 @@ public class Pivot extends SubsystemBase {
   private final PivotIO io;
   private final PivotIOInputsAutoLogged inputs = new PivotIOInputsAutoLogged();
   private final Alert encoderDisconnectedAlert;
-  private final PIDController pidController;
+
+  // private final PIDController pidController;
 
   // Pivot PID constants
-  private static final double kP = 0.5;
-  private static final double kI = 0.0;
-  private static final double kD = 0.07;
-  private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
+  // private static final double kP = 1.5;
+  // private static final double kI = 0.0;
+  // private static final double kD = 0.0;
+  // private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
 
   public Pivot(PivotIO io) {
     this.io = io;
-    this.pidController = new PIDController(kP, kI, kD);
-    this.pidController.setTolerance(kToleranceMeters);
+    // this.pidController = new PIDController(kP, kI, kD);
+    // this.pidController.setTolerance(kToleranceMeters);
     this.setDefaultCommand(executePreset(PivotPosition.Default));
     encoderDisconnectedAlert = new Alert("Pivot encoder disconnected!", AlertType.kError);
   }
 
   /** Periodically updates the algae's state and logs inputs. */
+  @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Pivot", inputs);
@@ -45,26 +46,26 @@ public class Pivot extends SubsystemBase {
    */
   public void setPreset(PivotIOInputs.PivotPosition state) {
     double targetPosition = state.getPivotPosition();
-    pidController.setSetpoint(targetPosition);
-    double output = pidController.calculate(inputs.pivotPosition);
-    io.setPivotPosition(output);
+    // pidController.setSetpoint(targetPosition);
+    // double output = pidController.calculate(inputs.pivotPosition);
+    io.setPivotPosition(targetPosition);
     io.updateInputs(inputs);
 
     Logger.recordOutput("Pivot/Setpoint", targetPosition);
-    Logger.recordOutput("Pivot/Output", output);
+    // Logger.recordOutput("Pivot/Output", output);
     Logger.recordOutput("Pivot/CurrentPosition", inputs.pivotPosition);
   }
 
   public Command pivotUp(double speed) {
     Logger.recordOutput("Pivot/speed", speed);
     Logger.recordOutput("Pivot/CurrentPosition", inputs.pivotPosition);
-    return startEnd(() -> io.setPivotPosition(speed), () -> io.setPivotPosition(0));
+    return startEnd(() -> io.pivotUp(speed), () -> io.pivotUp(0));
   }
 
   public Command pivotDown(double speed) {
     Logger.recordOutput("Pivot/speed", speed);
     Logger.recordOutput("Pivot/CurrentPosition", inputs.pivotPosition);
-    return startEnd(() -> io.setPivotPosition(-speed), () -> io.setPivotPosition(0));
+    return startEnd(() -> io.pivotDown(-speed), () -> io.pivotDown(0));
   }
 
   public Command executePreset(PivotIOInputs.PivotPosition state) {
