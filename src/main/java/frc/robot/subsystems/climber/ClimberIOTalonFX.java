@@ -17,7 +17,12 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Servo;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
-/** the. */
+/**
+ * ClimberIO implementation for a TalonFX-based climber.
+ *
+ * <p>All units are in the standard units for the type (Volts, Amps, Meters, Meters per second,
+ * etc).
+ */
 public class ClimberIOTalonFX implements ClimberIO {
 
   public final TalonFX topMotor, climbMotor1, climbMotor2;
@@ -30,8 +35,6 @@ public class ClimberIOTalonFX implements ClimberIO {
   private LoggedNetworkNumber maxPosition = new LoggedNetworkNumber("/Tunning/maxPOsition", 1.0);
   private final VoltageOut voltageOut = new VoltageOut(0.0);
   private final MotionMagicVoltage positionVoltage = new MotionMagicVoltage(0.0);
-
-  // private final NeutralOut neutralOut = new NeutralOut();
 
   /**
    * Constructs an IntakeIOTalonFX.
@@ -73,7 +76,6 @@ public class ClimberIOTalonFX implements ClimberIO {
     BaseStatusSignal.refreshAll(motorVolts, motorAmps, motorRPM, motorPosition);
     inputs.climberAppliedVolts = motorVolts.getValueAsDouble();
     inputs.climberCurrentAmps = motorAmps.getValueAsDouble();
-    inputs.climberPosition = getPosition();
     inputs.climberRPM = motorRPM.getValueAsDouble();
     inputs.servoPosition = servo1.getPosition();
     inputs.climberPosition = motorPosition.getValueAsDouble();
@@ -92,8 +94,7 @@ public class ClimberIOTalonFX implements ClimberIO {
 
   @Override
   public void setClimbRPM(double voltage) {
-    climbMotor1.setControl(voltageOut.withOutput(MathUtil.clamp(voltage, -12, 12)));
-    // climbMotor2.setVoltage(MathUtil.clamp(voltage, -12.0, 12.0));
+    climbMotor1.setVoltage(MathUtil.clamp(voltage, -12, 12));
   }
 
   @Override
