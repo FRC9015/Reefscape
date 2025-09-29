@@ -25,7 +25,6 @@ public class Climber extends SubsystemBase {
     this.io = io;
     this.pidController = new PIDController(kP, kI, kD);
     this.pidController.setTolerance(kToleranceMeters);
-    // this.setDefaultCommand(extendCommand2());
   }
 
   /** Locks the servos for the ramp. */

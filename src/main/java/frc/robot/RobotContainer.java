@@ -162,12 +162,6 @@ public class RobotContainer {
                     MotorIDConstants.CLIMBER_MOTOR_ID2,
                     MotorIDConstants.SERVO_CHANNE1,
                     MotorIDConstants.SERVO_CHANNE2));
-        // climb =
-        //     new Climber(
-        //         new ClimberIOTalonFX(
-        //             MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
-        // pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-        //  elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
         break;
 
@@ -184,17 +178,11 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim("Bow", CameraConstants.starboardPose));
-        // new VisionIOPhotonVisionSim("Bow", CameraConstants.bowPose));
-        // climber = new Climber(1);
         endEffector = new EndEffector(new EndEffectorIOSim());
         intake = new Intake(new IntakeIOSim());
         elevator = new Elevator(new ElevatorIOSim());
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.GROUND_CORAL_MOTOR_ID));
-        // climb =
-        //     new Climber(
-        //         new ClimberIOTalonFX(
-        //             MotorIDConstants.CLIMBER_MOTOR_ID1, MotorIDConstants.CLIMBER_MOTOR_ID2));
         coralFound = new Trigger(() -> intake.isCoralIn());
         coralIn = new Trigger(() -> intake.isCoralSet());
         canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
@@ -203,7 +191,6 @@ public class RobotContainer {
         inPosition = new Trigger(() -> intake.inPosition());
         elevatorToggle = new Trigger(() -> elevator.getToggle());
         groundStall = new Trigger(() -> algae.isStalled());
-        // pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         climb =
             new Climber(
                 7,
@@ -214,7 +201,6 @@ public class RobotContainer {
                     MotorIDConstants.SERVO_CHANNE1,
                     MotorIDConstants.SERVO_CHANNE2));
 
-        //  elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
         break;
 
@@ -231,8 +217,6 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision("Bow", CameraConstants.starboardPose));
-        //    new VisionIOPhotonVision("Bow", CameraConstants.bowPose));
-        // climber = new Climber(1);
         endEffector =
             new EndEffector(new EndEffectorIOTalonFX(MotorIDConstants.END_EFFECTOR_MOTOR_ID));
         intake = new Intake(new IntakeIOTalonFX(1, 0, 44, 45, 46));
@@ -264,19 +248,12 @@ public class RobotContainer {
                     MotorIDConstants.SERVO_CHANNE1,
                     MotorIDConstants.SERVO_CHANNE2));
 
-        //  climb = new Climber(new ClimberIO() {});
-        // pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
-
-        //     elavatorCamera = CameraServer.startAutomaticCapture();
         led = new Led(Constants.LEDConstants.CANDLE_ID);
         break;
     }
     allianceChooser = new SendableChooser<DriverStation.Alliance>();
     bargePosChooser = new SendableChooser<Command>();
     bargeModeChooser = new SendableChooser<Integer>();
-    // allianceChooser.setDefaultOption("Blue", DriverStation.Alliance.Blue);
-
-    // allianceChooser.addOption("Red", DriverStation.Alliance.Red);
 
     alliance = new LoggedDashboardChooser<>("Alliance", allianceChooser);
     alliance.addOption("Red", DriverStation.Alliance.Red);
@@ -361,9 +338,6 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // elavatorCamera.setResolution(640, 480);
-    // elavatorCamera.setFPS(24);
-
     // Configure the button bindings
     configureButtonBindings();
 
@@ -415,34 +389,13 @@ public class RobotContainer {
         .onTrue(
             pivot.executePreset(PivotPosition.Default).withTimeout(0.7).andThen(algae.setSpeed(0)));
     driverController.povLeft().onTrue(pivot.executePreset(PivotPosition.Down));
-    // .andThen(
-    //     algae
-    //         .setSpeed(-5)
-    //         .until(groundStall)
-    //         .andThen(pivot.executePreset(PivotPosition.Default))));
-    // driverController
-    //     .b()
-    //     .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceR, drive, () ->
-    // alliance.get()));
-    // driverController
-    //     .x()
-    //     .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () ->
-    // alliance.get()));
-    // driverController
-    //     .a()
-    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.bargeMid, 0.0, alliance.get()));
-
-    // driverController.y().onTrue(drive.pathfindToPoseFlipped(Constants.FieldConstants.REEF_D,
-    // 0.0));
     driverController.rightBumper().onTrue(climb.retractCommand2());
     driverController.leftTrigger().whileTrue(climb.down());
     driverController.povDown().whileTrue(climb.down());
     driverController.povUp().whileTrue(climb.up());
     driverController.rightTrigger().whileTrue(climb.topMotor());
 
-    // driverController.povUp().whileTrue(climb.setSpeed(10)).whileFalse(climb.setSpeed(0));
-    // driverController.povDown().whileTrue(climb.setSpeed(-10)).whileFalse(climb.setSpeed(0));
-    // Slow modec
+    // Slow mode
     driverController
         .leftBumper()
         .whileTrue(
@@ -451,17 +404,6 @@ public class RobotContainer {
                 () -> -driverController.getLeftY() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
-    // driverController
-    //     .povLeft()
-    //     .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceL, drive, () ->
-    // alliance.get()));
-    // driverController
-    //     .povRight()
-    //     .onTrue(new AutoDrive(() -> Constants.FieldConstants.SourceR, drive, () ->
-    // alliance.get()));
-
-    // driverController.povLeft().whileTrue(pivot.pivotUp(3));
-    // driverController.povRight().whileTrue(pivot.pivotDown(3));
 
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
@@ -478,8 +420,6 @@ public class RobotContainer {
                 .andThen(climb.retractCommand2())
                 .andThen(new WaitCommand(2))
                 .andThen(pivot.executePreset(PivotPosition.Default).withTimeout(0.5)));
-    // .andThen(climb.down())
-    // .withTimeout(0.01));
 
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
     operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
@@ -630,44 +570,6 @@ public class RobotContainer {
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
         .and(() -> !elevator.getToggle())
         .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_FR, drive, () -> alliance.get()));
-    // operatorButtonBox
-    //     .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
-    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AL, 0, alliance.get()));
-    // operatorButtonBox
-    //     .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
-    //     .onTrue(
-    //         drive.pathfindToPose(Constants.FieldConstants.REEF_BL, 0,
-    // DriverStation.Alliance.Red));
-    // operatorButtonBox
-    //     .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
-    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CL, 0, alliance.get()));
-    // operatorButtonBox
-    //     .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
-    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DL, 0, alliance.get()));
-    // operatorButtonBox
-    //     .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
-    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_EL, 0, alliance.get()));
-    // operatorButtonBox
-    //     .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
-    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FL, 0, alliance.get()));
-    // operatorButtonBox
-    //     .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
-    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_AR, 0, alliance.get()));
-    // operatorButtonBox
-    //     .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
-    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_BR, 0, alliance.get()));
-    // operatorButtonBox
-    //     .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
-    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_CR, 0, alliance.get()));
-    // operatorButtonBox
-    //     .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
-    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_DR, 0, alliance.get()));
-    // operatorButtonBox
-    //     .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
-    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_ER, 0, alliance.get()));
-    // operatorButtonBox
-    //     .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
-    //     .onTrue(drive.pathfindToPose(Constants.FieldConstants.REEF_FR, 0, alliance.get()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L1.getButtonID())
         .and(() -> elevator.getToggle())

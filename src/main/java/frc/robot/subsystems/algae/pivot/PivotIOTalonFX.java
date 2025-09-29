@@ -52,7 +52,6 @@ public class PivotIOTalonFX implements PivotIO {
 
   @Override
   public void setPivotPosition(double angle) {
-    // pivotMotor.setVoltage(MathUtil.clamp(value, -8, 8));
     if (angle < GroundIntakeConstants.maxPosition) {
       angle = GroundIntakeConstants.maxPosition;
     }

@@ -117,16 +117,10 @@ public class Vision extends SubsystemBase {
                 || observation.pose().getX() > CameraConstants.aprilTagLayout.getFieldLength()
                 || observation.pose().getY() < 0.0
                 || observation.pose().getY() > CameraConstants.aprilTagLayout.getFieldWidth()
-                || observation.tagId().contains((short) 1)
-                || observation.tagId().contains((short) 2)
-                || observation.tagId().contains((short) 3)
                 || observation.tagId().contains((short) 4)
                 || observation.tagId().contains((short) 5)
-                || observation.tagId().contains((short) 12)
-                || observation.tagId().contains((short) 13)
                 || observation.tagId().contains((short) 14)
-                || observation.tagId().contains((short) 15)
-                || observation.tagId().contains((short) 16);
+                || observation.tagId().contains((short) 15);
 
         // Add pose to log
         robotPoses.add(observation.pose());

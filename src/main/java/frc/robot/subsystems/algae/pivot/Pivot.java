@@ -13,18 +13,8 @@ public class Pivot extends SubsystemBase {
   private final PivotIOInputsAutoLogged inputs = new PivotIOInputsAutoLogged();
   private final Alert encoderDisconnectedAlert;
 
-  // private final PIDController pidController;
-
-  // Pivot PID constants
-  // private static final double kP = 1.5;
-  // private static final double kI = 0.0;
-  // private static final double kD = 0.0;
-  // private static final double kToleranceMeters = 0.01; // Acceptable position error in meters
-
   public Pivot(PivotIO io) {
     this.io = io;
-    // this.pidController = new PIDController(kP, kI, kD);
-    // this.pidController.setTolerance(kToleranceMeters);
     this.setDefaultCommand(executePreset(PivotPosition.Default));
     encoderDisconnectedAlert = new Alert("Pivot encoder disconnected!", AlertType.kError);
   }
@@ -46,13 +36,10 @@ public class Pivot extends SubsystemBase {
    */
   public void setPreset(PivotIOInputs.PivotPosition state) {
     double targetPosition = state.getPivotPosition();
-    // pidController.setSetpoint(targetPosition);
-    // double output = pidController.calculate(inputs.pivotPosition);
     io.setPivotPosition(targetPosition);
     io.updateInputs(inputs);
 
     Logger.recordOutput("Pivot/Setpoint", targetPosition);
-    // Logger.recordOutput("Pivot/Output", output);
     Logger.recordOutput("Pivot/CurrentPosition", inputs.pivotPosition);
   }
 
