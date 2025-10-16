@@ -379,8 +379,9 @@ public class RobotContainer {
                 .withTimeout(3)
                 .andThen(pivot.executePreset(PivotPosition.Score).withTimeout(0.5))
                 .andThen(climb.retractCommand2())
-                .andThen(new WaitCommand(2))
+                .andThen(new WaitCommand(4))
                 .andThen(pivot.executePreset(PivotPosition.Default).withTimeout(0.5)));
+
     driverController
         .povRight()
         .onTrue(pivot.executePreset(PivotPosition.Score).alongWith(algae.setSpeed(0)));

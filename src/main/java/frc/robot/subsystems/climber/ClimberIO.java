@@ -23,7 +23,8 @@ public interface ClimberIO {
   public static class ClimberIOInputs {
 
     public static enum ClimberPositions {
-      Up(230);
+      Up(220),
+      ClimbReady(210);
 
       private final double climberPosition;
 

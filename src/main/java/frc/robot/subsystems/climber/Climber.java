@@ -66,6 +66,11 @@ public class Climber extends SubsystemBase {
     return run(() -> this.setPreset(state)).until(() -> pidController.atSetpoint());
   }
 
+  public Command executePreset2(ClimberIOInputs.ClimberPositions state) {
+    Logger.recordOutput("Climber/State", state);
+    return run(() -> this.setPreset(state)).until(() -> pidController.atSetpoint());
+  }
+
   /** Creates a runOnce command to retract the ramp servos. */
   public Command upGo() {
     return runOnce(this::retract2);
