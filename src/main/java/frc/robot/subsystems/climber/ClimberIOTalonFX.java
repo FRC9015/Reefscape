@@ -25,7 +25,7 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
  */
 public class ClimberIOTalonFX implements ClimberIO {
 
-  public final TalonFX topMotor, climbMotor1, climbMotor2;
+  public final TalonFX topMotor, climbMotor1;
   public final Servo servo1, servo2;
   public StatusSignal<Voltage> motorVolts;
   public StatusSignal<Current> motorAmps;
@@ -45,7 +45,6 @@ public class ClimberIOTalonFX implements ClimberIO {
       int topMotorID, int climbID1, int climbID2, int servoCannel1, int servoCannel2) {
     topMotor = new TalonFX(topMotorID);
     climbMotor1 = new TalonFX(climbID1);
-    climbMotor2 = new TalonFX(climbID2);
     servo1 = new Servo(servoCannel1);
     servo2 = new Servo(servoCannel2);
 
@@ -53,15 +52,12 @@ public class ClimberIOTalonFX implements ClimberIO {
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
-    TalonFXConfiguration motorConfig2 = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     // Configure the integrated encoder (default settings should work)
     topMotor.getConfigurator().apply(motorConfig);
     climbMotor1.getConfigurator().apply(motorConfig);
-    climbMotor2.getConfigurator().apply(motorConfig2);
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     motorVolts = topMotor.getMotorVoltage();
     motorAmps = topMotor.getStatorCurrent();

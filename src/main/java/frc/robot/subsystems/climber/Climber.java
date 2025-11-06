@@ -28,12 +28,12 @@ public class Climber extends SubsystemBase {
   }
 
   /** Locks the servos for the ramp. */
-  public void extend2() {
+  public void servoExtend() {
     io.servoLock();
   }
 
   /** Retracts the servos for the ramp. */
-  public void retract2() {
+  public void servoRetract() {
     io.servoUnlock();
   }
 
@@ -71,11 +71,6 @@ public class Climber extends SubsystemBase {
     return run(() -> this.setPreset(state)).until(() -> pidController.atSetpoint());
   }
 
-  /** Creates a runOnce command to retract the ramp servos. */
-  public Command upGo() {
-    return runOnce(this::retract2);
-  }
-
   /** Sends the climber outwards at 10 volts. */
   public Command up() {
     return this.startEnd(() -> io.setClimbRPM(10), () -> io.setClimbRPM(0));
@@ -92,13 +87,13 @@ public class Climber extends SubsystemBase {
   }
 
   /** Creates run command to retract the ramp servos. */
-  public Command extendCommand2() {
-    return runOnce(this::extend2);
+  public Command servoExtendCommand() {
+    return runOnce(this::servoExtend);
   }
 
   /** Creates run command to retract the ramp servos. */
-  public Command retractCommand2() {
-    return runOnce(this::retract2);
+  public Command servoRetractCommand() {
+    return runOnce(this::servoRetract);
   }
 
   /** Sets climb voltage to 0. */

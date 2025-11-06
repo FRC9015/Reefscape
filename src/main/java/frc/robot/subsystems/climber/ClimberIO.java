@@ -43,7 +43,6 @@ public interface ClimberIO {
     public double climberRPM = 0.0;
     public double climberPosition = 0.0;
     public double servoPosition = 0.0;
-    // public ClimberPositions currClimberPositions = ClimberPositions.Default;
   }
 
   /** Updates the set of loggable inputs. */

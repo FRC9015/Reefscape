@@ -378,16 +378,7 @@ public class RobotContainer {
     // Reset gyro to 0° when B button is pressed
 
     driverController.y().whileTrue(algae.setSpeed(6)).whileFalse(algae.setSpeed(0));
-    driverController
-        .b()
-        .onTrue(
-            climb
-                .executePreset(ClimberPositions.Up)
-                .withTimeout(3)
-                .andThen(pivot.executePreset(PivotPosition.Score).withTimeout(0.5))
-                .andThen(climb.retractCommand2())
-                .andThen(new WaitCommand(6))
-                .andThen(pivot.executePreset(PivotPosition.Default).withTimeout(0.5)));
+    driverController.b().onTrue(climbSequence());
 
     driverController
         .povRight()
@@ -399,7 +390,7 @@ public class RobotContainer {
     driverController
         .povLeft()
         .onTrue(pivot.executePreset(PivotPosition.Down).alongWith(algae.setSpeed(-10)));
-    driverController.rightBumper().onTrue(climb.retractCommand2());
+    driverController.rightBumper().onTrue(climb.servoRetractCommand());
     driverController.leftTrigger().whileTrue(climb.down());
     driverController.povDown().whileTrue(climb.down());
     driverController.povUp().whileTrue(climb.up());
@@ -420,20 +411,11 @@ public class RobotContainer {
     operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
     operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
     // operatorController.b().onTrue(climb.retractCommand2());
-    operatorController
-        .y()
-        .onTrue(
-            climb
-                .executePreset(ClimberPositions.Up)
-                .withTimeout(3)
-                .andThen(pivot.executePreset(PivotPosition.Score).withTimeout(0.5))
-                .andThen(climb.retractCommand2())
-                .andThen(new WaitCommand(2))
-                .andThen(pivot.executePreset(PivotPosition.Default).withTimeout(0.5)));
+    operatorController.y().onTrue(climbSequence());
 
     operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
     operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
-    operatorController.a().onTrue(climb.extendCommand2());
+    operatorController.a().onTrue(climb.servoExtendCommand());
 
     // Button Box
     operatorButtonBox
@@ -726,13 +708,23 @@ public class RobotContainer {
   //     return bargePos.get();
   //   }
 
+  private Command climbSequence() {
+    return climb
+        .executePreset(ClimberPositions.Up)
+        .withTimeout(3)
+        .andThen(pivot.executePreset(PivotPosition.Score).withTimeout(0.5))
+        .andThen(climb.servoRetractCommand())
+        .andThen(new WaitCommand(2))
+        .andThen(pivot.executePreset(PivotPosition.Default).withTimeout(0.5));
+  }
+
   public void onDisabled() {
     drive.setModulesCoast();
   }
 
   public void onEnabled() {
     drive.setModulesBrake();
-    climb.extendCommand2();
+    climb.servoExtendCommand();
   }
 
   private Command autoElevatorCommand(Supplier<ElevatorState> stateSupplier) {
