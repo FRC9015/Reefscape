@@ -5,35 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "parallel",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "CR"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "L4Position"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "shootCoral"
-                }
-              }
-            ]
+            "pathName": "Side L1 Revised 4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootCoral"
           }
         },
         {

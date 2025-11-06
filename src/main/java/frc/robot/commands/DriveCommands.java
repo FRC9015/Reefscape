@@ -191,10 +191,7 @@ public class DriveCommands {
         double omega =
             angleController.calculate(
                 drive.getRotation().getRadians(),
-                drive
-                        .getPose()
-                        .getTranslation()
-                        .minus(targetPose.getTranslation())
+                (drive.getPose().getTranslation().minus(targetPose.getTranslation()))
                         .getAngle()
                         .getRadians()
                     + Math.PI);
@@ -202,8 +199,8 @@ public class DriveCommands {
         // Drive field-relative
         ChassisSpeeds speeds =
             new ChassisSpeeds(
-                linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                -linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                -linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
                 omega);
 
         drive.runVelocity(

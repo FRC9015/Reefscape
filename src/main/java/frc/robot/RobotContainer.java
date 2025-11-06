@@ -101,6 +101,7 @@ public class RobotContainer {
   private final Trigger inPosition;
   private final Trigger elevatorToggle;
   private final Trigger groundStall;
+  private final Trigger coralNotIn;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -129,7 +130,6 @@ public class RobotContainer {
         photon =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOPhotonVision("Starboard", CameraConstants.starboardPose),
                 new VisionIOPhotonVision("Bow", CameraConstants.bowPose),
                 new VisionIOPhotonVision("Stern", CameraConstants.sternPose));
         endEffector =
@@ -153,6 +153,7 @@ public class RobotContainer {
         inPosition = new Trigger(() -> intake.inPosition());
         elevatorToggle = new Trigger(() -> elevator.getToggle());
         groundStall = new Trigger(() -> algae.isStalled());
+        coralNotIn = new Trigger(() -> !intake.isCoralSet());
         climb =
             new Climber(
                 7,
@@ -191,6 +192,7 @@ public class RobotContainer {
         inPosition = new Trigger(() -> intake.inPosition());
         elevatorToggle = new Trigger(() -> elevator.getToggle());
         groundStall = new Trigger(() -> algae.isStalled());
+        coralNotIn = new Trigger(() -> !intake.isCoralSet());
         climb =
             new Climber(
                 7,
@@ -237,6 +239,7 @@ public class RobotContainer {
         inPosition = new Trigger(() -> intake.inPosition());
         elevatorToggle = new Trigger(() -> elevator.getToggle());
         groundStall = new Trigger(() -> algae.isStalled());
+        coralNotIn = new Trigger(() -> !intake.isCoralSet());
 
         climb =
             new Climber(
@@ -285,10 +288,10 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "IntakeCoralDrive",
         endEffector
-            .runEffectorAuto(4)
+            .runEffectorAuto(5)
             .alongWith(elevator.executePreset(ElevatorState.Default))
             .until(intake::inRamp));
-    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(4).withTimeout(0.4));
+    NamedCommands.registerCommand("shootCoral", endEffector.runEffector(4).withTimeout(0.45));
     NamedCommands.registerCommand(
         "TestCommand", Commands.run(() -> System.out.println("TestCommand Works")));
     NamedCommands.registerCommand("DefaultPosition", elevator.executePreset(ElevatorState.Default));
@@ -305,9 +308,13 @@ public class RobotContainer {
         "L4PositionL2",
         elevator.executePreset(ElevatorState.CoralL4).withTimeout(0.7).unless(coralFound));
     NamedCommands.registerCommand(
-        "AL", new AutoDrive(() -> Constants.FieldConstants.REEF_AL, drive, () -> alliance.get()));
+        "AL",
+        new AutoDrive(() -> Constants.FieldConstants.REEF_AL, drive, () -> alliance.get())
+            .withTimeout(2));
     NamedCommands.registerCommand(
-        "CR", new AutoDrive(() -> Constants.FieldConstants.REEF_CR, drive, () -> alliance.get()));
+        "CR",
+        new AutoDrive(() -> Constants.FieldConstants.REEF_CR, drive, () -> alliance.get())
+            .withTimeout(2));
     NamedCommands.registerCommand(
         "BR", new AutoDrive(() -> Constants.FieldConstants.REEF_BR, drive, () -> alliance.get()));
     NamedCommands.registerCommand(
@@ -379,7 +386,7 @@ public class RobotContainer {
                 .withTimeout(3)
                 .andThen(pivot.executePreset(PivotPosition.Score).withTimeout(0.5))
                 .andThen(climb.retractCommand2())
-                .andThen(new WaitCommand(4))
+                .andThen(new WaitCommand(6))
                 .andThen(pivot.executePreset(PivotPosition.Default).withTimeout(0.5)));
 
     driverController
@@ -389,7 +396,9 @@ public class RobotContainer {
         .x()
         .onTrue(
             pivot.executePreset(PivotPosition.Default).withTimeout(0.7).andThen(algae.setSpeed(0)));
-    driverController.povLeft().onTrue(pivot.executePreset(PivotPosition.Down));
+    driverController
+        .povLeft()
+        .onTrue(pivot.executePreset(PivotPosition.Down).alongWith(algae.setSpeed(-10)));
     driverController.rightBumper().onTrue(climb.retractCommand2());
     driverController.leftTrigger().whileTrue(climb.down());
     driverController.povDown().whileTrue(climb.down());
@@ -410,7 +419,7 @@ public class RobotContainer {
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
     operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
     operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
-    operatorController.b().onTrue(climb.retractCommand2());
+    // operatorController.b().onTrue(climb.retractCommand2());
     operatorController
         .y()
         .onTrue(
@@ -438,7 +447,9 @@ public class RobotContainer {
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
         .and(() -> !elevator.getToggle())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_AL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(() -> Constants.FieldConstants.REEF_AL, drive, () -> alliance.get())
+                .until(coralNotIn));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
         .onTrue(
@@ -450,7 +461,9 @@ public class RobotContainer {
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
         .and(() -> !elevator.getToggle())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_BL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(() -> Constants.FieldConstants.REEF_BL, drive, () -> alliance.get())
+                .until(coralNotIn));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
         .onTrue(
@@ -462,7 +475,9 @@ public class RobotContainer {
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
         .and(() -> !elevator.getToggle())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_CL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(() -> Constants.FieldConstants.REEF_CL, drive, () -> alliance.get())
+                .until(coralNotIn));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
         .onTrue(
@@ -474,7 +489,9 @@ public class RobotContainer {
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
         .and(() -> !elevator.getToggle())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_DL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(() -> Constants.FieldConstants.REEF_DL, drive, () -> alliance.get())
+                .until(coralNotIn));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
         .onTrue(
@@ -486,7 +503,9 @@ public class RobotContainer {
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
         .and(() -> !elevator.getToggle())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_EL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(() -> Constants.FieldConstants.REEF_EL, drive, () -> alliance.get())
+                .until(coralNotIn));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
         .onTrue(
@@ -498,7 +517,9 @@ public class RobotContainer {
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
         .and(() -> !elevator.getToggle())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_FL, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(() -> Constants.FieldConstants.REEF_FL, drive, () -> alliance.get())
+                .until(coralNotIn));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
         .onTrue(
@@ -510,7 +531,9 @@ public class RobotContainer {
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
         .and(() -> !elevator.getToggle())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_AR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(() -> Constants.FieldConstants.REEF_AR, drive, () -> alliance.get())
+                .until(coralNotIn));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
         .onTrue(
@@ -522,7 +545,9 @@ public class RobotContainer {
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
         .and(() -> !elevator.getToggle())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_BR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(() -> Constants.FieldConstants.REEF_BR, drive, () -> alliance.get())
+                .until(coralNotIn));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
         .onTrue(
@@ -534,7 +559,9 @@ public class RobotContainer {
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
         .and(() -> !elevator.getToggle())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_CR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(() -> Constants.FieldConstants.REEF_CR, drive, () -> alliance.get())
+                .until(coralNotIn));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
         .onTrue(
@@ -546,7 +573,9 @@ public class RobotContainer {
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
         .and(() -> !elevator.getToggle())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_DR, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(() -> Constants.FieldConstants.REEF_DR, drive, () -> alliance.get())
+                .until(coralNotIn));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
         .onTrue(
@@ -558,7 +587,9 @@ public class RobotContainer {
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
         .and(() -> !elevator.getToggle())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_ER, drive, () -> alliance.get()));
+        .onTrue(
+            new AutoDrive(() -> Constants.FieldConstants.REEF_ER, drive, () -> alliance.get())
+                .until(coralNotIn));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
         .onTrue(
@@ -570,25 +601,17 @@ public class RobotContainer {
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
         .and(() -> !elevator.getToggle())
-        .onTrue(new AutoDrive(() -> Constants.FieldConstants.REEF_FR, drive, () -> alliance.get()));
-    operatorButtonBox
-        .button(Constants.ButtonBoxIds.ELEVATOR_L1.getButtonID())
-        .and(() -> elevator.getToggle())
         .onTrue(
-            Commands.runOnce(
-                () -> {
-                  selectedElevatorState = ElevatorState.CoralL1;
-                  Logger.recordOutput("selectedState", selectedElevatorState);
-                }));
+            new AutoDrive(() -> Constants.FieldConstants.REEF_FR, drive, () -> alliance.get())
+                .until(coralNotIn));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L1.getButtonID())
-        .and(() -> !elevator.getToggle())
         .onTrue(
             elevator
                 .executePreset(ElevatorState.CoralL1)
                 .withTimeout(0.2)
-                .andThen(endEffector.runEffectorAutoCommandL1())
-                .andThen(elevator.executePreset(ElevatorState.Default))
+                .andThen(endEffector.runEffectorAutoCommand())
+                .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.5))
                 .unless(() -> intake.isCoralIn()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L2.getButtonID())
