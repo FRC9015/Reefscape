@@ -83,13 +83,6 @@ public final class Constants {
                 Units.inchesToMeters(13.5), Units.inchesToMeters(-6.5), Units.inchesToMeters(7)),
             new Rotation3d(0, -Units.degreesToRadians(15), Units.degreesToRadians(0)));
 
-    // Unsure if truly needed
-    //    public static final Transform3d topPose =
-    // new Transform3d(
-    //     new Translation3d(
-    //         Units.inchesToMeters(0), Units.inchesToMeters(0), Units.inchesToMeters(0)),
-    //     new Rotation3d(0, 0, 0));
-
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(5, 5, 8);
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
   }
@@ -194,38 +187,34 @@ public final class Constants {
     public static final double maxHeight = 8.25;
     public static final double minHeight = -0.04;
   }
+
   public static class GroundIntakeConstants {
 
-    public static final MotionMagicConfigs GROUND_MAGIC_CONFIGS = 
-        new MotionMagicConfigs()
-            .withMotionMagicAcceleration(2)
-            .withMotionMagicCruiseVelocity(6);
-    public static final Slot0Configs GROUND_CONFIGS = 
+    public static final MotionMagicConfigs GROUND_MAGIC_CONFIGS =
+        new MotionMagicConfigs().withMotionMagicAcceleration(100).withMotionMagicCruiseVelocity(25);
+    public static final Slot0Configs GROUND_CONFIGS =
         new Slot0Configs()
-            .withGravityType(GravityTypeValue.Arm_Cosine)
-            .withKP(0.5)
+            .withKP(2)
             .withKI(0)
-            .withKD(0)
+            .withKD(0.05)
             .withKG(0.01)
             .withKA(0)
             .withKS(0)
             .withKV(0);
-    public static final FeedbackConfigs GROUND_FEEDBACK_CONFIGS = 
-    new FeedbackConfigs()
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder);
+    public static final FeedbackConfigs GROUND_FEEDBACK_CONFIGS =
+        new FeedbackConfigs().withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
 
-    public static final double maxPosition = 6.0;
+    public static final double maxPosition = -8.0;
     public static final double minPosition = 0.0;
 
-    public static final SoftwareLimitSwitchConfigs GROUND_LIMIT_CONFIGS = 
+    public static final SoftwareLimitSwitchConfigs GROUND_LIMIT_CONFIGS =
         new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitEnable(true)
             .withForwardSoftLimitThreshold(maxPosition)
             .withReverseSoftLimitEnable(true)
             .withReverseSoftLimitThreshold(minPosition);
-
-    
   }
+
   public static class LEDConstants {
     public static final int CANDLE_ID = 47;
   }

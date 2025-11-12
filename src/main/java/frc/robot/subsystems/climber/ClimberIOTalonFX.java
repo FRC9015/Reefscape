@@ -17,10 +17,15 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Servo;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
-/** the. */
+/**
+ * ClimberIO implementation for a TalonFX-based climber.
+ *
+ * <p>All units are in the standard units for the type (Volts, Amps, Meters, Meters per second,
+ * etc).
+ */
 public class ClimberIOTalonFX implements ClimberIO {
 
-  public final TalonFX topMotor, climbMotor1, climbMotor2;
+  public final TalonFX topMotor, climbMotor1;
   public final Servo servo1, servo2;
   public StatusSignal<Voltage> motorVolts;
   public StatusSignal<Current> motorAmps;
@@ -31,8 +36,6 @@ public class ClimberIOTalonFX implements ClimberIO {
   private final VoltageOut voltageOut = new VoltageOut(0.0);
   private final MotionMagicVoltage positionVoltage = new MotionMagicVoltage(0.0);
 
-  // private final NeutralOut neutralOut = new NeutralOut();
-
   /**
    * Constructs an IntakeIOTalonFX.
    *
@@ -42,7 +45,6 @@ public class ClimberIOTalonFX implements ClimberIO {
       int topMotorID, int climbID1, int climbID2, int servoCannel1, int servoCannel2) {
     topMotor = new TalonFX(topMotorID);
     climbMotor1 = new TalonFX(climbID1);
-    climbMotor2 = new TalonFX(climbID2);
     servo1 = new Servo(servoCannel1);
     servo2 = new Servo(servoCannel2);
 
@@ -50,15 +52,12 @@ public class ClimberIOTalonFX implements ClimberIO {
     TalonFXConfiguration motorConfig = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-
-    TalonFXConfiguration motorConfig2 = new TalonFXConfiguration();
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     // Configure the integrated encoder (default settings should work)
     topMotor.getConfigurator().apply(motorConfig);
     climbMotor1.getConfigurator().apply(motorConfig);
-    climbMotor2.getConfigurator().apply(motorConfig2);
     motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     motorVolts = topMotor.getMotorVoltage();
     motorAmps = topMotor.getStatorCurrent();
@@ -73,7 +72,6 @@ public class ClimberIOTalonFX implements ClimberIO {
     BaseStatusSignal.refreshAll(motorVolts, motorAmps, motorRPM, motorPosition);
     inputs.climberAppliedVolts = motorVolts.getValueAsDouble();
     inputs.climberCurrentAmps = motorAmps.getValueAsDouble();
-    inputs.climberPosition = getPosition();
     inputs.climberRPM = motorRPM.getValueAsDouble();
     inputs.servoPosition = servo1.getPosition();
     inputs.climberPosition = motorPosition.getValueAsDouble();
@@ -92,8 +90,7 @@ public class ClimberIOTalonFX implements ClimberIO {
 
   @Override
   public void setClimbRPM(double voltage) {
-    climbMotor1.setControl(voltageOut.withOutput(MathUtil.clamp(voltage, -12, 12)));
-    // climbMotor2.setVoltage(MathUtil.clamp(voltage, -12.0, 12.0));
+    climbMotor1.setVoltage(MathUtil.clamp(voltage, -12, 12));
   }
 
   @Override

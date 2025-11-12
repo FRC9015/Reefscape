@@ -23,9 +23,8 @@ public interface ClimberIO {
   public static class ClimberIOInputs {
 
     public static enum ClimberPositions {
-      Default(0.0),
-      Up(-196.0),
-      Down(0.0);
+      Up(220),
+      ClimbReady(210);
 
       private final double climberPosition;
 
@@ -44,7 +43,6 @@ public interface ClimberIO {
     public double climberRPM = 0.0;
     public double climberPosition = 0.0;
     public double servoPosition = 0.0;
-    public ClimberPositions currClimberPositions = ClimberPositions.Default;
   }
 
   /** Updates the set of loggable inputs. */

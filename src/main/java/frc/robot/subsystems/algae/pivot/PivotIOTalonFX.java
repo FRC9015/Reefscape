@@ -22,18 +22,20 @@ public class PivotIOTalonFX implements PivotIO {
 
   public PivotIOTalonFX(int moterID) {
 
-    this.pivotMotor = new TalonFX(moterID, "*");
-    TalonFXConfiguration motorConfig = 
-      new TalonFXConfiguration()
-        .withSlot0(GroundIntakeConstants.GROUND_CONFIGS)
-        .withMotionMagic(GroundIntakeConstants.GROUND_MAGIC_CONFIGS)
-        .withFeedback(GroundIntakeConstants.GROUND_FEEDBACK_CONFIGS);
+    this.pivotMotor = new TalonFX(moterID, "CANivore");
+    TalonFXConfiguration motorConfig =
+        new TalonFXConfiguration()
+            .withSlot0(GroundIntakeConstants.GROUND_CONFIGS)
+            .withMotionMagic(GroundIntakeConstants.GROUND_MAGIC_CONFIGS)
+            .withFeedback(GroundIntakeConstants.GROUND_FEEDBACK_CONFIGS);
 
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     pivotMotor.getConfigurator().apply(motorConfig);
     motorPosition = pivotMotor.getPosition();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0, motorPosition);
   }
 
   @Override
@@ -50,11 +52,9 @@ public class PivotIOTalonFX implements PivotIO {
 
   @Override
   public void setPivotPosition(double angle) {
-    //pivotMotor.setVoltage(MathUtil.clamp(value, -8, 8));
-    if (angle > GroundIntakeConstants.maxPosition) {
+    if (angle < GroundIntakeConstants.maxPosition) {
       angle = GroundIntakeConstants.maxPosition;
-    } 
-    if (angle < GroundIntakeConstants.minPosition) {
+    } else if (angle > GroundIntakeConstants.minPosition) {
       angle = GroundIntakeConstants.minPosition;
     }
     pivotMotor.setControl(motionMagicVoltage.withPosition(angle));
@@ -62,11 +62,11 @@ public class PivotIOTalonFX implements PivotIO {
 
   @Override
   public void pivotUp(double speed) {
-    pivotMotor.setControl(voltageOut.withOutput(speed));
+    pivotMotor.setVoltage(MathUtil.clamp(speed, -12, 12));
   }
 
   @Override
   public void pivotDown(double speed) {
-    pivotMotor.setControl(voltageOut.withOutput(speed));
+    pivotMotor.setVoltage(MathUtil.clamp(speed, -12, 12));
   }
 }
