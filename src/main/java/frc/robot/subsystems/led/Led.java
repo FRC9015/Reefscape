@@ -13,6 +13,7 @@ import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.awt.Color;
 
 /**
@@ -67,5 +68,13 @@ public class Led extends SubsystemBase {
         strobeAnimation(Color.BLACK);
       }
     };
+  }
+
+  @Override
+  public void periodic() {
+    setColor(Color.BLUE);
+    new WaitCommand(2);
+    setColor(Color.ORANGE);
+    new WaitCommand(2);
   }
 }
