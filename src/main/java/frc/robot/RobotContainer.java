@@ -102,6 +102,7 @@ public class RobotContainer {
   private final Trigger elevatorToggle;
   private final Trigger groundStall;
   private final Trigger coralNotIn;
+  private final Trigger outreachMode;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -154,6 +155,8 @@ public class RobotContainer {
         elevatorToggle = new Trigger(() -> elevator.getToggle());
         groundStall = new Trigger(() -> algae.isStalled());
         coralNotIn = new Trigger(() -> !intake.isCoralSet());
+        outreachMode = new Trigger(() -> !driverController.leftBumper().getAsBoolean());
+
         climb =
             new Climber(
                 7,
@@ -193,6 +196,8 @@ public class RobotContainer {
         elevatorToggle = new Trigger(() -> elevator.getToggle());
         groundStall = new Trigger(() -> algae.isStalled());
         coralNotIn = new Trigger(() -> !intake.isCoralSet());
+        outreachMode = new Trigger(() -> !driverController.leftBumper().getAsBoolean());
+
         climb =
             new Climber(
                 7,
@@ -240,6 +245,7 @@ public class RobotContainer {
         elevatorToggle = new Trigger(() -> elevator.getToggle());
         groundStall = new Trigger(() -> algae.isStalled());
         coralNotIn = new Trigger(() -> !intake.isCoralSet());
+        outreachMode = new Trigger(() -> !driverController.leftBumper().getAsBoolean());
 
         climb =
             new Climber(
@@ -363,38 +369,37 @@ public class RobotContainer {
             drive,
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
+            () -> 0,
+            0.1)); // Disable rotation for hamilton park
 
-    // Face Reef Center while holding A
-    driverController
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveFacingPose(
-                drive,
-                () -> driverController.getLeftY(),
-                () -> driverController.getLeftX(),
-                () -> Constants.FieldConstants.REEF_CENTER,
-                () -> alliance.get()));
     // Reset gyro to 0° when B button is pressed
 
     driverController.y().whileTrue(algae.setSpeed(6)).whileFalse(algae.setSpeed(0));
-    driverController.b().onTrue(climbSequence());
+    // driverController.b().onTrue(climbSequence());
 
+    driverController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
+    driverController.x().onTrue(elevator.executePreset(ElevatorState.CoralL4));
+    driverController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
     driverController
-        .povRight()
-        .onTrue(pivot.executePreset(PivotPosition.Score).alongWith(algae.setSpeed(0)));
+        .rightBumper()
+        .and(() -> !driverController.leftBumper().getAsBoolean())
+        .onTrue(climb.servoRetractCommand());
     driverController
-        .x()
-        .onTrue(
-            pivot.executePreset(PivotPosition.Default).withTimeout(0.7).andThen(algae.setSpeed(0)));
+        .leftTrigger()
+        .and(() -> !driverController.leftBumper().getAsBoolean())
+        .whileTrue(climb.down());
     driverController
-        .povLeft()
-        .onTrue(pivot.executePreset(PivotPosition.Down).alongWith(algae.setSpeed(-10)));
-    driverController.rightBumper().onTrue(climb.servoRetractCommand());
-    driverController.leftTrigger().whileTrue(climb.down());
-    driverController.povDown().whileTrue(climb.down());
-    driverController.povUp().whileTrue(climb.up());
-    driverController.rightTrigger().whileTrue(climb.topMotor());
+        .povDown()
+        .and(() -> !driverController.leftBumper().getAsBoolean())
+        .whileTrue(climb.down());
+    driverController
+        .povUp()
+        .and(() -> !driverController.leftBumper().getAsBoolean())
+        .whileTrue(climb.up());
+    driverController
+        .rightTrigger()
+        .and(() -> !driverController.leftBumper().getAsBoolean())
+        .whileTrue(climb.topMotor());
 
     // Slow mode
     driverController
@@ -404,7 +409,7 @@ public class RobotContainer {
                 drive,
                 () -> -driverController.getLeftY() * Constants.SLOW_MODE_CONSTANT,
                 () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
-                () -> -driverController.getRightX() * Constants.SLOW_MODE_CONSTANT));
+                () -> 0 * Constants.SLOW_MODE_CONSTANT));
 
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
     operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));

@@ -1,21 +1,13 @@
-// Copyright 2021-2025 FRC 6328
+// Copyright (c) 2021-2026 Littleton Robotics
 // http://github.com/Mechanical-Advantage
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// Use of this source code is governed by a BSD
+// license that can be found in the LICENSE file
+// at the root directory of this project.
 
 package frc.robot.commands;
 
-import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -38,16 +30,19 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+/** Collection of static commands for controlling the robot drive subsystem. */
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
   private static final double ANGLE_KP = 5.0;
-  private static final double ANGLE_KD = 0.2;
+  private static final double ANGLE_KD = 0.1;
   private static final double ANGLE_MAX_VELOCITY = 8.0;
   private static final double ANGLE_MAX_ACCELERATION = 20.0;
   private static final double FF_START_DELAY = 2.0; // Secs
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
-  private static final double WHEEL_RADIUS_MAX_VELOCITY = 25; // Rad/Sec
-  private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
+  private static final double WHEEL_RADIUS_MAX_VELOCITY = 10; // Rad/Sec
+  private static final double WHEEL_RADIUS_RAMP_RATE = 0.25; // Rad/Sec^2
+  public static final int NUM_MODULES = 4;
+  public static final double NUM_MODULES_DOUBLE = (double) NUM_MODULES;
 
   private DriveCommands() {}
 
@@ -60,8 +55,8 @@ public class DriveCommands {
     linearMagnitude = linearMagnitude * linearMagnitude;
 
     // Return new linear velocity
-    return new Pose2d(new Translation2d(), linearDirection)
-        .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
+    return new Pose2d(Translation2d.kZero, linearDirection)
+        .transformBy(new Transform2d(linearMagnitude, 0.0, Rotation2d.kZero))
         .getTranslation();
   }
 
@@ -91,6 +86,43 @@ public class DriveCommands {
                   linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
                   linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
                   omega * drive.getMaxAngularSpeedRadPerSec());
+          boolean isFlipped =
+              DriverStation.getAlliance().isPresent()
+                  && DriverStation.getAlliance().get() == Alliance.Red;
+          drive.runVelocity(
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  speeds,
+                  isFlipped
+                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                      : drive.getRotation()));
+        },
+        drive);
+  }
+
+  public static Command joystickDrive(
+      Drive drive,
+      DoubleSupplier xSupplier,
+      DoubleSupplier ySupplier,
+      DoubleSupplier omegaSupplier,
+      double multiplier) {
+    return Commands.run(
+        () -> {
+          // Get linear velocity
+          Translation2d linearVelocity =
+              getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+
+          // Apply rotation deadband
+          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+
+          // Square rotation value for more precise control
+          omega = Math.copySign(omega * omega, omega);
+
+          // Convert to field relative speeds & send command
+          ChassisSpeeds speeds =
+              new ChassisSpeeds(
+                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * multiplier,
+                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * multiplier,
+                  omega * drive.getMaxAngularSpeedRadPerSec() * multiplier);
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().get() == Alliance.Red;
@@ -156,81 +188,6 @@ public class DriveCommands {
 
         // Reset PID controller when command starts
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
-  }
-
-  public static Command joystickDriveFacingPose(
-      Drive drive,
-      DoubleSupplier xSupplier,
-      DoubleSupplier ySupplier,
-      Supplier<Pose2d> poseSupplier,
-      Supplier<DriverStation.Alliance> allianceSupplier) {
-
-    PIDController angleController = new PIDController(ANGLE_KP, 0.0, ANGLE_KD);
-    angleController.enableContinuousInput(-Math.PI, Math.PI);
-
-    return new Command() {
-      @Override
-      public void initialize() {
-        angleController.reset();
-      }
-
-      @Override
-      public void execute() {
-        // Alliance flip logic every cycle
-        Pose2d flippedPose = FlippingUtil.flipFieldPose(poseSupplier.get());
-        boolean isFlipped =
-            DriverStation.getAlliance().isPresent()
-                && DriverStation.getAlliance().get() == Alliance.Red;
-        Pose2d targetPose = isFlipped ? flippedPose : poseSupplier.get();
-
-        // Linear velocity from joysticks
-        Translation2d linearVelocity =
-            getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
-
-        // Angular correction
-        double omega =
-            angleController.calculate(
-                drive.getRotation().getRadians(),
-                (drive.getPose().getTranslation().minus(targetPose.getTranslation()))
-                        .getAngle()
-                        .getRadians()
-                    + Math.PI);
-
-        // Drive field-relative
-        ChassisSpeeds speeds =
-            new ChassisSpeeds(
-                -linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                -linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                omega);
-
-        drive.runVelocity(
-            ChassisSpeeds.fromFieldRelativeSpeeds(
-                speeds,
-                isFlipped
-                    ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                    : drive.getRotation()));
-      }
-
-      @Override
-      public void end(boolean interrupted) {
-        drive.stop();
-      }
-
-      @Override
-      public boolean isFinished() {
-        // Recompute live target pose for distance check
-        Pose2d flippedPose = FlippingUtil.flipFieldPose(poseSupplier.get());
-        boolean isFlipped =
-            DriverStation.getAlliance().isPresent()
-                && DriverStation.getAlliance().get() == Alliance.Red;
-        Pose2d targetPose = isFlipped ? flippedPose : poseSupplier.get();
-
-        Pose2d currentPose = drive.getPose();
-        double distance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
-
-        return distance < 1.0; // or test with 1.0 to confirm
-      }
-    };
   }
 
   /**
@@ -334,7 +291,7 @@ public class DriveCommands {
             // Update gyro delta
             Commands.run(
                     () -> {
-                      Rotation2d rotation = drive.getRotation();
+                      var rotation = drive.getRotation();
                       state.gyroDelta += Math.abs(rotation.minus(state.lastAngle).getRadians());
                       state.lastAngle = rotation;
                     })
@@ -344,8 +301,9 @@ public class DriveCommands {
                     () -> {
                       double[] positions = drive.getWheelRadiusCharacterizationPositions();
                       double wheelDelta = 0.0;
-                      for (int i = 0; i < 4; i++) {
-                        wheelDelta += Math.abs(positions[i] - state.positions[i]) / 4.0;
+                      for (int i = 0; i < NUM_MODULES; i++) {
+                        wheelDelta +=
+                            Math.abs(positions[i] - state.positions[i]) / NUM_MODULES_DOUBLE;
                       }
                       double wheelRadius = (state.gyroDelta * Drive.DRIVE_BASE_RADIUS) / wheelDelta;
 
@@ -366,8 +324,8 @@ public class DriveCommands {
   }
 
   private static class WheelRadiusCharacterizationState {
-    double[] positions = new double[4];
-    Rotation2d lastAngle = new Rotation2d();
+    double[] positions = new double[NUM_MODULES];
+    Rotation2d lastAngle = Rotation2d.kZero;
     double gyroDelta = 0.0;
   }
 }

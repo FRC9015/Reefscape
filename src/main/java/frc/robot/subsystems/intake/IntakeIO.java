@@ -33,6 +33,49 @@ public interface IntakeIO {
     public boolean side2IsDetected = false;
   }
 
+  // ...existing code...
+  public static enum CanRangeStates {
+    AllClear(false, false, false),
+    MiddleOnly(true, false, false),
+    Side1Only(false, true, false),
+    Side2Only(false, false, true),
+    MiddleAndSide1(true, true, false),
+    MiddleAndSide2(true, false, true),
+    Side1AndSide2(false, true, true),
+    AllBlocked(true, true, true),
+    Default(false, false, false); // used when inputs are unknown/null
+
+    public final boolean middleDetected;
+    public final boolean side1Detected;
+    public final boolean side2Detected;
+
+    CanRangeStates(boolean middleDetected, boolean side1Detected, boolean side2Detected) {
+      this.middleDetected = middleDetected;
+      this.side1Detected = side1Detected;
+      this.side2Detected = side2Detected;
+    }
+
+    /** Determine state from possibly-null Boolean flags. null -> Default */
+    public static CanRangeStates fromBooleans(Boolean middle, Boolean side1, Boolean side2) {
+      if (middle == null || side1 == null || side2 == null) {
+        return Default;
+      }
+      for (CanRangeStates s : values()) {
+        if (s == Default) continue;
+        if (s.middleDetected == middle && s.side1Detected == side1 && s.side2Detected == side2) {
+          return s;
+        }
+      }
+      return Default;
+    }
+
+    /** Convenience: determine state from IntakeIOInputs */
+    public static CanRangeStates fromInputs(IntakeIOInputs inputs) {
+      if (inputs == null) return Default;
+      return fromBooleans(inputs.middleIsDetected, inputs.side1IsDetected, inputs.side2IsDetected);
+    }
+  }
+
   /** Updates the set of loggable inputs. */
   public default void updateInputs(IntakeIOInputs inputs) {}
 
