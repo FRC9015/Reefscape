@@ -34,7 +34,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
   // private final Debouncer encoderConnectedDebounce = new Debouncer(0.5);
 
-  private final DigitalInput coralInSensor;
+  private final DigitalInput coralFoundSensor;
   private final DigitalInput coralSetSensor;
   private final CANrange middleRange;
   private final CANrange sideRange1;
@@ -51,9 +51,9 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<Boolean> rangeIsDetectedSide2;
 
   public IntakeIOTalonFX(
-      int coralInChannel, int coralSetChannel, int canRangeID1, int canRangeID2, int canRangeID3) {
+      int coralFoundChannel, int coralSetChannel, int canRangeID1, int canRangeID2, int canRangeID3) {
 
-    coralInSensor = new DigitalInput(coralInChannel);
+    coralFoundSensor = new DigitalInput(coralFoundChannel);
     coralSetSensor = new DigitalInput(coralSetChannel);
     middleRange = new CANrange(canRangeID1);
     sideRange1 = new CANrange(canRangeID2);
@@ -108,7 +108,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     // inputs.intakeCurrentAmps = currentSignal.getValueAsDouble();
 
     // Commented out for now
-    inputs.coralIn = coralInSensor.get(); // Coral detected if the sensor is triggered
+    inputs.coralFound = coralFoundSensor.get(); // Coral detected if the sensor is triggered
     inputs.coralSet = coralSetSensor.get();
     inputs.middleSTDdevs = rangeSTDdevsMiddle.getValueAsDouble();
     inputs.middleDistance = rangeDistanceMiddle.getValueAsDouble();
@@ -120,7 +120,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     inputs.side2Distance = rangeDistanceSide2.getValueAsDouble();
     inputs.side2IsDetected = rangeIsDetectedSide2.getValue();
     // (active low)
-    Logger.recordOutput("coralIn?", !coralInSensor.get());
+    Logger.recordOutput("coralIn?", !coralFoundSensor.get());
     Logger.recordOutput("coralSet?", !coralSetSensor.get());
     Logger.recordOutput("getDistance", middleRange.getDistance(true).getValueAsDouble());
     Logger.recordOutput("getSTDdevs", middleRange.getDistanceStdDev(true).getValueAsDouble());
