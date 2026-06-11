@@ -51,7 +51,11 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<Boolean> rangeIsDetectedSide2;
 
   public IntakeIOTalonFX(
-      int coralFoundChannel, int coralSetChannel, int canRangeID1, int canRangeID2, int canRangeID3) {
+      int coralFoundChannel,
+      int coralSetChannel,
+      int canRangeID1,
+      int canRangeID2,
+      int canRangeID3) {
 
     coralFoundSensor = new DigitalInput(coralFoundChannel);
     coralSetSensor = new DigitalInput(coralSetChannel);

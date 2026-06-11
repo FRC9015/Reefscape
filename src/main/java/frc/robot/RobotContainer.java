@@ -373,15 +373,13 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -driverController.getLeftY(),
+            () -> 0,
             () -> -driverController.getLeftX(),
             () -> 0,
             0.1)); // Disable rotation for hamilton park
 
     // Reset gyro to 0° when B button is pressed
 
-
- 
     driverController
         .povRight()
         .and(() -> !isControllerOverride)
@@ -430,10 +428,18 @@ public class RobotContainer {
     //             () -> 0 * Constants.SLOW_MODE_CONSTANT,
     //             () -> 0 * Constants.SLOW_MODE_CONSTANT));
 
-    masterController.povDown().onTrue(elevator.executePreset(ElevatorState.Default).unless(coralFound));
-    masterController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2).unless(coralFound));
-    masterController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3).unless(coralFound));
-    masterController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4).unless(coralFound));
+    masterController
+        .povDown()
+        .onTrue(elevator.executePreset(ElevatorState.Default).unless(coralFound));
+    masterController
+        .povLeft()
+        .onTrue(elevator.executePreset(ElevatorState.CoralL2).unless(coralFound));
+    masterController
+        .povRight()
+        .onTrue(elevator.executePreset(ElevatorState.CoralL3).unless(coralFound));
+    masterController
+        .povUp()
+        .onTrue(elevator.executePreset(ElevatorState.CoralL4).unless(coralFound));
     // operatorController.b().onTrue(climb.retractCommand2());
     masterController.y().onTrue(climbSequence());
 
@@ -441,7 +447,9 @@ public class RobotContainer {
     masterController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
     masterController.a().onTrue(climb.servoExtendCommand());
 
-    masterController.b().onTrue(Commands.runOnce(() -> isControllerOverride = !isControllerOverride));
+    masterController
+        .b()
+        .onTrue(Commands.runOnce(() -> isControllerOverride = !isControllerOverride));
 
     // Button Box
     operatorButtonBox
