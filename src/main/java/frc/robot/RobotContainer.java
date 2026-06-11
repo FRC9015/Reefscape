@@ -88,7 +88,7 @@ public class RobotContainer {
 
   private final CommandXboxController driverController = new CommandXboxController(0);
   // Operator Controller
-  private final CommandXboxController operatorController = new CommandXboxController(1);
+  private final CommandXboxController masterController = new CommandXboxController(1);
   // Operator Button Box
   private final CommandGenericHID operatorButtonBox = new CommandGenericHID(2);
 
@@ -103,6 +103,9 @@ public class RobotContainer {
   private final Trigger groundStall;
   private final Trigger coralNotIn;
   private final Trigger outreachMode;
+  private final Trigger overrideController;
+
+  private boolean isControllerOverride = false;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -156,6 +159,7 @@ public class RobotContainer {
         groundStall = new Trigger(() -> algae.isStalled());
         coralNotIn = new Trigger(() -> !intake.isCoralSet());
         outreachMode = new Trigger(() -> !driverController.leftBumper().getAsBoolean());
+        overrideController = new Trigger(() -> isControllerOverride);
 
         climb =
             new Climber(
@@ -197,6 +201,7 @@ public class RobotContainer {
         groundStall = new Trigger(() -> algae.isStalled());
         coralNotIn = new Trigger(() -> !intake.isCoralSet());
         outreachMode = new Trigger(() -> !driverController.leftBumper().getAsBoolean());
+        overrideController = new Trigger(() -> isControllerOverride);
 
         climb =
             new Climber(
@@ -246,6 +251,7 @@ public class RobotContainer {
         groundStall = new Trigger(() -> algae.isStalled());
         coralNotIn = new Trigger(() -> !intake.isCoralSet());
         outreachMode = new Trigger(() -> !driverController.leftBumper().getAsBoolean());
+        overrideController = new Trigger(() -> isControllerOverride);
 
         climb =
             new Climber(
@@ -374,53 +380,68 @@ public class RobotContainer {
 
     // Reset gyro to 0° when B button is pressed
 
-    driverController.y().whileTrue(algae.setSpeed(6)).whileFalse(algae.setSpeed(0));
-    // driverController.b().onTrue(climbSequence());
 
-    driverController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
-    driverController.x().onTrue(elevator.executePreset(ElevatorState.CoralL4));
-    driverController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
+ 
+    driverController
+        .povRight()
+        .and(() -> !isControllerOverride)
+        .onTrue(elevator.executePreset(ElevatorState.CoralL3));
+    driverController
+        .x()
+        .and(() -> !isControllerOverride)
+        .onTrue(elevator.executePreset(ElevatorState.CoralL4));
+    driverController
+        .povLeft()
+        .and(() -> !isControllerOverride)
+        .onTrue(elevator.executePreset(ElevatorState.CoralL2));
     driverController
         .rightBumper()
         .and(() -> !driverController.leftBumper().getAsBoolean())
+        .and(() -> !isControllerOverride)
         .onTrue(climb.servoRetractCommand());
     driverController
         .leftTrigger()
         .and(() -> !driverController.leftBumper().getAsBoolean())
+        .and(() -> !isControllerOverride)
         .whileTrue(climb.down());
     driverController
         .povDown()
         .and(() -> !driverController.leftBumper().getAsBoolean())
+        .and(() -> !isControllerOverride)
         .whileTrue(climb.down());
     driverController
         .povUp()
         .and(() -> !driverController.leftBumper().getAsBoolean())
+        .and(() -> !isControllerOverride)
         .whileTrue(climb.up());
     driverController
         .rightTrigger()
         .and(() -> !driverController.leftBumper().getAsBoolean())
+        .and(() -> !isControllerOverride)
         .whileTrue(climb.topMotor());
 
-    // Slow mode
-    driverController
-        .leftBumper()
-        .whileTrue(
-            DriveCommands.joystickDrive(
-                drive,
-                () -> -driverController.getLeftY() * Constants.SLOW_MODE_CONSTANT,
-                () -> 0 * Constants.SLOW_MODE_CONSTANT,
-                () -> 0 * Constants.SLOW_MODE_CONSTANT));
+    // // Slow mode
+    // driverController
+    //     .leftBumper()
+    //     .whileTrue(
+    //         DriveCommands.joystickDrive(
+    //             drive,
+    //             () -> -driverController.getLeftY() * Constants.SLOW_MODE_CONSTANT,
+    //             () -> 0 * Constants.SLOW_MODE_CONSTANT,
+    //             () -> 0 * Constants.SLOW_MODE_CONSTANT));
 
-    operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
-    operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
-    operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
-    operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
+    masterController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
+    masterController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
+    masterController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
+    masterController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
     // operatorController.b().onTrue(climb.retractCommand2());
-    operatorController.y().onTrue(climbSequence());
+    masterController.y().onTrue(climbSequence());
 
-    operatorController.rightBumper().whileTrue(endEffector.runEffector(4));
-    operatorController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
-    operatorController.a().onTrue(climb.servoExtendCommand());
+    masterController.rightBumper().whileTrue(endEffector.runEffector(4));
+    masterController.leftTrigger().whileTrue(endEffector.runEffectorReverse(6));
+    masterController.a().onTrue(climb.servoExtendCommand());
+
+    masterController.b().onTrue(Commands.runOnce(() -> isControllerOverride = !isControllerOverride));
 
     // Button Box
     operatorButtonBox
