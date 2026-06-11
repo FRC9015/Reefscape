@@ -368,7 +368,7 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive,
             () -> -driverController.getLeftY(),
-            () -> 0,
+            () -> -driverController.getLeftX(),
             () -> 0,
             0.1)); // Disable rotation for hamilton park
 
@@ -408,13 +408,13 @@ public class RobotContainer {
             DriveCommands.joystickDrive(
                 drive,
                 () -> -driverController.getLeftY() * Constants.SLOW_MODE_CONSTANT,
-                () -> 0 * Constants.SLOW_MODE_CONSTANT,
+                () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
                 () -> 0 * Constants.SLOW_MODE_CONSTANT));
 
-    operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
-    operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2));
-    operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3));
-    operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4));
+    operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default).unless(coralFound));
+    operatorController.povLeft().onTrue(elevator.executePreset(ElevatorState.CoralL2).unless(coralFound));
+    operatorController.povRight().onTrue(elevator.executePreset(ElevatorState.CoralL3).unless(coralFound));
+    operatorController.povUp().onTrue(elevator.executePreset(ElevatorState.CoralL4).unless(coralFound));
     // operatorController.b().onTrue(climb.retractCommand2());
     operatorController.y().onTrue(climbSequence());
 
