@@ -368,7 +368,7 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive,
             () -> -driverController.getLeftY(),
-            () -> -driverController.getLeftX(),
+            () -> 0,
             () -> 0,
             0.1)); // Disable rotation for hamilton park
 
@@ -408,7 +408,7 @@ public class RobotContainer {
             DriveCommands.joystickDrive(
                 drive,
                 () -> -driverController.getLeftY() * Constants.SLOW_MODE_CONSTANT,
-                () -> -driverController.getLeftX() * Constants.SLOW_MODE_CONSTANT,
+                () -> 0 * Constants.SLOW_MODE_CONSTANT,
                 () -> 0 * Constants.SLOW_MODE_CONSTANT));
 
     operatorController.povDown().onTrue(elevator.executePreset(ElevatorState.Default));
