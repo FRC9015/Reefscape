@@ -94,7 +94,7 @@ public class RobotContainer {
 
   // Triggers
   private final Trigger coralFound;
-  private final Trigger coralIn;
+  private final Trigger coralSet;
   private final Trigger canRangeLeft;
   private final Trigger canRangeMiddle;
   private final Trigger canRangeRight;
@@ -146,15 +146,15 @@ public class RobotContainer {
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.GROUND_CORAL_MOTOR_ID));
 
-        coralFound = new Trigger(() -> intake.isCoralIn());
-        coralIn = new Trigger(() -> intake.isCoralSet());
+        coralFound = new Trigger(() -> intake.isCoralFound());
+        coralSet = new Trigger(() -> intake.isCoralSet());
         canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
         elevatorToggle = new Trigger(() -> elevator.getToggle());
         groundStall = new Trigger(() -> algae.isStalled());
-        coralNotIn = new Trigger(() -> !intake.isCoralSet());
+        coralNotIn = new Trigger(() -> !intake.isCoralFound());
         outreachMode = new Trigger(() -> !driverController.leftBumper().getAsBoolean());
 
         climb =
@@ -187,15 +187,15 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.GROUND_CORAL_MOTOR_ID));
-        coralFound = new Trigger(() -> intake.isCoralIn());
-        coralIn = new Trigger(() -> intake.isCoralSet());
+        coralFound = new Trigger(() -> intake.isCoralFound());
+        coralSet = new Trigger(() -> intake.isCoralSet());
         canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
         elevatorToggle = new Trigger(() -> elevator.getToggle());
         groundStall = new Trigger(() -> algae.isStalled());
-        coralNotIn = new Trigger(() -> !intake.isCoralSet());
+        coralNotIn = new Trigger(() -> !intake.isCoralFound());
         outreachMode = new Trigger(() -> !driverController.leftBumper().getAsBoolean());
 
         climb =
@@ -236,15 +236,15 @@ public class RobotContainer {
                     4));
         pivot = new Pivot(new PivotIOTalonFX(MotorIDConstants.PIVOT_MOTOR_ID));
         algae = new Algae(new AlgaeIOTalonFX(MotorIDConstants.GROUND_CORAL_MOTOR_ID));
-        coralFound = new Trigger(() -> intake.isCoralIn());
-        coralIn = new Trigger(() -> intake.isCoralSet());
+        coralFound = new Trigger(() -> intake.isCoralFound());
+        coralSet = new Trigger(() -> intake.isCoralSet());
         canRangeLeft = new Trigger(() -> intake.canRangeLeftDetected());
         canRangeMiddle = new Trigger(() -> intake.canRangeMiddleDetected());
         canRangeRight = new Trigger(() -> intake.canRangeRightDetected());
         inPosition = new Trigger(() -> intake.inPosition());
         elevatorToggle = new Trigger(() -> elevator.getToggle());
         groundStall = new Trigger(() -> algae.isStalled());
-        coralNotIn = new Trigger(() -> !intake.isCoralSet());
+        coralNotIn = new Trigger(() -> !intake.isCoralFound());
         outreachMode = new Trigger(() -> !driverController.leftBumper().getAsBoolean());
 
         climb =
@@ -289,7 +289,7 @@ public class RobotContainer {
         endEffector
             .runEffectorAuto(2)
             .alongWith(elevator.executePreset(ElevatorState.Default))
-            .until(intake::isCoralSet)
+            .until(intake::isCoralFound)
             .andThen(endEffector::stop));
     NamedCommands.registerCommand(
         "IntakeCoralDrive",
@@ -430,7 +430,7 @@ public class RobotContainer {
                 .raceWith(autoElevatorCommand(() -> selectedElevatorState))
                 .andThen(autoShootCoralCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AL.getButtonID())
         .and(() -> !elevator.getToggle())
@@ -444,7 +444,7 @@ public class RobotContainer {
                 .raceWith(autoElevatorCommand(() -> selectedElevatorState))
                 .andThen(autoShootCoralCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BL.getButtonID())
         .and(() -> !elevator.getToggle())
@@ -458,7 +458,7 @@ public class RobotContainer {
                 .raceWith(autoElevatorCommand(() -> selectedElevatorState))
                 .andThen(autoShootCoralCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CL.getButtonID())
         .and(() -> !elevator.getToggle())
@@ -472,7 +472,7 @@ public class RobotContainer {
                 .raceWith(autoElevatorCommand(() -> selectedElevatorState))
                 .andThen(autoShootCoralCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DL.getButtonID())
         .and(() -> !elevator.getToggle())
@@ -486,7 +486,7 @@ public class RobotContainer {
                 .raceWith(autoElevatorCommand(() -> selectedElevatorState))
                 .andThen(autoShootCoralCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_EL.getButtonID())
         .and(() -> !elevator.getToggle())
@@ -500,7 +500,7 @@ public class RobotContainer {
                 .raceWith(autoElevatorCommand(() -> selectedElevatorState))
                 .andThen(autoShootCoralCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FL.getButtonID())
         .and(() -> !elevator.getToggle())
@@ -514,7 +514,7 @@ public class RobotContainer {
                 .raceWith(autoElevatorCommand(() -> selectedElevatorState))
                 .andThen(autoShootCoralCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_AR.getButtonID())
         .and(() -> !elevator.getToggle())
@@ -528,7 +528,7 @@ public class RobotContainer {
                 .raceWith(autoElevatorCommand(() -> selectedElevatorState))
                 .andThen(autoShootCoralCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_BR.getButtonID())
         .and(() -> !elevator.getToggle())
@@ -542,7 +542,7 @@ public class RobotContainer {
                 .raceWith(autoElevatorCommand(() -> selectedElevatorState))
                 .andThen(autoShootCoralCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_CR.getButtonID())
         .and(() -> !elevator.getToggle())
@@ -556,7 +556,7 @@ public class RobotContainer {
                 .raceWith(autoElevatorCommand(() -> selectedElevatorState))
                 .andThen(autoShootCoralCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_DR.getButtonID())
         .and(() -> !elevator.getToggle())
@@ -570,7 +570,7 @@ public class RobotContainer {
                 .raceWith(autoElevatorCommand(() -> selectedElevatorState))
                 .andThen(autoShootCoralCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_ER.getButtonID())
         .and(() -> !elevator.getToggle())
@@ -584,7 +584,7 @@ public class RobotContainer {
                 .raceWith(autoElevatorCommand(() -> selectedElevatorState))
                 .andThen(autoShootCoralCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.REEF_FR.getButtonID())
         .and(() -> !elevator.getToggle())
@@ -599,7 +599,7 @@ public class RobotContainer {
                 .withTimeout(0.2)
                 .andThen(endEffector.runEffectorAutoCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.5))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L2.getButtonID())
         .and(() -> elevator.getToggle())
@@ -618,7 +618,7 @@ public class RobotContainer {
                 .withTimeout(0.6)
                 .andThen(endEffector.runEffectorAutoCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.5))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L3.getButtonID())
         .and(() -> elevator.getToggle())
@@ -637,7 +637,7 @@ public class RobotContainer {
                 .withTimeout(0.75)
                 .andThen(endEffector.runEffectorAutoCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
 
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ELEVATOR_L4.getButtonID())
@@ -657,7 +657,7 @@ public class RobotContainer {
                 .withTimeout(1.10)
                 .andThen(endEffector.runEffectorAutoCommand())
                 .andThen(elevator.executePreset(ElevatorState.Default).withTimeout(0.75))
-                .unless(() -> intake.isCoralIn()));
+                .unless(() -> intake.isCoralFound()));
 
     operatorButtonBox
         .button(Constants.ButtonBoxIds.ABORT.getButtonID())

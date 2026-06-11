@@ -20,7 +20,7 @@ public interface IntakeIO {
   public static class IntakeIOInputs {
 
     // Fields representing the intake state and inputs
-    public boolean coralIn = false;
+    public boolean coralFound = false;
     public boolean coralSet = false;
     public double middleSTDdevs = 0.0;
     public double middleDistance = 0.0;
