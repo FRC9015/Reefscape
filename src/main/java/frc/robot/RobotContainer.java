@@ -370,14 +370,18 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
+   drive.setDefaultCommand(
+        DriveCommands.joystickDriveConditional(
             drive,
-            () -> 0,
-            () -> -driverController.getLeftX(),
-            () -> 0,
-            0.1)); // Disable rotation for hamilton park
-
+            () -> (isControllerOverride ? -masterController.getLeftX() : 0.0),
+            () ->
+                (isControllerOverride
+                    ? -masterController.getLeftY()
+                    : -driverController.getLeftY()*Math.sin(drive.getRotation().getRadians())),
+            () -> (isControllerOverride),
+            () -> (isControllerOverride ? -masterController.getRightX() : 0.0),
+            () -> drive.getRotation(),
+            0.1));
     // Reset gyro to 0° when B button is pressed
 
     driverController
