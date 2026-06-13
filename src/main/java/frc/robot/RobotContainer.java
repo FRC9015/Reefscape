@@ -104,6 +104,7 @@ public class RobotContainer {
   private final Trigger coralNotIn;
   private final Trigger outreachMode;
   private final Trigger overrideController;
+  private final Trigger isElevatorAtDefault;
 
   private boolean isControllerOverride = false;
 
@@ -159,7 +160,9 @@ public class RobotContainer {
         groundStall = new Trigger(() -> algae.isStalled());
         coralNotIn = new Trigger(() -> !intake.isCoralFound());
         outreachMode = new Trigger(() -> !driverController.leftBumper().getAsBoolean());
-        overrideController = new Trigger(() -> isControllerOverride);
+        overrideController = new Trigger(() -> masterController.b().getAsBoolean());
+        isElevatorAtDefault =
+            new Trigger(() -> elevator.getElevatorState() == ElevatorState.Default);
 
         climb =
             new Climber(
@@ -201,7 +204,9 @@ public class RobotContainer {
         groundStall = new Trigger(() -> algae.isStalled());
         coralNotIn = new Trigger(() -> !intake.isCoralFound());
         outreachMode = new Trigger(() -> !driverController.leftBumper().getAsBoolean());
-        overrideController = new Trigger(() -> isControllerOverride);
+        overrideController = new Trigger(() -> masterController.b().getAsBoolean());
+        isElevatorAtDefault =
+            new Trigger(() -> elevator.getElevatorState() == ElevatorState.Default);
 
         climb =
             new Climber(
@@ -251,7 +256,9 @@ public class RobotContainer {
         groundStall = new Trigger(() -> algae.isStalled());
         coralNotIn = new Trigger(() -> !intake.isCoralFound());
         outreachMode = new Trigger(() -> !driverController.leftBumper().getAsBoolean());
-        overrideController = new Trigger(() -> isControllerOverride);
+        overrideController = new Trigger(() -> masterController.b().getAsBoolean());
+        isElevatorAtDefault =
+            new Trigger(() -> elevator.getElevatorState() == ElevatorState.Default);
 
         climb =
             new Climber(
@@ -370,58 +377,59 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-   drive.setDefaultCommand(
-        DriveCommands.joystickDriveConditional(
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDriveConditional(
+    //         drive,
+    //         () ->
+    //             (isControllerOverride
+    //                 ? -masterController.getLeftY()
+    //                 : -driverController.getLeftX()*Math.sin(drive.getRotation().getRadians())),
+    //         () ->
+    //             (isControllerOverride
+    //                 ? -masterController.getLeftX()
+    //                 : -driverController.getLeftX()),
+    //         () -> (isControllerOverride),
+    //         () -> (isControllerOverride ? -masterController.getRightX() : 0.0),
+    //         () -> drive.getRotation(),
+    //         0.1));
+    // // Reset gyro to 0° when B button is pressed
+
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
             drive,
-            () -> (isControllerOverride ? -masterController.getLeftX() : 0.0),
+            () -> (overrideController.getAsBoolean() ? masterController.getLeftY() : 0),
             () ->
-                (isControllerOverride
-                    ? -masterController.getLeftY()
-                    : -driverController.getLeftY()*Math.sin(drive.getRotation().getRadians())),
-            () -> (isControllerOverride),
-            () -> (isControllerOverride ? -masterController.getRightX() : 0.0),
-            () -> drive.getRotation(),
-            0.1));
-    // Reset gyro to 0° when B button is pressed
+                ((overrideController.getAsBoolean())
+                    ? masterController.getLeftX()
+                    : driverController.getLeftX()),
+            () -> (overrideController.getAsBoolean() ? -masterController.getRightX() : 0),
+            0.05));
 
     driverController
         .povRight()
-        .and(() -> !isControllerOverride)
+        .and(() -> !overrideController.getAsBoolean())
         .onTrue(elevator.executePreset(ElevatorState.CoralL3));
     driverController
-        .x()
-        .and(() -> !isControllerOverride)
+        .povUp()
+        .and(() -> !overrideController.getAsBoolean())
         .onTrue(elevator.executePreset(ElevatorState.CoralL4));
     driverController
         .povLeft()
-        .and(() -> !isControllerOverride)
+        .and(() -> !overrideController.getAsBoolean())
         .onTrue(elevator.executePreset(ElevatorState.CoralL2));
     driverController
+        .povDown()
+        .and(() -> !overrideController.getAsBoolean())
+        .onTrue(elevator.executePreset(ElevatorState.Default));
+
+    driverController
         .rightBumper()
-        .and(() -> !driverController.leftBumper().getAsBoolean())
-        .and(() -> !isControllerOverride)
-        .onTrue(climb.servoRetractCommand());
+        .and(() -> !overrideController.getAsBoolean())
+        .whileTrue(endEffector.runEffector(4));
     driverController
         .leftTrigger()
-        .and(() -> !driverController.leftBumper().getAsBoolean())
-        .and(() -> !isControllerOverride)
-        .whileTrue(climb.down());
-    driverController
-        .povDown()
-        .and(() -> !driverController.leftBumper().getAsBoolean())
-        .and(() -> !isControllerOverride)
-        .whileTrue(climb.down());
-    driverController
-        .povUp()
-        .and(() -> !driverController.leftBumper().getAsBoolean())
-        .and(() -> !isControllerOverride)
-        .whileTrue(climb.up());
-    driverController
-        .rightTrigger()
-        .and(() -> !driverController.leftBumper().getAsBoolean())
-        .and(() -> !isControllerOverride)
-        .whileTrue(climb.topMotor());
-
+        .and(() -> !overrideController.getAsBoolean())
+        .whileTrue(endEffector.runEffectorReverse(6));
     // // Slow mode
     // driverController
     //     .leftBumper()

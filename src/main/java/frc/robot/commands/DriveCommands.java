@@ -191,7 +191,7 @@ public class DriveCommands {
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
   }
 
-   public static Command joystickDriveConditional(
+  public static Command joystickDriveConditional(
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
@@ -208,43 +208,45 @@ public class DriveCommands {
             new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
     angleController.enableContinuousInput(-Math.PI, Math.PI);
     return Commands.run(
-        () -> {
-          // Get linear velocity
-          Translation2d linearVelocity =
-              getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+            () -> {
+              // Get linear velocity
+              Translation2d linearVelocity =
+                  getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
-          // Compute angular velocity either from joystick (omegaSupplier) or from PID angle controller
-          double omega;
-          if (useOmega.getAsBoolean()) {
-            double raw = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
-            raw = Math.copySign(raw * raw, raw);
-            omega = raw * drive.getMaxAngularSpeedRadPerSec() * multiplier;
-          } else {
-            omega =
-                angleController.calculate(
-                    drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
-          }
+              // Compute angular velocity either from joystick (omegaSupplier) or from PID angle
+              // controller
+              double omega;
+              if (useOmega.getAsBoolean()) {
+                double raw = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+                raw = Math.copySign(raw * raw, raw);
+                omega = raw * drive.getMaxAngularSpeedRadPerSec() * multiplier;
+              } else {
+                omega =
+                    angleController.calculate(
+                        drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
+              }
 
-          // Convert to field relative speeds & send command
-          ChassisSpeeds speeds =
-              new ChassisSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * multiplier,
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * multiplier,
-                  omega);
-          boolean isFlipped =
-              DriverStation.getAlliance().isPresent()
-                  && DriverStation.getAlliance().get() == Alliance.Red;
-          drive.runVelocity(
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  speeds,
-                  isFlipped
-                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                      : drive.getRotation()));
-        },
-   drive)
+              // Convert to field relative speeds & send command
+              ChassisSpeeds speeds =
+                  new ChassisSpeeds(
+                      linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * multiplier,
+                      linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * multiplier,
+                      omega);
+              boolean isFlipped =
+                  DriverStation.getAlliance().isPresent()
+                      && DriverStation.getAlliance().get() == Alliance.Red;
+              drive.runVelocity(
+                  ChassisSpeeds.fromFieldRelativeSpeeds(
+                      speeds,
+                      isFlipped
+                          ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                          : drive.getRotation()));
+            },
+            drive)
         // Reset the angle controller when the command starts (harmless if using joystick omega)
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
   }
+
   /**
    * Measures the velocity feedforward constants for the drive motors.
    *
